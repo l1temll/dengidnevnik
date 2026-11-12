@@ -3,13 +3,13 @@
  * Local-first PWA + Firebase Firestore Sync + 3 кастомные карты + Радиальная аналитика и Календарь
  */
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBkJMhoECl8iK_khQA_axO3TvEobKHa5WY",
+const FIREBASE_CONFIG = {
+  apiKey: "ТВОЙ_API_KEY_ИЗ_SOLO_FPI_BANK",
   authDomain: "solo-fpi-bank.firebaseapp.com",
   projectId: "solo-fpi-bank",
   storageBucket: "solo-fpi-bank.firebasestorage.app",
-  messagingSenderId: "60894842735",
-  appId: "1:60894842735:web:5d2f6755834e7e6136e29a"
+  messagingSenderId: "ТВОИ_ЦИФРЫ",
+  appId: "ТВОЙ_APP_ID"
 };
 
 const FIREBASE_VERSION = "10.13.1";
