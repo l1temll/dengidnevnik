@@ -1,0 +1,27 @@
+{
+  "name": "ФПИ Банк · Мои траты",
+  "short_name": "ФПИ Банк",
+  "description": "Личный финансовый дневник, 3 кастомные банковские карты и аналитика расходов ФПИ Банка",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0b14",
+  "theme_color": "#0c0b14",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
