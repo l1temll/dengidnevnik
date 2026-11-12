@@ -3,14 +3,13 @@
  * Local-first PWA + Firebase Firestore Sync + 3 кастомные карты + Радиальная аналитика и Календарь
  */
 
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyD_Ymf72f92rerLVIZd7uGaGmn4wVNK2Lk",
-  authDomain: "nika-nastya-expenses.firebaseapp.com",
-  projectId: "nika-nastya-expenses",
-  storageBucket: "nika-nastya-expenses.firebasestorage.app",
-  messagingSenderId: "636574347794",
-  appId: "1:636574347794:web:5de409c3dc2a49da0adecb",
-  measurementId: "G-LQMJ31R0JR"
+const firebaseConfig = {
+  apiKey: "AIzaSyBkJMhoECl8iK_khQA_axO3TvEobKHa5WY",
+  authDomain: "solo-fpi-bank.firebaseapp.com",
+  projectId: "solo-fpi-bank",
+  storageBucket: "solo-fpi-bank.firebasestorage.app",
+  messagingSenderId: "60894842735",
+  appId: "1:60894842735:web:5d2f6755834e7e6136e29a"
 };
 
 const FIREBASE_VERSION = "10.13.1";
