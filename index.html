@@ -1338,6 +1338,87 @@
       font-size: 11px; font-weight: 760; cursor: pointer;
     }
 
+    /* Быстрые кнопки проезда и билета домой в добавлении расхода */
+    .quick-presets-wrap {
+      margin: 4px 0 14px;
+      padding: 11px 12px;
+      border-radius: 18px;
+      background: var(--surface-2);
+      border: 1px solid var(--glass-border);
+    }
+    .quick-presets-title {
+      font-size: 10px; font-weight: 800; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
+    }
+    .quick-presets-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+    }
+    .preset-expense-btn {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      padding: 10px 11px; border-radius: 13px;
+      border: 1px solid var(--glass-border);
+      background: var(--surface-solid); color: var(--text);
+      font-size: 11px; font-weight: 780; cursor: pointer; text-align: left;
+      transition: transform 0.18s var(--bounce), border-color 0.18s ease, background 0.18s ease;
+    }
+    .preset-expense-btn:active { transform: scale(0.95); }
+    .preset-expense-btn:hover { border-color: var(--accent-strong); }
+    .preset-expense-btn strong {
+      color: var(--accent-strong); font-variant-numeric: tabular-nums; white-space: nowrap;
+    }
+    .preset-expense-btn.full-span {
+      grid-column: 1 / -1;
+      background: var(--accent-soft);
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+
+    /* Виджет и карточка аналитики Кредитки ФПИ */
+    .credit-planner-card {
+      background: var(--surface); border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 22px; padding: 15px 16px; margin-bottom: 14px;
+    }
+    .credit-planner-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 10px; margin-bottom: 10px;
+    }
+    .credit-planner-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--accent-strong); background: var(--accent-soft);
+      padding: 4px 9px; border-radius: 999px;
+    }
+    .credit-daily-big {
+      font-size: 26px; font-weight: 880; letter-spacing: -0.9px;
+      font-variant-numeric: tabular-nums; margin-top: 4px;
+    }
+    .credit-daily-sub {
+      font-size: 11px; color: var(--muted); font-weight: 720; margin-top: 2px;
+    }
+    .credit-multi-bar {
+      height: 9px; border-radius: 999px; background: var(--surface-2);
+      overflow: hidden; display: flex; gap: 2px; margin: 11px 0 9px;
+    }
+    .credit-bar-seg { height: 100%; border-radius: 999px; transition: width 0.35s var(--spring); }
+    .credit-stats-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px;
+    }
+    .credit-stat-box {
+      padding: 10px 11px; border-radius: 14px;
+      background: var(--surface-2); border: 1px solid var(--line);
+    }
+    .credit-stat-label { font-size: 10px; color: var(--muted); font-weight: 740; }
+    .credit-stat-val {
+      font-size: 14px; font-weight: 840; margin-top: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+    .credit-legend-row {
+      display: flex; flex-wrap: wrap; gap: 10px; font-size: 10px; color: var(--muted); font-weight: 740;
+    }
+    .credit-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .credit-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
     .category-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
     }
@@ -1536,6 +1617,30 @@
         </div>
       </div>
 
+      <!-- Умный виджет дневного бюджета по Кредитке (Карта 1) -->
+      <section class="credit-planner-card liquid-glass" id="home-credit-widget" aria-live="polite">
+        <div class="credit-planner-top">
+          <div>
+            <span class="credit-planner-badge">💳 Кредитка · лимит на день</span>
+            <div class="credit-daily-big" id="home-credit-daily-free">0 ₽ / день</div>
+            <div class="credit-daily-sub" id="home-credit-daily-note">Свободно сверх обязательного проезда по будням</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10px; color:var(--muted); font-weight:760;">На сегодня осталось</div>
+            <strong style="font-size:15px; font-weight:850; font-variant-numeric:tabular-nums;" id="home-credit-today-left">0 ₽</strong>
+          </div>
+        </div>
+        <div class="credit-multi-bar" title="Распределение лимита 10 000 ₽">
+          <div class="credit-bar-seg" id="home-bar-spent" style="width:0%; background:#f43f5e;"></div>
+          <div class="credit-bar-seg" id="home-bar-reserved" style="width:0%; background:#f59e0b;"></div>
+          <div class="credit-bar-seg" id="home-bar-free" style="width:100%; background:#22c55e;"></div>
+        </div>
+        <div class="credit-legend-row">
+          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#22c55e;"></span>Свободно: <strong id="home-credit-free-sum" style="color:var(--text);">0 ₽</strong></span>
+          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f59e0b;"></span>Бронь проезда (Пн–Пт): <strong id="home-credit-reserved-sum" style="color:var(--text);">0 ₽</strong></span>
+        </div>
+      </section>
+
       <!-- Фильтр ленты по картам -->
       <div class="card-filter-pills" id="card-filter-pills" role="group" aria-label="Фильтр по картам">
         <button class="filter-pill active" type="button" data-filter-card="all">Все карты</button>
@@ -1575,6 +1680,51 @@
           <button class="month-nav-btn" type="button" id="month-next" aria-label="Следующий месяц">›</button>
         </div>
       </div>
+
+      <!-- ПОЛНАЯ АНАЛИТИКА КРЕДИТКИ (ЛИМИТ 10 000 ₽ + БУДНИЙ ПРОЕЗД) -->
+      <section class="credit-planner-card liquid-glass" id="analytics-credit-card" aria-label="Расчёт дневного бюджета кредитки">
+        <div class="credit-planner-top">
+          <div>
+            <span class="credit-planner-badge" id="an-credit-badge">💳 Кредитка ФПИ · 10 000 ₽ / мес</span>
+            <div class="credit-daily-big" id="an-credit-daily-free">0 ₽ / день</div>
+            <div class="credit-daily-sub" id="an-credit-subtitle">Свободно на любые траты сверх проезда</div>
+          </div>
+          <button class="cards-counter-pill" type="button" id="an-reset-credit-btn" title="Установить баланс кредитки 10 000 ₽">
+            🔄 10 000 ₽
+          </button>
+        </div>
+
+        <div class="credit-multi-bar">
+          <div class="credit-bar-seg" id="an-bar-spent" style="width:0%; background:#f43f5e;"></div>
+          <div class="credit-bar-seg" id="an-bar-reserved" style="width:0%; background:#f59e0b;"></div>
+          <div class="credit-bar-seg" id="an-bar-free" style="width:100%; background:#22c55e;"></div>
+        </div>
+
+        <div class="credit-legend-row" style="margin-bottom:4px;">
+          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f43f5e;"></span>Потрачено: <strong id="an-credit-spent" style="color:var(--text);">0 ₽</strong></span>
+          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f59e0b;"></span>Проезд Пн–Пт: <strong id="an-credit-reserved" style="color:var(--text);">0 ₽</strong></span>
+          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#22c55e;"></span>Чистый остаток: <strong id="an-credit-free" style="color:var(--text);">0 ₽</strong></span>
+        </div>
+
+        <div class="credit-stats-grid">
+          <div class="credit-stat-box">
+            <div class="credit-stat-label">Баланс Кредитки сейчас</div>
+            <div class="credit-stat-val" id="an-credit-balance">10 000 ₽</div>
+          </div>
+          <div class="credit-stat-box">
+            <div class="credit-stat-label">Осталось дней (будней Пн–Пт)</div>
+            <div class="credit-stat-val" id="an-credit-days">0 дн. (0 будн.)</div>
+          </div>
+          <div class="credit-stat-box">
+            <div class="credit-stat-label">Бронь на автобус + билет домой</div>
+            <div class="credit-stat-val" id="an-credit-commute-info">0 ₽</div>
+          </div>
+          <div class="credit-stat-box">
+            <div class="credit-stat-label">Общий лимит в будний день</div>
+            <div class="credit-stat-val" id="an-credit-weekday-total">0 ₽ / будни</div>
+          </div>
+        </div>
+      </section>
 
       <!-- РАДИАЛЬНОЕ МЕНЮ ТРАТ -->
       <section class="radial-card" aria-label="Радиальная диаграмма расходов">
@@ -1799,6 +1949,25 @@
         <label class="field-label" for="expense-amount">Сумма</label>
         <input class="amount-input" id="expense-amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0 ₽" required>
 
+        <!-- Быстрые кнопки частых трат с кредитки -->
+        <div class="quick-presets-wrap" id="quick-expense-presets">
+          <div class="quick-presets-title">Быстрый ввод (Кредитка · Транспорт)</div>
+          <div class="quick-presets-grid">
+            <button class="preset-expense-btn" type="button" data-quick-preset="bus">
+              <span>🚌 Автобус</span>
+              <strong id="preset-bus-price">42 ₽</strong>
+            </button>
+            <button class="preset-expense-btn" type="button" data-quick-preset="home">
+              <span>🎫 Билет домой</span>
+              <strong id="preset-home-price">189 ₽</strong>
+            </button>
+            <button class="preset-expense-btn full-span" type="button" data-quick-preset="both">
+              <span>⚡ Автобус + Билет домой (комбо за день)</span>
+              <strong id="preset-both-price">231 ₽</strong>
+            </button>
+          </div>
+        </div>
+
         <span class="field-label">Карта списания / зачисления</span>
         <div class="segmented" id="expense-card-selector" role="group" aria-label="Выбор карты">
           <button class="segment-button selected" type="button" data-select-card="card_1">Основная ФПИ</button>
@@ -1851,6 +2020,32 @@
         <div class="settings-section-title">Банковские карты (3 счёта)</div>
         <button class="primary-button" type="button" id="settings-open-cards" style="width:100%;">
           🎨 Настроить дизайн и баланс карт
+        </button>
+      </section>
+
+      <section class="settings-section">
+        <div class="settings-section-title">💳 Кредитка (1-е число) и цены на проезд</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div>
+            <label class="field-label" for="setting-bus-price" style="margin-top:4px;">🚌 Автобус (₽)</label>
+            <input class="text-input" id="setting-bus-price" type="number" inputmode="decimal" min="0" step="0.5" value="42">
+          </div>
+          <div>
+            <label class="field-label" for="setting-home-price" style="margin-top:4px;">🎫 Билет домой (₽)</label>
+            <input class="text-input" id="setting-home-price" type="number" inputmode="decimal" min="0" step="0.5" value="189">
+          </div>
+        </div>
+
+        <label class="field-label" for="setting-credit-limit" style="margin-top:10px;">Лимит Кредитки 1-го числа каждого месяца (₽)</label>
+        <input class="text-input" id="setting-credit-limit" type="number" inputmode="decimal" min="100" step="100" value="10000">
+
+        <div class="segmented" role="group" aria-label="Автообновление 1 числа" style="margin-top:10px;">
+          <button class="segment-button selected" type="button" data-auto-reset="true">Авто 1-го числа: ВКЛ</button>
+          <button class="segment-button" type="button" data-auto-reset="false">ВЫКЛ</button>
+        </div>
+
+        <button class="secondary-button" type="button" id="settings-reset-credit-now" style="width:100%; margin-top:10px;">
+          🔄 Выставить на Кредитке 10 000 ₽ сейчас
         </button>
       </section>
 
