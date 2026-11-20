@@ -1,169 +1,414 @@
-<!doctype html>
-<html lang="ru" data-theme="dark">
+<!DOCTYPE html>
+<html lang="ru" class="dark">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07070b">
-  <meta name="description" content="ФПИ Банк — личный финансовый дневник">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ФПИ Банк" />
+  <meta name="theme-color" content="#050508" id="meta-theme-color" />
+  <meta name="format-detection" content="telephone=no" />
+
   <title>ФПИ Банк</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./assets/icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    try {
-      const savedTheme = localStorage.getItem("solo_fpi_theme_v2") || "dark";
-      const validThemes = ["dark", "light"];
-      const theme = validThemes.includes(savedTheme) ? savedTheme : "dark";
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.style.colorScheme = theme;
-    } catch (_) {
-      document.documentElement.dataset.theme = "dark";
-    }
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ios: {
+              bg: '#050508',
+              card: '#141418',
+              elevated: '#1E1E24',
+              accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+              accentSoft: 'rgb(var(--accent-soft-rgb) / <alpha-value>)',
+              blue: '#0A84FF',
+              green: '#30D158',
+              indigo: '#6E5CE6',
+              orange: '#FF9F0A',
+              red: '#FF453A',
+              purple: '#9B6BFF',
+              gray: '#8E8E98'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', '"Inter"', '"Segoe UI Variable"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    };
   </script>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./assets/icon-192.png" type="image/png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js" defer></script>
+
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #07070b;
-      --surface: #111117;
-      --surface-2: #181822;
-      --surface-3: #232332;
-      --text: #f5f5f7;
-      --muted: #8e8e98;
-      --line: rgba(255, 255, 255, 0.08);
-      --line-strong: rgba(255, 255, 255, 0.14);
-      --accent: #8b5cf6;
-      --accent-soft: rgba(139, 92, 246, 0.16);
-      --accent-glow: rgba(139, 92, 246, 0.42);
-      --green: #34d399;
-      --amber: #f59e0b;
-      --red: #f43f5e;
-      --nav-bg: rgba(18, 18, 26, 0.82);
-      --overlay: rgba(0, 0, 0, 0.72);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --spring: cubic-bezier(0.22, 1, 0.36, 1);
-      --spring-snappy: cubic-bezier(0.32, 0.72, 0, 1);
+      --accent-hex: #8B5CF6;
+      --accent-rgb: 139 92 246;
+      --accent-soft-rgb: 167 139 250;
+      --accent-glow: rgba(139, 92, 246, 0.34);
+      --accent-on: #FFFFFF;
+
+      --text-primary: #F5F5F7;
+      --text-secondary: #9898A6;
+      --text-tertiary: #636370;
+
+      --surface-bg: rgba(255, 255, 255, 0.048);
+      --surface-elevated: rgba(255, 255, 255, 0.08);
+      --surface-sheet: rgba(17, 16, 23, 0.96);
+      --surface-nav: rgba(20, 19, 28, 0.80);
+      --surface-header: rgba(5, 5, 8, 0.52);
+      --surface-input: rgba(255, 255, 255, 0.065);
+      --hairline: rgba(255, 255, 255, 0.085);
+      --hairline-strong: rgba(255, 255, 255, 0.14);
+
+      --desktop-shell-bg: rgba(14, 13, 20, 0.66);
+      --glass-border-alpha: 0.12;
+      --glass-specular-alpha: 0.22;
+      --glass-blur: 28px;
+      --custom-bg-dim: 0.25;
+      --ios-ease: cubic-bezier(0.32, 0.72, 0, 1);
     }
 
-    html[data-theme="light"] {
-      color-scheme: light;
-      --bg: #f5f5f7;
-      --surface: #ffffff;
-      --surface-2: #ebebf0;
-      --surface-3: #dcdce4;
-      --text: #111115;
-      --muted: #6e6e78;
-      --line: rgba(0, 0, 0, 0.08);
-      --line-strong: rgba(0, 0, 0, 0.14);
-      --accent: #6d28d9;
-      --accent-soft: rgba(109, 40, 217, 0.1);
-      --accent-glow: rgba(109, 40, 217, 0.28);
-      --green: #059669;
-      --amber: #d97706;
-      --red: #e11d48;
-      --nav-bg: rgba(255, 255, 255, 0.84);
-      --overlay: rgba(10, 10, 18, 0.42);
+    /* Акцентные палитры (1-в-1 как в дневнике) */
+    body.accent-purple { --accent-hex: #8B5CF6; --accent-rgb: 139 92 246; --accent-soft-rgb: 167 139 250; --accent-glow: rgba(139, 92, 246, 0.34); --accent-on: #FFFFFF; }
+    body.accent-blue   { --accent-hex: #0A84FF; --accent-rgb: 10 132 255; --accent-soft-rgb: 90 172 255;  --accent-glow: rgba(10, 132, 255, 0.30); --accent-on: #FFFFFF; }
+    body.accent-orange { --accent-hex: #FF9F0A; --accent-rgb: 255 159 10; --accent-soft-rgb: 255 186 73;  --accent-glow: rgba(255, 159, 10, 0.30); --accent-on: #000000; }
+    body.accent-green  { --accent-hex: #30D158; --accent-rgb: 48 209 88;  --accent-soft-rgb: 92 225 126;  --accent-glow: rgba(48, 209, 88, 0.28);  --accent-on: #000000; }
+    body.accent-pink   { --accent-hex: #FF375F; --accent-rgb: 255 55 95;  --accent-soft-rgb: 255 107 138; --accent-glow: rgba(255, 55, 95, 0.30);  --accent-on: #FFFFFF; }
+
+    /* Яркость граней стекла */
+    body.rim-soft   { --glass-border-alpha: 0.06; --glass-specular-alpha: 0.10; }
+    body.rim-normal { --glass-border-alpha: 0.12; --glass-specular-alpha: 0.22; }
+    body.rim-bright { --glass-border-alpha: 0.24; --glass-specular-alpha: 0.42; }
+
+    /* Светлая тема */
+    body.mode-light {
+      --text-primary: #111116;
+      --text-secondary: #5C5C68;
+      --text-tertiary: #8E8E98;
+      --surface-bg: rgba(0, 0, 0, 0.042);
+      --surface-elevated: rgba(0, 0, 0, 0.068);
+      --surface-sheet: rgba(248, 248, 252, 0.97);
+      --surface-nav: rgba(255, 255, 255, 0.86);
+      --surface-header: rgba(245, 245, 249, 0.68);
+      --desktop-shell-bg: rgba(255, 255, 255, 0.78);
+      --surface-input: rgba(0, 0, 0, 0.055);
+      --hairline: rgba(0, 0, 0, 0.08);
+      --hairline-strong: rgba(0, 0, 0, 0.14);
+      color: var(--text-primary);
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html { min-height: 100%; background: var(--bg); }
+    /* Строгий монохромный режим */
+    body.mono-mode.mode-dark {
+      --accent-hex: #FFFFFF;
+      --accent-rgb: 255 255 255;
+      --accent-soft-rgb: 220 220 225;
+      --accent-glow: rgba(255, 255, 255, 0.18);
+      --accent-on: #000000;
+    }
+    body.mono-mode.mode-light {
+      --accent-hex: #111114;
+      --accent-rgb: 17 17 20;
+      --accent-soft-rgb: 60 60 68;
+      --accent-glow: rgba(0, 0, 0, 0.14);
+      --accent-on: #FFFFFF;
+    }
+
+    *, *::before, *::after {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      overflow-y: auto;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
     body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: clip;
       margin: 0;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", system-ui, sans-serif;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI Variable", system-ui, sans-serif;
+      color: var(--text-primary);
+      background-color: #050508;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: pan-y;
       -webkit-font-smoothing: antialiased;
-      overscroll-behavior-y: none;
-      transition: background-color 0.25s ease, color 0.25s ease;
     }
-    html[data-theme="dark"] body::before {
-      content: "";
+
+    input, select, textarea {
+      font-size: 16px !important;
+      user-select: text;
+      -webkit-user-select: text;
+      max-width: 100%;
+    }
+
+    input[type="date"], input[type="time"] {
+      -webkit-appearance: none;
+      appearance: none;
+      min-width: 0;
+    }
+
+    .pt-safe { padding-top: calc(env(safe-area-inset-top, 0px) + 0.65rem); }
+    .pb-safe-nav { padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.75rem); }
+    .main-scroll-area {
+      padding-bottom: calc(6.75rem + env(safe-area-inset-bottom, 0px));
+      overflow-x: clip;
+    }
+
+    #top-app-header {
+      background: var(--surface-header);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+    }
+
+    /* ==========================================================================
+       1. ФОНЫ ИЗ ДНЕВНИКА: ШЁЛКОВЫЕ ВОЛНЫ, ЧЁРНЫЙ, БЕЛЫЙ, ФОТО ИЗ ГАЛЕРЕИ
+       ========================================================================== */
+    #custom-bg-layer {
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: 0;
       pointer-events: none;
-      background:
-        radial-gradient(85% 45% at 80% 18%, rgba(109, 40, 217, 0.16) 0%, transparent 65%),
-        radial-gradient(70% 40% at 15% 85%, rgba(76, 29, 149, 0.12) 0%, transparent 65%);
+      display: none;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    #custom-bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      display: none;
+      background: rgba(0, 0, 0, var(--custom-bg-dim));
+    }
+    #silk-wave-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      display: none;
     }
 
-    button, input, select { font: inherit; color: inherit; }
-    button { cursor: pointer; }
-
-    .app-shell {
-      width: min(100%, 480px);
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: max(14px, env(safe-area-inset-top)) 18px calc(108px + var(--safe-bottom));
+    body.bg-mode-black { background-color: #000000 !important; }
+    body.bg-mode-white { background-color: #F5F5F9 !important; }
+    body.bg-mode-abstract { background-color: #050508 !important; }
+    body.mode-light.bg-mode-abstract { background-color: #F4F3FA !important; }
+    body.bg-mode-abstract #silk-wave-bg { display: block !important; }
+    body.bg-mode-custom #custom-bg-layer { display: block !important; }
+    body.bg-mode-abstract #custom-bg-overlay,
+    body.bg-mode-custom #custom-bg-overlay { display: block !important; }
+    body.mode-light.bg-mode-abstract #custom-bg-overlay {
+      background: rgba(244, 243, 250, var(--custom-bg-dim));
     }
 
-    /* === TOPBAR === */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      animation: fade-down 0.4s var(--spring) both;
+    .silk-bg-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.94;
+      transition: filter 0.35s ease, opacity 0.35s ease;
     }
-    .brand-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+    body.mode-light .silk-bg-svg {
+      opacity: 0.32;
+      filter: invert(0.88) hue-rotate(180deg) saturate(1.15);
     }
-    .brand-title {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.7px;
-      margin: 0;
-      line-height: 1.1;
+    body.mono-mode #silk-wave-bg {
+      filter: grayscale(100%) contrast(115%) brightness(0.75) !important;
     }
-    .sync-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--amber);
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      flex-shrink: 0;
-    }
-    .sync-dot.online {
-      background: var(--green);
-      box-shadow: 0 0 8px rgba(52, 211, 153, 0.65);
-    }
-    .sync-dot.busy {
-      background: var(--accent);
-      animation: pulse 1s infinite ease-in-out;
+    body.mono-mode.mode-light #silk-wave-bg {
+      filter: grayscale(100%) brightness(1.15) !important;
     }
 
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      display: grid;
-      place-items: center;
-      color: var(--text);
-      transition: transform 0.2s var(--spring), background 0.2s ease;
+    @media (min-width: 768px) {
+      #header-inner-container { max-width: 540px !important; }
+      main#main-container {
+        max-width: 540px !important;
+        background: var(--desktop-shell-bg);
+        backdrop-filter: blur(28px) saturate(165%);
+        -webkit-backdrop-filter: blur(28px) saturate(165%);
+        border: 1px solid var(--hairline-strong);
+        border-radius: 28px;
+        box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        margin-top: 14px;
+        margin-bottom: 104px;
+        padding: 24px 28px 28px !important;
+      }
+      body.mode-light main#main-container {
+        box-shadow: 0 20px 54px -16px rgba(15, 15, 30, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
     }
-    .icon-btn:active { transform: scale(0.92); }
-    .icon-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.75; }
 
-    /* === STACKED CARD DECK (ISO/IEC 7810 ID-1) === */
-    .deck-section {
+    /* ==========================================================================
+       2. ПОВЕРХНОСТИ И СТИЛИ ИНТЕРФЕЙСА (МИНИМАЛ / СТЕКЛО / LIQUID)
+       ========================================================================== */
+    .ios-divider { border-color: var(--hairline); }
+    .divide-y.ios-divider > :not([hidden]) ~ :not([hidden]) { border-color: var(--hairline); }
+
+    .ios-icon-btn {
+      background: var(--surface-bg);
+      border: 1px solid rgba(255, 255, 255, var(--glass-border-alpha));
+      color: var(--text-primary);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    body.mode-light .ios-icon-btn { border-color: rgba(0, 0, 0, 0.08); }
+
+    .ios-segmented {
       position: relative;
-      margin-bottom: 16px;
-      user-select: none;
-      touch-action: pan-y;
+      background: var(--surface-bg);
+      border: 1px solid var(--hairline);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 14px;
+      padding: 3px;
     }
+    .ios-seg-active {
+      background: rgb(var(--accent-rgb) / 0.24);
+      color: #FFFFFF !important;
+      box-shadow: inset 0 0 0 1px rgb(var(--accent-rgb) / 0.35);
+    }
+    body.mode-light .ios-seg-active {
+      background: rgb(var(--accent-rgb) / 0.16);
+      color: rgb(var(--accent-rgb)) !important;
+    }
+    body.mono-mode.mode-dark .ios-seg-active {
+      background: rgba(255, 255, 255, 0.18);
+      color: #FFFFFF !important;
+      box-shadow: none;
+    }
+    body.mono-mode.mode-light .ios-seg-active {
+      background: rgba(0, 0, 0, 0.12);
+      color: #000000 !important;
+      box-shadow: none;
+    }
+
+    .ios-accent-btn {
+      background: rgb(var(--accent-rgb));
+      color: var(--accent-on) !important;
+      box-shadow: 0 4px 16px -4px var(--accent-glow);
+    }
+    .ios-accent-soft-btn {
+      background: rgb(var(--accent-rgb) / 0.16);
+      color: rgb(var(--accent-soft-rgb)) !important;
+      border: 1px solid rgb(var(--accent-rgb) / 0.28);
+    }
+    body.mode-light .ios-accent-soft-btn { color: rgb(var(--accent-rgb)) !important; }
+
+    .ios-surface {
+      background: var(--surface-bg);
+      border: 1px solid var(--hairline);
+    }
+    body.theme-tg-glass .ios-surface,
+    body.theme-liquid .ios-surface {
+      backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(170%);
+      border-color: rgba(255, 255, 255, var(--glass-border-alpha));
+    }
+    body.theme-liquid .ios-surface {
+      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, var(--glass-specular-alpha));
+    }
+
+    /* Полоса лимита на день (референс image_9f5f3f.jpg + адаптация под Минимал/Стекло/Liquid) */
+    .limit-capsule {
+      background: rgba(22, 20, 32, 0.56);
+      border: 1px solid rgba(255, 255, 255, var(--glass-border-alpha));
+      backdrop-filter: blur(22px) saturate(165%);
+      -webkit-backdrop-filter: blur(22px) saturate(165%);
+      border-radius: 22px;
+      padding: 15px 17px 14px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    body.mode-light .limit-capsule {
+      background: rgba(255, 255, 255, 0.78);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    body.theme-liquid .limit-capsule {
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.10) 0%, rgba(20, 16, 32, 0.52) 100%);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, var(--glass-specular-alpha));
+    }
+
+    .ios-input {
+      background: var(--surface-input);
+      border: 1px solid var(--hairline);
+      color: var(--text-primary);
+      border-radius: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .ios-input:focus {
+      border-color: rgb(var(--accent-rgb) / 0.6);
+      background: var(--surface-elevated);
+    }
+    .ios-input::placeholder { color: var(--text-tertiary); }
+
+    /* Нативный переключатель iOS Switch из дневника */
+    .ios-switch {
+      position: relative;
+      display: inline-flex;
+      width: 48px;
+      height: 28px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .ios-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .ios-switch-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: rgba(120, 120, 128, 0.34);
+      transition: background-color 0.26s var(--ios-ease);
+    }
+    .ios-switch-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.32);
+      transition: transform 0.28s cubic-bezier(0.24, 1.18, 0.34, 1);
+    }
+    .ios-switch input:checked + .ios-switch-track { background: rgb(var(--accent-rgb)); }
+    .ios-switch input:checked + .ios-switch-track .ios-switch-thumb { transform: translate3d(20px, 0, 0); }
+    body.mono-mode.mode-dark .ios-switch input:checked + .ios-switch-track .ios-switch-thumb { background: #111114; }
+
+    /* ==========================================================================
+       3. СТОПКА БАНКОВСКИХ КАРТ (ISO/IEC 7810 ID-1)
+       ========================================================================== */
     .card-deck {
       position: relative;
       width: calc(100% - 16px);
       aspect-ratio: 1.586 / 1;
       margin: 0 auto 0 0;
+      perspective: 1100px;
+      user-select: none;
+      touch-action: pan-y;
     }
     .bank-card {
       position: absolute;
       inset: 0;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 20px 22px;
       display: flex;
       flex-direction: column;
@@ -173,1265 +418,1025 @@
       isolation: isolate;
       border: 1px solid rgba(255, 255, 255, 0.18);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.26),
-        0 18px 40px -12px rgba(0, 0, 0, 0.65);
-      transform-origin: center right;
-      transition:
-        transform 0.48s var(--spring),
-        opacity 0.42s ease,
-        filter 0.42s ease;
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 20px 44px -14px rgba(0, 0, 0, 0.72);
+      transform-origin: center center;
       will-change: transform, opacity;
       cursor: grab;
     }
-    .bank-card.dragging {
-      transition: none !important;
-      cursor: grabbing;
-    }
+    .bank-card:active { cursor: grabbing; }
     .bank-card[data-pos="0"] {
-      z-index: 3;
-      transform: translate3d(0, 0, 0) scale(1);
+      z-index: 30;
+      transform: translate3d(0px, 0px, 0px) scale(1);
       opacity: 1;
       filter: brightness(1);
     }
     .bank-card[data-pos="1"] {
-      z-index: 2;
-      transform: translate3d(14px, 0, 0) scale(0.945);
-      opacity: 0.78;
-      filter: brightness(0.72);
+      z-index: 20;
+      transform: translate3d(13px, 0px, 0px) scale(0.935);
+      opacity: 0.86;
+      filter: brightness(0.76);
       cursor: pointer;
     }
     .bank-card[data-pos="2"] {
-      z-index: 1;
-      transform: translate3d(26px, 0, 0) scale(0.89);
-      opacity: 0.46;
-      filter: brightness(0.5);
+      z-index: 10;
+      transform: translate3d(24px, 0px, 0px) scale(0.87);
+      opacity: 0.56;
+      filter: brightness(0.55);
       cursor: pointer;
     }
-    .bank-card.exit-left {
-      transform: translate3d(-115%, 8px, 0) rotate(-6deg) scale(0.94) !important;
-      opacity: 0 !important;
-    }
-    .bank-card.exit-right {
-      transform: translate3d(115%, 8px, 0) rotate(6deg) scale(0.94) !important;
-      opacity: 0 !important;
-    }
 
-    /* Modern Apple-grade Card Skins */
+    /* Скины карт */
     .bank-card[data-skin="fpi-obsidian"] {
       background:
-        radial-gradient(95% 95% at 95% 5%, rgba(139, 92, 246, 0.68) 0%, rgba(76, 29, 149, 0.35) 45%, transparent 72%),
-        radial-gradient(80% 70% at 10% 95%, rgba(59, 130, 246, 0.16) 0%, transparent 60%),
-        linear-gradient(135deg, #161521 0%, #0d0c14 55%, #1d1438 100%);
+        radial-gradient(95% 95% at 96% 6%, color-mix(in srgb, var(--accent-hex) 82%, #7c3aed) 0%, color-mix(in srgb, var(--accent-hex) 34%, transparent) 44%, transparent 72%),
+        radial-gradient(80% 70% at 8% 96%, rgba(56, 189, 248, 0.14) 0%, transparent 60%),
+        linear-gradient(135deg, #161422 0%, #0b0a12 52%, #1d133c 100%);
     }
     .bank-card[data-skin="titanium-dark"] {
       background:
-        linear-gradient(120deg, rgba(255,255,255,0.08) 0%, transparent 45%, rgba(255,255,255,0.04) 100%),
-        linear-gradient(135deg, #2a2c32 0%, #17181c 52%, #0e0f12 100%);
+        radial-gradient(85% 85% at 92% 10%, rgba(255, 255, 255, 0.16) 0%, transparent 62%),
+        linear-gradient(135deg, #272930 0%, #141519 52%, #0a0b0e 100%);
     }
     .bank-card[data-skin="pacific-blue"] {
       background:
-        radial-gradient(90% 90% at 90% 10%, rgba(56, 189, 248, 0.38) 0%, transparent 60%),
-        linear-gradient(135deg, #0c192c 0%, #102a45 55%, #091322 100%);
+        radial-gradient(90% 90% at 94% 8%, rgba(56, 189, 248, 0.52) 0%, transparent 62%),
+        linear-gradient(135deg, #0b1628 0%, #102b4b 54%, #071120 100%);
     }
     .bank-card[data-skin="alpine-green"] {
       background:
-        radial-gradient(90% 90% at 90% 10%, rgba(52, 211, 153, 0.32) 0%, transparent 60%),
-        linear-gradient(135deg, #0b1c17 0%, #123328 55%, #071310 100%);
+        radial-gradient(90% 90% at 94% 8%, rgba(52, 211, 153, 0.42) 0%, transparent 62%),
+        linear-gradient(135deg, #0a1914 0%, #11362a 54%, #06120e 100%);
     }
     .bank-card[data-skin="natural-titanium"] {
       color: #161513;
       border-color: rgba(255, 255, 255, 0.45);
-      background:
-        linear-gradient(135deg, #d8d4cb 0%, #b8b3a8 50%, #9f9a8f 100%);
+      background: linear-gradient(135deg, #dcd8cf 0%, #bbb6aa 52%, #9f9a8e 100%);
     }
     .bank-card[data-skin="natural-titanium"] .card-bank-name,
-    .bank-card[data-skin="natural-titanium"] .card-digits { color: rgba(22, 21, 19, 0.72); }
+    .bank-card[data-skin="natural-titanium"] .card-digits,
+    .bank-card[data-skin="natural-titanium"] .card-name-sub { color: rgba(22, 21, 19, 0.72); }
     .bank-card[data-skin="crimson-noir"] {
       background:
-        radial-gradient(90% 90% at 90% 10%, rgba(244, 63, 94, 0.45) 0%, transparent 60%),
-        linear-gradient(135deg, #1d0b12 0%, #3b0d1e 55%, #12060a 100%);
-    }
-    .bank-card[data-skin="custom"] {
-      background-color: #14131d;
-      background-image: linear-gradient(180deg, rgba(8, 8, 14, 0.28) 0%, rgba(8, 8, 14, 0.75) 100%), var(--card-custom-img, linear-gradient(135deg, #1d1438, #0d0c14));
-      background-size: cover;
-      background-position: center;
+        radial-gradient(90% 90% at 94% 8%, rgba(244, 63, 94, 0.56) 0%, transparent 62%),
+        linear-gradient(135deg, #1b0a10 0%, #3d0c1f 54%, #100509 100%);
     }
 
-    .card-wave-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      opacity: 0.28;
-      z-index: 0;
-    }
-    .card-top-row {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .card-bank-name {
-      font-size: 13px;
-      font-weight: 760;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.86);
-    }
-    .card-edit-trigger {
-      border: 0;
-      background: rgba(255, 255, 255, 0.12);
-      color: inherit;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: transform 0.18s var(--spring), background 0.18s ease;
-    }
-    .card-edit-trigger:active { transform: scale(0.88); }
-    .card-edit-trigger svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+    body.mono-mode .bank-card { filter: grayscale(100%) contrast(108%); }
 
-    .card-mid-row {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 6px 0;
-    }
     .emv-chip {
-      width: 40px;
-      height: 30px;
+      width: 42px;
+      height: 31px;
       border-radius: 6px;
-      background: linear-gradient(135deg, #d7d9de 0%, #9fa4ae 50%, #e5e7eb 100%);
-      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: linear-gradient(135deg, #e1e3e8 0%, #9fa5b0 48%, #eceef2 100%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.75);
     }
     .emv-chip::before {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(90deg, transparent 31%, rgba(0,0,0,0.28) 31%, rgba(0,0,0,0.28) 34%, transparent 34%, transparent 66%, rgba(0,0,0,0.28) 66%, rgba(0,0,0,0.28) 69%, transparent 69%),
-        linear-gradient(0deg, transparent 47%, rgba(0,0,0,0.28) 47%, rgba(0,0,0,0.28) 53%, transparent 53%);
-    }
-    .nfc-icon {
-      width: 20px;
-      height: 20px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.8;
-      opacity: 0.72;
+        linear-gradient(90deg, transparent 31%, rgba(0,0,0,0.3) 31%, rgba(0,0,0,0.3) 34%, transparent 34%, transparent 66%, rgba(0,0,0,0.3) 66%, rgba(0,0,0,0.3) 69%, transparent 69%),
+        linear-gradient(0deg, transparent 47%, rgba(0,0,0,0.3) 47%, rgba(0,0,0,0.3) 53%, transparent 53%);
     }
 
-    .card-bottom-row {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .card-name-sub {
-      font-size: 11px;
-      font-weight: 600;
-      opacity: 0.72;
-      margin-bottom: 2px;
-    }
-    .card-balance {
-      font-size: 31px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1.05;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .card-digits {
-      font-size: 13px;
-      font-weight: 650;
-      letter-spacing: 0.12em;
-      color: rgba(255, 255, 255, 0.78);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-      margin-bottom: 4px;
-    }
-
-    .deck-dots {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin-top: 12px;
-    }
-    .deck-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 99px;
-      border: 0;
-      padding: 0;
-      background: var(--muted);
-      opacity: 0.35;
-      transition: width 0.3s var(--spring), opacity 0.25s ease, background 0.25s ease;
-    }
-    .deck-dot.active {
-      width: 20px;
-      opacity: 1;
-      background: var(--text);
-    }
-
-    /* === COMPACT LIMIT STRIP (MATCHING REFERENCE) === */
-    .limit-strip {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 14px 16px;
-      margin-bottom: 22px;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-    .limit-strip-head {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-    }
-    .limit-icon-box {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--surface-2);
-      display: grid;
-      place-items: center;
-      color: var(--muted);
-      flex-shrink: 0;
-    }
-    .limit-icon-box svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
-    .limit-main-col { flex: 1; min-width: 0; }
-    .limit-kicker {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 550;
-    }
-    .limit-value {
-      font-size: 18px;
-      font-weight: 780;
-      letter-spacing: -0.4px;
-      font-variant-numeric: tabular-nums;
-      margin-top: 1px;
-      white-space: nowrap;
-    }
-    .limit-value span {
-      font-size: 13px;
-      font-weight: 550;
-      color: var(--muted);
-    }
-    .limit-right-col {
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .limit-full-val {
-      font-size: 14px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      margin-top: 2px;
-      white-space: nowrap;
-    }
-    .limit-chevron {
-      width: 18px;
-      height: 18px;
-      stroke: var(--muted);
-      fill: none;
-      stroke-width: 2;
-      flex-shrink: 0;
-      transition: transform 0.28s var(--spring);
-    }
-    .limit-strip.expanded .limit-chevron { transform: rotate(180deg); }
-
-    .limit-progress {
-      height: 5px;
-      border-radius: 99px;
-      background: var(--surface-3);
-      overflow: hidden;
-      display: flex;
-      gap: 2px;
-      margin-top: 12px;
-    }
-    .limit-seg {
-      height: 100%;
-      border-radius: 99px;
-      transition: width 0.45s var(--spring);
-    }
+    /* Раскрывающаяся секция деталей лимита */
     .limit-details {
       display: grid;
       grid-template-rows: 0fr;
-      transition: grid-template-rows 0.3s var(--spring), margin-top 0.3s var(--spring);
+      transition: grid-template-rows 0.3s cubic-bezier(0.22, 1, 0.36, 1), margin-top 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .limit-strip.expanded .limit-details {
+    .limit-capsule.expanded .limit-details {
       grid-template-rows: 1fr;
       margin-top: 12px;
     }
-    .limit-details-inner {
-      overflow: hidden;
-      border-top: 1px solid var(--line);
-      padding-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 12px;
-    }
-    .limit-detail-row {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-    }
-    .limit-detail-row strong {
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-      font-weight: 680;
+    .limit-capsule.expanded .limit-chevron {
+      transform: rotate(180deg);
     }
 
-    /* === BORDERLESS TRANSACTION LIST (NO BLOATED TILES) === */
-    .list-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
+    /* ==========================================================================
+       4. НАТИВНАЯ НИЖНЯЯ НАВИГАЦИЯ iOS (КАК НА РЕФЕРЕНСЕ + ДОК РЕЖИМ ИЗ ДНЕВНИКА)
+       ========================================================================== */
+    .ios-tabbar-shell {
+      background: var(--surface-nav);
+      backdrop-filter: blur(30px) saturate(185%);
+      -webkit-backdrop-filter: blur(30px) saturate(185%);
+      border: 1px solid rgba(255, 255, 255, var(--glass-border-alpha));
+      box-shadow: 0 14px 38px -8px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
-    .list-title {
-      font-size: 20px;
-      font-weight: 780;
-      letter-spacing: -0.4px;
-      margin: 0;
-    }
-    .pill-filter-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 12px;
-      border-radius: 99px;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 620;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-    .pill-filter-btn.active {
-      color: var(--text);
-      border-color: var(--line-strong);
+    body.mode-light .ios-tabbar-shell {
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.12);
     }
 
-    .tx-group-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 650;
-      color: var(--muted);
-      margin: 16px 0 4px;
-    }
-    .tx-list {
-      display: flex;
-      flex-direction: column;
-    }
-    .tx-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 13px 2px;
-      border: 0;
-      border-bottom: 1px solid var(--line);
-      background: transparent;
-      width: 100%;
-      text-align: left;
-      transition: opacity 0.16s ease, transform 0.2s var(--spring);
-      animation: row-in 0.34s var(--spring) both;
-      animation-delay: calc(var(--i, 0) * 28ms);
-    }
-    .tx-row:last-child { border-bottom: 0; }
-    .tx-row:active { opacity: 0.6; transform: scale(0.99); }
-    .tx-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: var(--surface);
-      display: grid;
-      place-items: center;
-      color: var(--text);
-      flex-shrink: 0;
-    }
-    .tx-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
-    .tx-copy { flex: 1; min-width: 0; }
-    .tx-name {
-      font-size: 15px;
-      font-weight: 620;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .tx-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .tx-amount {
-      font-size: 15px;
-      font-weight: 680;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .tx-amount.income { color: var(--green); }
-
-    .empty-block {
-      padding: 36px 16px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
+    .fab-center-btn {
+      background: linear-gradient(145deg, color-mix(in srgb, var(--accent-hex) 85%, #ffffff) 0%, rgb(var(--accent-rgb)) 100%);
+      color: var(--accent-on);
+      border: 1.5px solid rgba(255, 255, 255, 0.34);
+      box-shadow: 0 0 26px var(--accent-glow), inset 0 1.5px 1px rgba(255, 255, 255, 0.5);
     }
 
-    /* === ANALYTICS SCREEN (BORDERLESS / MODERN) === */
-    .screen { display: none; }
-    .screen.active { display: block; animation: screen-fade 0.28s var(--spring) both; }
-
-    .filter-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 12px;
-      scrollbar-width: none;
-    }
-    .filter-scroll::-webkit-scrollbar { display: none; }
-    .chip-btn {
-      flex: 0 0 auto;
-      padding: 7px 14px;
-      border-radius: 99px;
-      border: 1px solid var(--line);
-      background: transparent;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 650;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    }
-    .chip-btn.active {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
+    body.nav-docked #bottom-nav-wrapper { bottom: 0; padding-left: 0; padding-right: 0; }
+    body.nav-docked #bottom-nav-capsule {
+      max-width: 100%;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
     }
 
-    .seg-control {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      padding: 3px;
-      border-radius: 12px;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      margin-bottom: 14px;
-    }
-    .seg-btn {
-      border: 0;
-      border-radius: 9px;
-      padding: 8px;
-      background: transparent;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 680;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-    .seg-btn.active {
-      background: var(--surface-3);
-      color: var(--text);
+    /* ==========================================================================
+       5. ФИЗИЧЕСКИЕ АНИМАЦИИ, ШТОРКИ (BOTTOM SHEETS), КАСКАД ИЗ ДНЕВНИКА
+       ========================================================================== */
+    .ios-press {
+      touch-action: manipulation;
+      transform: translate3d(0, 0, 0);
     }
 
-    .month-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
+    #expense-list.play-cascade > * {
+      animation: iosRowReveal 0.30s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
-    .month-arrow {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      display: grid;
-      place-items: center;
-      font-size: 16px;
-    }
-    .month-label { font-size: 14px; font-weight: 700; }
+    .play-cascade > *:nth-child(1) { animation-delay: 0.00s; }
+    .play-cascade > *:nth-child(2) { animation-delay: 0.025s; }
+    .play-cascade > *:nth-child(3) { animation-delay: 0.05s; }
+    .play-cascade > *:nth-child(4) { animation-delay: 0.075s; }
+    .play-cascade > *:nth-child(5) { animation-delay: 0.10s; }
+    .play-cascade > *:nth-child(6) { animation-delay: 0.125s; }
 
-    /* Compact side-by-side Donut + Legend */
-    .analytics-donut-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 16px 0 20px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 18px;
+    @keyframes iosRowReveal {
+      0% { opacity: 0; transform: translate3d(0, 10px, 0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0); }
     }
-    .donut-wrap {
-      position: relative;
-      width: 136px;
-      height: 136px;
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
+
+    /* Bottom Sheets с перехватом свайпа вниз (1-в-1 как в дневнике) */
+    [id^="modal-"] {
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
-    .donut-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .donut-seg {
-      fill: none;
-      stroke-width: 15;
-      stroke-linecap: round;
-      cursor: pointer;
-      transition: stroke-width 0.2s var(--spring), opacity 0.2s ease;
-    }
-    .donut-seg.active { stroke-width: 19; }
-    .donut-center {
+    .ios-sheet-backdrop {
       position: absolute;
-      text-align: center;
-      pointer-events: none;
-    }
-    .donut-total {
-      font-size: 17px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.4px;
-    }
-    .donut-sub {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .donut-legend {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      border: 0;
-      background: transparent;
-      padding: 2px 0;
-      font-size: 13px;
-      text-align: left;
-      width: 100%;
-    }
-    .legend-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
-    .legend-val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; font-weight: 600; }
-
-    /* Borderless Calendar */
-    .cal-section { margin-bottom: 22px; }
-    .cal-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .cal-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      row-gap: 6px;
-    }
-    .cal-cell {
-      border: 0;
-      background: transparent;
-      padding: 5px 2px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      border-radius: 12px;
-      transition: background 0.18s ease;
-    }
-    .cal-cell.empty { pointer-events: none; }
-    .cal-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 13px;
-      font-weight: 650;
-    }
-    .cal-cell.today .cal-num {
-      border: 1px solid var(--accent);
-      color: var(--accent);
-    }
-    .cal-cell.selected .cal-num {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
-    .cal-sum {
-      font-size: 9px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-      min-height: 11px;
-    }
-    .cal-day-box {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
-    }
-
-    /* === BOTTOM NAVIGATION (MATCHING REFERENCE) === */
-    .bottom-nav-wrap {
-      position: fixed;
-      z-index: 30;
-      left: 0;
-      right: 0;
-      bottom: calc(14px + var(--safe-bottom));
-      padding: 0 18px;
-      pointer-events: none;
-    }
-    .bottom-nav {
-      pointer-events: auto;
-      width: min(100%, 444px);
-      height: 66px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 72px 1fr;
-      align-items: center;
-      padding: 0 10px;
-      border-radius: 33px;
-      background: var(--nav-bg);
-      border: 1px solid var(--line-strong);
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
-    }
-    .nav-btn {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      height: 50px;
-      font-size: 10px;
-      font-weight: 650;
-      transition: color 0.2s ease, transform 0.2s var(--spring);
-    }
-    .nav-btn:active { transform: scale(0.92); }
-    .nav-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    .nav-btn.active { color: var(--accent); }
-
-    .fab-btn {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      background: linear-gradient(145deg, #9b6dff 0%, #6d28d9 100%);
-      color: #ffffff;
-      display: grid;
-      place-items: center;
-      justify-self: center;
-      box-shadow: 0 0 24px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45);
-      transition: transform 0.24s var(--spring);
-    }
-    .fab-btn:active { transform: scale(0.9) rotate(90deg); }
-    .fab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.3; }
-
-    /* === MODAL SHEETS === */
-    dialog { color: var(--text); }
-    .sheet {
-      border: 0;
-      padding: 0;
-      width: min(100%, 480px);
-      max-width: none;
-      margin: auto auto 0;
-      background: transparent;
-      overflow: visible;
-    }
-    .sheet::backdrop {
-      background: var(--overlay);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-    .sheet[open] .sheet-panel { animation: sheet-up 0.32s var(--spring) both; }
-    .sheet-panel {
-      background: var(--surface);
-      border: 1px solid var(--line-strong);
-      border-bottom: 0;
-      border-radius: 28px 28px 0 0;
-      padding: 10px 20px calc(26px + var(--safe-bottom));
-      max-height: 88dvh;
-      overflow-y: auto;
-    }
-    .sheet-handle {
-      width: 38px;
-      height: 4px;
-      border-radius: 99px;
-      background: var(--surface-3);
-      margin: 0 auto 14px;
-    }
-    .sheet-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .sheet-head h2 { font-size: 18px; font-weight: 760; margin: 0; }
-    .close-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 0;
-      background: var(--surface-2);
-      color: var(--muted);
-      font-size: 18px;
-      display: grid;
-      place-items: center;
-    }
-
-    .amount-input {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: 44px;
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      text-align: center;
-      outline: none;
-      padding: 6px 0 12px;
-      font-variant-numeric: tabular-nums;
-    }
-    .presets-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .preset-pill {
-      padding: 9px 6px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      font-size: 11px;
-      font-weight: 650;
-      text-align: center;
-      transition: transform 0.16s var(--spring), border-color 0.16s ease;
-    }
-    .preset-pill:active { transform: scale(0.95); }
-    .preset-pill strong { display: block; color: var(--accent); margin-top: 2px; font-variant-numeric: tabular-nums; }
-
-    .field-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 650;
-      color: var(--muted);
-      margin: 12px 0 6px;
-    }
-    .text-input {
-      width: 100%;
-      height: 44px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      padding: 0 13px;
-      font-size: 14px;
-      outline: none;
-    }
-    .text-input:focus { border-color: var(--accent); }
-
-    .cat-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 6px;
-    }
-    .cat-btn {
-      border: 1px solid var(--line);
-      background: var(--surface-2);
-      border-radius: 14px;
-      padding: 10px 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      font-size: 10px;
-      font-weight: 620;
-      color: var(--muted);
-      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
-    }
-    .cat-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
-    .cat-btn.selected {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--text);
-    }
-
-    .skins-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .skin-btn {
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 5px;
-      background: var(--surface-2);
-      text-align: center;
-    }
-    .skin-btn.selected { border-color: var(--accent); }
-    .skin-swatch { height: 34px; border-radius: 8px; margin-bottom: 4px; }
-    .skin-name { font-size: 10px; font-weight: 650; }
-
-    .primary-btn {
-      width: 100%;
-      height: 48px;
-      border: 0;
-      border-radius: 99px;
-      background: var(--text);
-      color: var(--bg);
-      font-size: 14px;
-      font-weight: 760;
-      margin-top: 18px;
-      transition: transform 0.18s var(--spring), opacity 0.18s ease;
-    }
-    .primary-btn:active { transform: scale(0.98); opacity: 0.9; }
-    .secondary-btn {
-      width: 100%;
-      height: 44px;
-      border: 1px solid var(--line);
-      border-radius: 99px;
-      background: var(--surface-2);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 680;
-      margin-top: 10px;
-    }
-    .danger-btn {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: var(--red);
-      font-size: 13px;
-      font-weight: 680;
-      padding: 14px 0 4px;
-    }
-    .settings-group {
-      padding: 14px 0;
-      border-bottom: 1px solid var(--line);
-    }
-    .settings-group:last-of-type { border-bottom: 0; }
-    .settings-title { font-size: 13px; font-weight: 740; margin-bottom: 10px; }
-    .status-note {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 12px;
-      background: var(--surface-2);
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .toast {
-      position: fixed;
-      z-index: 60;
-      left: 50%;
-      bottom: calc(92px + var(--safe-bottom));
-      transform: translateX(-50%) translateY(10px);
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.68);
       opacity: 0;
-      pointer-events: none;
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--line-strong);
-      border-radius: 99px;
-      padding: 10px 16px;
-      font-size: 12px;
-      font-weight: 650;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
-      transition: opacity 0.22s ease, transform 0.22s var(--spring);
-      white-space: nowrap;
+      pointer-events: auto;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .hidden { display: none !important; }
+    .ios-sheet-panel {
+      position: relative;
+      z-index: 1;
+      background: var(--surface-sheet);
+      border-top: 1px solid var(--hairline-strong);
+      border-left: 1px solid var(--hairline);
+      border-right: 1px solid var(--hairline);
+      box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.65);
+      transform: translate3d(0, 100%, 0);
+      touch-action: pan-y;
+    }
+    body.mode-light .ios-sheet-panel {
+      box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.14);
+    }
+    .ios-sheet-grabber {
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+      margin: 0 auto 12px auto;
+      pointer-events: none;
+    }
+    body.mode-light .ios-sheet-grabber { background: rgba(0, 0, 0, 0.16); }
 
-    @keyframes fade-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes screen-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes row-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes sheet-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    body.mode-light .text-primary-adaptive { color: #111116 !important; }
+    body.mode-dark .text-primary-adaptive  { color: #F5F5F7 !important; }
+    .text-secondary-adaptive { color: var(--text-secondary); }
+    .text-tertiary-adaptive  { color: var(--text-tertiary); }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.12s !important;
+        animation-delay: 0s !important;
+        transition-duration: 0.12s !important;
+      }
+    }
   </style>
 </head>
-<body>
-  <main class="app-shell" id="app">
-    <header class="topbar">
-      <div class="brand-title-wrap">
-        <h1 class="brand-title" id="screen-heading">ФПИ Банк</h1>
-        <span class="sync-dot" id="sync-dot" title="Статус синхронизации"></span>
-      </div>
-      <button class="icon-btn" id="settings-open" type="button" aria-label="Настройки">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/>
-        </svg>
-      </button>
-    </header>
+<body class="mode-dark accent-purple theme-minimal bg-mode-abstract rim-normal min-h-screen flex flex-col antialiased relative">
 
-    <!-- ================= ГЛАВНАЯ ================= -->
-    <section class="screen active" id="screen-home">
-      <div class="deck-section">
+  <!-- СЛОЙ 1: ПОЛЬЗОВАТЕЛЬСКИЙ ФОН ИЗ ГАЛЕРЕИ -->
+  <div id="custom-bg-layer" aria-hidden="true"></div>
+
+  <!-- СЛОЙ 2: АБСТРАКТНЫЕ ШЁЛКОВЫЕ ВОЛНЫ (ПО РЕФЕРЕНСУ И ДНЕВНИКУ) -->
+  <div id="silk-wave-bg" aria-hidden="true">
+    <svg class="silk-bg-svg" viewBox="0 0 430 932" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="gTop" cx="85%" cy="10%" r="65%">
+          <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.36" />
+          <stop offset="55%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.10" />
+          <stop offset="100%" stop-color="#050508" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="gBottom" cx="72%" cy="84%" r="62%">
+          <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.28" />
+          <stop offset="55%" stop-color="rgb(var(--accent-soft-rgb))" stop-opacity="0.07" />
+          <stop offset="100%" stop-color="#050508" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="ribbon1" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0" />
+          <stop offset="50%" stop-color="rgb(var(--accent-soft-rgb))" stop-opacity="0.24" />
+          <stop offset="100%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.04" />
+        </linearGradient>
+        <linearGradient id="ribbon2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.03" />
+          <stop offset="55%" stop-color="rgb(var(--accent-rgb))" stop-opacity="0.26" />
+          <stop offset="100%" stop-color="rgb(var(--accent-soft-rgb))" stop-opacity="0.02" />
+        </linearGradient>
+        <filter id="silkBlur" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="24" />
+        </filter>
+      </defs>
+      <rect width="430" height="932" fill="#050508" />
+      <rect width="430" height="932" fill="url(#gTop)" />
+      <rect width="430" height="932" fill="url(#gBottom)" />
+      <g filter="url(#silkBlur)">
+        <path d="M-80,260 C70,190 220,30 480,-20 L510,120 C260,180 120,340 -60,410 Z" fill="url(#ribbon1)" />
+        <path d="M-60,670 C110,590 260,550 510,510 L510,740 C270,760 110,830 -70,920 Z" fill="url(#ribbon2)" />
+        <path d="M120,340 C260,260 360,220 510,190 L510,280 C370,310 250,360 110,450 Z" fill="url(#ribbon1)" opacity="0.6" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- СЛОЙ 3: ЗАТЕМНЕНИЕ ФОНА -->
+  <div id="custom-bg-overlay" aria-hidden="true"></div>
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+  <header class="sticky top-0 z-30 pt-safe px-5 pb-2 transition-colors" id="top-app-header">
+    <div class="max-w-lg mx-auto flex items-center justify-between gap-2" id="header-inner-container">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <h1 id="screen-heading" class="text-[29px] font-bold tracking-tight leading-none text-primary-adaptive">ФПИ Банк</h1>
+        <span id="sync-dot" class="w-2 h-2 rounded-full bg-ios-orange shrink-0 transition-all" title="Статус облака"></span>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" id="btn-settings" class="ios-press w-10 h-10 rounded-full ios-icon-btn flex items-center justify-center shrink-0" title="Настройки">
+          <i data-lucide="settings" class="w-[19px] h-[19px]"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
+  <main id="main-container" class="relative z-10 flex-1 max-w-lg w-full mx-auto px-5 pt-1 main-scroll-area transition-all">
+
+    <!-- ======================================================================
+         ВКЛАДКА 1: ГЛАВНАЯ (СТОПКА КАРТ + ПОЛОСА ЛИМИТА + СПИСОК БЕЗ ПЛИТОК)
+         ====================================================================== -->
+    <section id="view-home" class="space-y-5">
+
+      <!-- Стопка из 3 банковских карт -->
+      <div class="pt-0.5">
         <div class="card-deck" id="card-deck" aria-label="Стопка банковских карт"></div>
-        <div class="deck-dots" id="deck-dots">
-          <button class="deck-dot active" type="button" data-deck-dot="0" aria-label="Карта 1"></button>
-          <button class="deck-dot" type="button" data-deck-dot="1" aria-label="Карта 2"></button>
-          <button class="deck-dot" type="button" data-deck-dot="2" aria-label="Карта 3"></button>
+      </div>
+
+      <!-- Полоса дневного лимита (точно как на референсе + раскрытие по клику) -->
+      <div class="limit-capsule" id="limit-capsule">
+        <div class="flex items-center gap-3.5 cursor-pointer" id="limit-capsule-head">
+          <i data-lucide="calendar" class="w-6 h-6 text-secondary-adaptive shrink-0"></i>
+
+          <div class="flex-1 min-w-0">
+            <div class="text-[11.5px] font-medium text-secondary-adaptive">Лимит на день</div>
+            <div id="home-daily-free" class="text-[19px] font-bold tracking-tight text-primary-adaptive tabular-nums mt-0.5 whitespace-nowrap">
+              0 ₽ <span class="text-[13.5px] font-normal text-secondary-adaptive">/ день</span>
+            </div>
+          </div>
+
+          <div class="text-right shrink-0">
+            <div class="text-[11.5px] font-medium text-secondary-adaptive">Без дороги</div>
+            <div id="home-daily-full" class="text-[15px] font-bold text-primary-adaptive tabular-nums mt-0.5 whitespace-nowrap">0 ₽</div>
+          </div>
+
+          <i data-lucide="chevron-down" class="limit-chevron w-4 h-4 text-secondary-adaptive shrink-0 transition-transform duration-300"></i>
+        </div>
+
+        <!-- Прогресс-бар -->
+        <div class="mt-3.5 h-1.5 w-full rounded-full bg-white/10 overflow-hidden flex">
+          <div id="bar-spent" class="h-full rounded-full transition-all duration-500" style="width:0%; background: linear-gradient(90deg, rgb(var(--accent-rgb)) 0%, rgb(var(--accent-soft-rgb)) 100%);"></div>
+          <div id="bar-reserved" class="h-full bg-ios-orange/60 transition-all duration-500" style="width:0%;"></div>
+        </div>
+
+        <!-- Раскрываемые подробности -->
+        <div class="limit-details">
+          <div class="overflow-hidden border-t ios-divider pt-2.5 space-y-2 text-[12.5px]">
+            <div class="flex justify-between text-secondary-adaptive">
+              <span>На сегодня осталось (сверх дороги)</span>
+              <strong id="det-today-free" class="font-semibold tabular-nums">0 ₽</strong>
+            </div>
+            <div class="flex justify-between text-secondary-adaptive">
+              <span>На сегодня осталось (без дороги)</span>
+              <strong id="det-today-full" class="font-semibold text-primary-adaptive tabular-nums">0 ₽</strong>
+            </div>
+            <div class="flex justify-between text-secondary-adaptive">
+              <span>Бронь дороги Пн–Пт</span>
+              <strong id="det-reserved" class="font-semibold text-primary-adaptive tabular-nums">0 ₽</strong>
+            </div>
+            <div class="flex justify-between text-secondary-adaptive">
+              <span>Свободный остаток Кредитки</span>
+              <strong id="det-free-bal" class="font-semibold text-primary-adaptive tabular-nums">0 ₽</strong>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Компактная полоса лимита на день (раскрывается по тапу) -->
-      <section class="limit-strip" id="limit-strip">
-        <div class="limit-strip-head" id="limit-strip-toggle">
-          <div class="limit-icon-box">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="3"/>
-              <path d="M16 2v4M8 2v4M3 10h18"/>
-            </svg>
-          </div>
-          <div class="limit-main-col">
-            <div class="limit-kicker">Лимит на день</div>
-            <div class="limit-value" id="home-daily-free">0 ₽ <span>/ день</span></div>
-          </div>
-          <div class="limit-right-col">
-            <div class="limit-kicker">Без дороги</div>
-            <div class="limit-full-val" id="home-daily-full">0 ₽</div>
-          </div>
-          <svg class="limit-chevron" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
+      <!-- Заголовок списка операций -->
+      <div class="space-y-1 pt-0.5">
+        <div class="flex items-center justify-between gap-2 pb-1">
+          <h2 class="text-[21px] font-bold tracking-tight text-primary-adaptive">Сегодня</h2>
+          <button type="button" id="home-filter-cycle" class="ios-press h-7 px-3 rounded-full ios-icon-btn text-[12px] font-medium text-secondary-adaptive flex items-center gap-1">
+            <span id="home-filter-label">Все операции</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
 
-        <div class="limit-progress">
-          <div class="limit-seg" id="bar-spent" style="width:0%; background:var(--accent);"></div>
-          <div class="limit-seg" id="bar-reserved" style="width:0%; background:var(--amber);"></div>
-          <div class="limit-seg" id="bar-free" style="width:100%; background:var(--green);"></div>
-        </div>
+        <div id="expense-list" class="divide-y ios-divider"></div>
+      </div>
+    </section>
 
-        <div class="limit-details">
-          <div class="limit-details-inner">
-            <div class="limit-detail-row">
-              <span>Осталось на сегодня (сверх дороги)</span>
-              <strong id="det-today-free">0 ₽</strong>
-            </div>
-            <div class="limit-detail-row">
-              <span>Осталось на сегодня (без дороги)</span>
-              <strong id="det-today-full">0 ₽</strong>
-            </div>
-            <div class="limit-detail-row">
-              <span>Бронь на дорогу (Пн–Пт)</span>
-              <strong id="det-reserved">0 ₽</strong>
-            </div>
-            <div class="limit-detail-row">
-              <span>Свободный остаток Кредитки</span>
-              <strong id="det-free-bal">0 ₽</strong>
-            </div>
-          </div>
-        </div>
-      </section>
+    <!-- ======================================================================
+         ВКЛАДКА 2: АНАЛИТИКА (СОВРЕМЕННЫЙ ГРАФИК ТРАТ + РАЗБИВКА + КАЛЕНДАРЬ)
+         ====================================================================== -->
+    <section id="view-analytics" class="hidden space-y-5">
 
-      <!-- Лента операций без плиток -->
-      <div class="list-header">
-        <h2 class="list-title" id="home-list-heading">Сегодня</h2>
-        <button class="pill-filter-btn" id="home-filter-cycle" type="button">
-          <span id="home-filter-label">Все операции</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      <!-- Фильтр карт -->
+      <div id="analytics-card-pills" class="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
+        <button type="button" data-analytics-card="all" class="an-card-pill ios-press px-3.5 py-1.5 rounded-full text-[12px] font-semibold ios-accent-btn shrink-0">Все карты</button>
+        <button type="button" data-analytics-card="card_1" id="an-pill-0" class="an-card-pill ios-press px-3.5 py-1.5 rounded-full text-[12px] font-semibold ios-icon-btn text-secondary-adaptive shrink-0">Кредитка ФПИ</button>
+        <button type="button" data-analytics-card="card_2" id="an-pill-1" class="an-card-pill ios-press px-3.5 py-1.5 rounded-full text-[12px] font-semibold ios-icon-btn text-secondary-adaptive shrink-0">Повседневная</button>
+        <button type="button" data-analytics-card="card_3" id="an-pill-2" class="an-card-pill ios-press px-3.5 py-1.5 rounded-full text-[12px] font-semibold ios-icon-btn text-secondary-adaptive shrink-0">Накопительная</button>
+      </div>
+
+      <!-- Переключатель периода: Месяцы / 28 дней -->
+      <div class="ios-segmented grid grid-cols-2 gap-1">
+        <button type="button" data-period-mode="month" class="period-mode-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold ios-seg-active">Месяцы</button>
+        <button type="button" data-period-mode="28days" class="period-mode-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold text-secondary-adaptive">28 дней</button>
+      </div>
+
+      <!-- Навигация по месяцам -->
+      <div id="month-nav-bar" class="flex items-center justify-between">
+        <button type="button" id="month-prev" class="ios-press w-8 h-8 rounded-full ios-icon-btn flex items-center justify-center" aria-label="Предыдущий месяц">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <span id="analytics-period-label" class="text-[14px] font-semibold text-primary-adaptive">Ноябрь 2026</span>
+        <button type="button" id="month-next" class="ios-press w-8 h-8 rounded-full ios-icon-btn flex items-center justify-center" aria-label="Следующий месяц">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="tx-list" id="expense-list"></div>
-    </section>
-
-    <!-- ================= АНАЛИТИКА ================= -->
-    <section class="screen" id="screen-analytics">
-      <div class="filter-scroll" id="analytics-card-pills">
-        <button class="chip-btn active" type="button" data-analytics-card="all">Все карты</button>
-        <button class="chip-btn" type="button" data-analytics-card="card_1" id="an-pill-0">Кредитка ФПИ</button>
-        <button class="chip-btn" type="button" data-analytics-card="card_2" id="an-pill-1">Повседневная</button>
-        <button class="chip-btn" type="button" data-analytics-card="card_3" id="an-pill-2">Накопительная</button>
-      </div>
-
-      <div class="seg-control">
-        <button class="seg-btn active" type="button" data-period-mode="month">Месяцы</button>
-        <button class="seg-btn" type="button" data-period-mode="28days">28 дней</button>
-      </div>
-
-      <div class="month-bar" id="month-nav-bar">
-        <button class="month-arrow" id="month-prev" type="button" aria-label="Предыдущий месяц">‹</button>
-        <div class="month-label" id="analytics-period-label">Ноябрь 2026</div>
-        <button class="month-arrow" id="month-next" type="button" aria-label="Следующий месяц">›</button>
-      </div>
-
-      <!-- Компактная сводка кредитки без коробок -->
-      <div style="margin-bottom: 16px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:13px; margin-bottom:4px;">
-          <span>Лимит: <strong id="an-daily-free" style="font-variant-numeric:tabular-nums;">0 ₽/д</strong></span>
-          <span style="color:var(--muted);">Без дороги: <strong id="an-daily-full" style="color:var(--text); font-variant-numeric:tabular-nums;">0 ₽/д</strong></span>
+      <!-- ГЛАВНЫЙ СОВРЕМЕННЫЙ ГРАФИК ТРАТ ПО ДНЯМ (APPLE HEALTH / STOCKS STYLE) -->
+      <div class="space-y-3 pb-4 border-b ios-divider">
+        <div class="flex items-end justify-between gap-2">
+          <div>
+            <div id="chart-kicker" class="text-[12px] font-medium text-secondary-adaptive">Потрачено за период</div>
+            <div id="chart-hero-amount" class="text-[32px] font-bold tracking-tight leading-tight text-primary-adaptive tabular-nums mt-0.5">0 ₽</div>
+          </div>
+          <div class="text-right space-y-0.5">
+            <div id="chart-avg-label" class="text-[12px] font-semibold text-ios-accent tabular-nums">~0 ₽ / день</div>
+            <div id="chart-delta-label" class="text-[11px] text-secondary-adaptive tabular-nums">Без сравнений</div>
+          </div>
         </div>
-        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:8px;">
+
+        <!-- Интерактивный SVG Area/Line график -->
+        <div class="relative pt-2 select-none" id="spending-chart-wrap">
+          <svg id="spending-chart-svg" viewBox="0 0 360 135" class="w-full h-[145px] overflow-visible touch-none"></svg>
+          <div id="chart-axis-labels" class="flex justify-between text-[10px] text-tertiary-adaptive tabular-nums pt-1 px-0.5"></div>
+        </div>
+      </div>
+
+      <!-- Компактная строка прогноза кредитки -->
+      <div class="space-y-2 pb-4 border-b ios-divider">
+        <div class="flex items-center justify-between text-[13px]">
+          <span class="text-secondary-adaptive">Лимит: <strong id="an-daily-free" class="text-primary-adaptive tabular-nums">0 ₽/д</strong></span>
+          <span class="text-secondary-adaptive">Без дороги: <strong id="an-daily-full" class="text-primary-adaptive tabular-nums">0 ₽/д</strong></span>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-tertiary-adaptive">
           <span id="an-reserve-line">Бронь Пн–Пт: 0 ₽</span>
           <span id="an-days-line">0 дн.</span>
         </div>
-        <div class="limit-progress" style="margin-top:0;">
-          <div class="limit-seg" id="an-bar-spent" style="width:0%; background:var(--accent);"></div>
-          <div class="limit-seg" id="an-bar-reserved" style="width:0%; background:var(--amber);"></div>
-          <div class="limit-seg" id="an-bar-free" style="width:100%; background:var(--green);"></div>
+        <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden flex">
+          <div id="an-bar-spent" class="h-full rounded-full transition-all duration-500" style="width:0%; background: linear-gradient(90deg, rgb(var(--accent-rgb)) 0%, rgb(var(--accent-soft-rgb)) 100%);"></div>
+          <div id="an-bar-reserved" class="h-full bg-ios-orange/60 transition-all duration-500" style="width:0%;"></div>
         </div>
       </div>
 
-      <!-- Кольцо + Легенда в один ряд -->
-      <div class="analytics-donut-row">
-        <div class="donut-wrap">
-          <svg class="donut-svg" viewBox="0 0 140 140" id="radial-svg">
-            <circle cx="70" cy="70" r="54" fill="none" stroke="var(--surface-2)" stroke-width="15"></circle>
-            <g id="radial-segments"></g>
-          </svg>
-          <div class="donut-center">
-            <div class="donut-total" id="radial-center-amount">0 ₽</div>
-            <div class="donut-sub" id="radial-center-sub">Потрачено</div>
-          </div>
+      <!-- Сегментированная шкала категорий + чистый список -->
+      <div class="space-y-3 pb-4 border-b ios-divider">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-primary-adaptive">Категории</h3>
+          <span id="an-top-cat-hint" class="text-[12px] text-secondary-adaptive"></span>
         </div>
-        <div class="donut-legend" id="radial-legend"></div>
+
+        <!-- Полоса долей как в хранилище iOS -->
+        <div id="cat-stacked-bar" class="h-2.5 w-full rounded-full bg-white/10 overflow-hidden flex gap-0.5"></div>
+
+        <!-- Список категорий без рамок -->
+        <div id="category-bars-list" class="divide-y ios-divider"></div>
       </div>
 
-      <!-- Воздушный календарь без плиток -->
-      <section class="cal-section">
-        <div class="cal-weekdays">
+      <!-- Воздушный календарь трат -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[15px] font-bold text-primary-adaptive">Календарь трат</h3>
+          <span class="text-[11px] text-tertiary-adaptive">Нажми на дату</span>
+        </div>
+
+        <div class="grid grid-cols-7 text-center text-[11px] font-semibold text-tertiary-adaptive pt-1">
           <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
         </div>
-        <div class="cal-grid" id="calendar-grid"></div>
-        <div class="cal-day-box hidden" id="calendar-day-details">
-          <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
-            <span id="cal-selected-date">Сегодня</span>
-            <span id="cal-selected-total">0 ₽</span>
+        <div id="calendar-grid" class="grid grid-cols-7 gap-y-1"></div>
+
+        <div id="calendar-day-details" class="hidden pt-3 border-t ios-divider space-y-1">
+          <div class="flex items-center justify-between text-[13px] font-bold">
+            <span id="cal-selected-date" class="text-primary-adaptive">Сегодня</span>
+            <span id="cal-selected-total" class="text-primary-adaptive tabular-nums">0 ₽</span>
           </div>
-          <div class="tx-list" id="cal-detail-list"></div>
+          <div id="cal-detail-list" class="divide-y ios-divider"></div>
         </div>
-      </section>
+      </div>
     </section>
+
   </main>
 
-  <!-- НИЖНЯЯ НАВИГАЦИЯ -->
-  <div class="bottom-nav-wrap">
-    <nav class="bottom-nav" aria-label="Навигация">
-      <button class="nav-btn active" type="button" data-tab="home">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20v-9.5Z"/>
-        </svg>
-        <span>Главная</span>
+  <!-- НАТИВНАЯ НИЖНЯЯ НАВИГАЦИЯ (КАК НА РЕФЕРЕНСЕ) -->
+  <nav id="bottom-nav-wrapper" class="fixed bottom-2 inset-x-0 z-30 px-4 pb-safe-nav pointer-events-none transition-all">
+    <div id="bottom-nav-capsule" class="ios-tabbar-shell max-w-[420px] mx-auto h-[66px] rounded-[33px] px-3 grid grid-cols-[1fr_72px_1fr] items-center pointer-events-auto transition-all">
+      <button type="button" data-tab="home" class="nav-tab ios-press py-1.5 flex flex-col items-center justify-center gap-0.5 text-ios-accent transition-colors">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-[10.5px] font-semibold tracking-tight">Главная</span>
       </button>
 
-      <button class="fab-btn" id="add-open" type="button" aria-label="Добавить операцию">
-        <svg viewBox="0 0 24 24" stroke-linecap="round">
-          <path d="M12 5v14M5 12h14"/>
-        </svg>
+      <button type="button" id="btn-fab-add" class="ios-press fab-center-btn w-14 h-14 rounded-full flex items-center justify-center justify-self-center" aria-label="Добавить операцию">
+        <i data-lucide="plus" class="w-6 h-6 stroke-[2.4]"></i>
       </button>
 
-      <button class="nav-btn" type="button" data-tab="analytics">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="9"/>
-          <path d="M12 3v9l6.3 6.3"/>
-        </svg>
-        <span>Аналитика</span>
+      <button type="button" data-tab="analytics" class="nav-tab ios-press py-1.5 flex flex-col items-center justify-center gap-0.5 text-secondary-adaptive transition-colors">
+        <i data-lucide="pie-chart" class="w-5 h-5"></i>
+        <span class="text-[10.5px] font-semibold tracking-tight">Аналитика</span>
       </button>
-    </nav>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       МОДАЛЬНОЕ ОКНО 1: ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ОПЕРАЦИИ + БЫСТРЫЕ ПЛАТЕЖИ
+       ======================================================================== -->
+  <div id="modal-expense" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] p-5 pb-safe-nav space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <button type="button" data-close-modal="modal-expense" class="ios-press text-[15px] font-medium text-ios-accent">Отмена</button>
+        <h2 id="expense-dialog-title" class="text-[16px] font-semibold text-primary-adaptive">Новая операция</h2>
+        <button type="submit" form="expense-form" class="ios-press text-[15px] font-semibold text-ios-accent">Сохранить</button>
+      </div>
+
+      <!-- Быстрые платежи: 1 тап -> сразу сохраняет -->
+      <div id="quick-payments-section" class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-[11.5px] font-semibold text-secondary-adaptive">Быстрые платежи · сохраняют сразу</span>
+          <div class="flex items-center gap-1.5">
+            <button type="button" id="qp-edit-toggle" class="ios-press px-2.5 py-1 rounded-full ios-surface text-[11px] font-semibold text-secondary-adaptive">Изм.</button>
+            <button type="button" id="qp-add-open" class="ios-press px-2.5 py-1 rounded-full ios-accent-soft-btn text-[11px] font-semibold">+ Свой</button>
+          </div>
+        </div>
+        <div id="quick-payments-grid" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <form id="expense-form" class="space-y-4">
+        <input type="hidden" id="expense-id" value="" />
+
+        <div class="ios-segmented grid grid-cols-2 gap-1">
+          <button type="button" data-tx-type="expense" class="tx-type-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold ios-seg-active">Расход</button>
+          <button type="button" data-tx-type="income" class="tx-type-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold text-secondary-adaptive">Пополнение</button>
+        </div>
+
+        <input id="expense-amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0 ₽" required class="w-full bg-transparent border-0 text-center text-[42px] font-extrabold tracking-tight text-primary-adaptive outline-none py-1 tabular-nums" />
+
+        <div class="space-y-1.5">
+          <label class="block text-[12px] text-secondary-adaptive">Карта</label>
+          <div id="expense-card-selector" class="ios-segmented grid grid-cols-3 gap-1">
+            <button type="button" data-select-card="card_1" class="tx-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold ios-seg-active">Кредитка</button>
+            <button type="button" data-select-card="card_2" class="tx-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Повседневная</button>
+            <button type="button" data-select-card="card_3" class="tx-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Накопительная</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Описание</label>
+            <input id="expense-description" maxlength="70" placeholder="Продукты, Кофе, Проезд" class="ios-input w-full px-3.5 py-2.5" />
+          </div>
+          <div>
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Дата</label>
+            <input id="expense-date" type="date" required class="ios-input w-full px-3.5 py-2.5" />
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-[12px] text-secondary-adaptive">Категория</label>
+          <div id="category-grid" class="grid grid-cols-4 gap-1.5"></div>
+        </div>
+
+        <div id="commute-toggle-row" class="hidden flex items-center justify-between gap-3 py-2.5 border-t ios-divider">
+          <div class="min-w-0">
+            <div class="text-[14px] font-medium text-primary-adaptive">В счёт брони дороги (Пн–Пт)</div>
+            <div class="text-[11px] text-secondary-adaptive">Выкл = обычный проезд (вычитается из лимита дня)</div>
+          </div>
+          <label class="ios-switch">
+            <input type="checkbox" id="tx-commute-checkbox" />
+            <span class="ios-switch-track"><span class="ios-switch-thumb"></span></span>
+          </label>
+        </div>
+
+        <div id="expense-error" class="text-[12px] text-ios-red"></div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" id="expense-delete" class="hidden ios-press py-3.5 px-4 rounded-2xl bg-ios-red/15 text-ios-red font-semibold text-[14px]">Удалить</button>
+          <button type="submit" class="ios-press flex-1 py-3.5 rounded-2xl ios-accent-btn font-semibold text-[15px]">Сохранить</button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- ================= ШТОРКА: ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ОПЕРАЦИИ ================= -->
-  <dialog class="sheet" id="expense-dialog">
-    <div class="sheet-panel">
-      <div class="sheet-handle"></div>
-      <div class="sheet-head">
-        <h2 id="expense-dialog-title">Новая операция</h2>
-        <button class="close-btn" type="button" data-close="expense-dialog">×</button>
+  <!-- ========================================================================
+       МОДАЛЬНОЕ ОКНО 2: СОЗДАНИЕ / РЕДАКТИРОВАНИЕ БЫСТРОГО ПЛАТЕЖА
+       ======================================================================== -->
+  <div id="modal-quick-pay" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] p-5 pb-safe-nav space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <button type="button" data-close-modal="modal-quick-pay" class="ios-press text-[15px] font-medium text-ios-accent">Отмена</button>
+        <h2 id="qp-dialog-title" class="text-[16px] font-semibold text-primary-adaptive">Быстрый платёж</h2>
+        <button type="submit" form="qp-form" class="ios-press text-[15px] font-semibold text-ios-accent">Готово</button>
       </div>
 
-      <form id="expense-form">
-        <input type="hidden" id="expense-id">
+      <form id="qp-form" class="space-y-4">
+        <input type="hidden" id="qp-id" value="" />
 
-        <div class="seg-control">
-          <button class="seg-btn active" type="button" data-tx-type="expense">Расход</button>
-          <button class="seg-btn" type="button" data-tx-type="income">Пополнение</button>
+        <div class="ios-segmented grid grid-cols-2 gap-1">
+          <button type="button" data-qp-type="expense" class="qp-type-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold ios-seg-active">Расход</button>
+          <button type="button" data-qp-type="income" class="qp-type-btn ios-press py-2 rounded-[11px] text-[13px] font-semibold text-secondary-adaptive">Пополнение</button>
         </div>
 
-        <input class="amount-input" id="expense-amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0 ₽" required>
-
-        <div class="presets-row" id="quick-expense-presets">
-          <button class="preset-pill" type="button" data-quick-preset="bus">
-            Автобус
-            <strong id="preset-bus-price">42 ₽</strong>
-          </button>
-          <button class="preset-pill" type="button" data-quick-preset="home">
-            Билет домой
-            <strong id="preset-home-price">175 ₽</strong>
-          </button>
-          <button class="preset-pill" type="button" data-quick-preset="both">
-            Комбо
-            <strong id="preset-both-price">217 ₽</strong>
-          </button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Название кнопки</label>
+            <input id="qp-title" maxlength="26" placeholder="Кофе, Проезд, Обед" required class="ios-input w-full px-3.5 py-2.5" />
+          </div>
+          <div>
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Сумма (₽)</label>
+            <input id="qp-amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="150" required class="ios-input w-full px-3.5 py-2.5" />
+          </div>
         </div>
 
-        <span class="field-label">Карта</span>
-        <div class="seg-control" style="grid-template-columns: repeat(3, 1fr);" id="expense-card-selector">
-          <button class="seg-btn active" type="button" data-select-card="card_1">Кредитка</button>
-          <button class="seg-btn" type="button" data-select-card="card_2">Повседневная</button>
-          <button class="seg-btn" type="button" data-select-card="card_3">Накопительная</button>
+        <div class="space-y-1.5">
+          <label class="block text-[12px] text-secondary-adaptive">Карта</label>
+          <div id="qp-card-selector" class="ios-segmented grid grid-cols-3 gap-1">
+            <button type="button" data-qp-card="card_1" class="qp-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold ios-seg-active">Кредитка</button>
+            <button type="button" data-qp-card="card_2" class="qp-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Повседневная</button>
+            <button type="button" data-qp-card="card_3" class="qp-card-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Накопительная</button>
+          </div>
         </div>
 
-        <label class="field-label" for="expense-description">Описание</label>
-        <input class="text-input" id="expense-description" maxlength="70" placeholder="Например: Продукты, Кофе, Такси">
+        <div class="space-y-1.5">
+          <label class="block text-[12px] text-secondary-adaptive">Категория</label>
+          <div id="qp-category-grid" class="grid grid-cols-4 gap-1.5"></div>
+        </div>
 
-        <label class="field-label" for="expense-date">Дата</label>
-        <input class="text-input" id="expense-date" type="date" required>
+        <div class="flex items-center justify-between gap-3 py-2 border-t ios-divider">
+          <div class="min-w-0">
+            <div class="text-[14px] font-medium text-primary-adaptive">Учитывать как дорогу до вокзала</div>
+            <div class="text-[11px] text-secondary-adaptive">Списывается из брони дороги Пн–Пт</div>
+          </div>
+          <label class="ios-switch">
+            <input type="checkbox" id="qp-commute-checkbox" />
+            <span class="ios-switch-track"><span class="ios-switch-thumb"></span></span>
+          </label>
+        </div>
 
-        <span class="field-label">Категория</span>
-        <div class="cat-grid" id="category-grid"></div>
-
-        <div id="expense-error" style="color:var(--red); font-size:12px; margin-top:8px;"></div>
-        <button class="primary-btn" type="submit" id="expense-save">Сохранить</button>
-        <button class="danger-btn hidden" type="button" id="expense-delete">Удалить операцию</button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="qp-delete" class="hidden ios-press py-3.5 px-4 rounded-2xl bg-ios-red/15 text-ios-red font-semibold text-[14px]">Удалить</button>
+          <button type="submit" class="ios-press flex-1 py-3.5 rounded-2xl ios-accent-btn font-semibold text-[15px]">Сохранить</button>
+        </div>
       </form>
     </div>
-  </dialog>
+  </div>
 
-  <!-- ================= ШТОРКА: НАСТРОЙКА КАРТЫ ================= -->
-  <dialog class="sheet" id="card-dialog">
-    <div class="sheet-panel">
-      <div class="sheet-handle"></div>
-      <div class="sheet-head">
-        <h2>Настройка карты</h2>
-        <button class="close-btn" type="button" data-close="card-dialog">×</button>
+  <!-- ========================================================================
+       МОДАЛЬНОЕ ОКНО 3: НАСТРОЙКА КАРТЫ
+       ======================================================================== -->
+  <div id="modal-card" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] p-5 pb-safe-nav space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <button type="button" data-close-modal="modal-card" class="ios-press text-[15px] font-medium text-ios-accent">Отмена</button>
+        <h2 class="text-[16px] font-semibold text-primary-adaptive">Настройка карты</h2>
+        <button type="submit" form="card-custom-form" class="ios-press text-[15px] font-semibold text-ios-accent">Сохранить</button>
       </div>
 
-      <form id="card-custom-form">
-        <div class="seg-control" style="grid-template-columns: repeat(3, 1fr);">
-          <button class="seg-btn active" type="button" data-edit-card-slot="0">Карта 1</button>
-          <button class="seg-btn" type="button" data-edit-card-slot="1">Карта 2</button>
-          <button class="seg-btn" type="button" data-edit-card-slot="2">Карта 3</button>
+      <form id="card-custom-form" class="space-y-4">
+        <div class="ios-segmented grid grid-cols-3 gap-1">
+          <button type="button" data-edit-card-slot="0" class="card-slot-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold ios-seg-active">Карта 1</button>
+          <button type="button" data-edit-card-slot="1" class="card-slot-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Карта 2</button>
+          <button type="button" data-edit-card-slot="2" class="card-slot-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Карта 3</button>
         </div>
 
-        <label class="field-label" for="card-balance-input">Текущий баланс (₽)</label>
-        <input class="amount-input" id="card-balance-input" type="number" inputmode="decimal" step="0.01" required style="font-size:34px; text-align:left; padding:0 0 8px;">
+        <div>
+          <label class="block text-[12px] text-secondary-adaptive mb-1">Текущий баланс (₽)</label>
+          <input id="card-balance-input" type="number" inputmode="decimal" step="0.01" required class="ios-input w-full px-3.5 py-2.5 text-[22px] font-bold tabular-nums" />
+        </div>
 
-        <label class="field-label" for="card-name-input">Название карты</label>
-        <input class="text-input" id="card-name-input" maxlength="28" required>
+        <div>
+          <label class="block text-[12px] text-secondary-adaptive mb-1">Название карты</label>
+          <input id="card-name-input" maxlength="28" required class="ios-input w-full px-3.5 py-2.5" />
+        </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 100px; gap:8px;">
+        <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="field-label" for="card-bank-input">Банк</label>
-            <input class="text-input" id="card-bank-input" maxlength="20">
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Банк</label>
+            <input id="card-bank-input" maxlength="20" class="ios-input w-full px-3.5 py-2.5" />
           </div>
           <div>
-            <label class="field-label" for="card-digits-input">4 цифры</label>
-            <input class="text-input" id="card-digits-input" maxlength="4" inputmode="numeric">
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Последние 4 цифры</label>
+            <input id="card-digits-input" maxlength="4" inputmode="numeric" class="ios-input w-full px-3.5 py-2.5" />
           </div>
         </div>
 
-        <span class="field-label">Стиль карты</span>
-        <div class="skins-grid" id="card-skins-grid">
-          <button class="skin-btn selected" type="button" data-card-skin="fpi-obsidian">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#161521,#6d28d9)"></div>
-            <span class="skin-name">ФПИ Фиолет</span>
-          </button>
-          <button class="skin-btn" type="button" data-card-skin="titanium-dark">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#2a2c32,#0e0f12)"></div>
-            <span class="skin-name">Титан Dark</span>
-          </button>
-          <button class="skin-btn" type="button" data-card-skin="pacific-blue">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#0c192c,#0284c7)"></div>
-            <span class="skin-name">Pacific Blue</span>
-          </button>
-          <button class="skin-btn" type="button" data-card-skin="alpine-green">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#0b1c17,#059669)"></div>
-            <span class="skin-name">Alpine Green</span>
-          </button>
-          <button class="skin-btn" type="button" data-card-skin="natural-titanium">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#d8d4cb,#9f9a8f)"></div>
-            <span class="skin-name">Natural Титан</span>
-          </button>
-          <button class="skin-btn" type="button" data-card-skin="crimson-noir">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#1d0b12,#be123c)"></div>
-            <span class="skin-name">Crimson Noir</span>
-          </button>
+        <div class="space-y-1.5">
+          <label class="block text-[12px] text-secondary-adaptive">Стиль карты</label>
+          <div id="card-skins-grid" class="grid grid-cols-3 gap-2">
+            <button type="button" data-card-skin="fpi-obsidian" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-ios-accent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#161422,#6d28d9)"></div>
+              <span class="text-[10px] font-semibold">ФПИ Фиолет</span>
+            </button>
+            <button type="button" data-card-skin="titanium-dark" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-transparent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#272930,#0a0b0e)"></div>
+              <span class="text-[10px] font-semibold">Титан Dark</span>
+            </button>
+            <button type="button" data-card-skin="pacific-blue" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-transparent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#0b1628,#0284c7)"></div>
+              <span class="text-[10px] font-semibold">Pacific Blue</span>
+            </button>
+            <button type="button" data-card-skin="alpine-green" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-transparent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#0a1914,#059669)"></div>
+              <span class="text-[10px] font-semibold">Alpine Green</span>
+            </button>
+            <button type="button" data-card-skin="natural-titanium" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-transparent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#dcd8cf,#9f9a8e)"></div>
+              <span class="text-[10px] font-semibold">Natural Титан</span>
+            </button>
+            <button type="button" data-card-skin="crimson-noir" class="skin-btn ios-press p-1.5 rounded-xl ios-surface border-2 border-transparent text-center">
+              <div class="h-8 rounded-lg mb-1" style="background:linear-gradient(135deg,#1b0a10,#be123c)"></div>
+              <span class="text-[10px] font-semibold">Crimson Noir</span>
+            </button>
+          </div>
         </div>
 
-        <button class="primary-btn" type="submit">Сохранить карту</button>
+        <button type="submit" class="ios-press w-full py-3.5 rounded-2xl ios-accent-btn font-semibold text-[15px]">Сохранить карту</button>
       </form>
     </div>
-  </dialog>
+  </div>
 
-  <!-- ================= ШТОРКА: НАСТРОЙКИ ================= -->
-  <dialog class="sheet" id="settings-dialog">
-    <div class="sheet-panel">
-      <div class="sheet-handle"></div>
-      <div class="sheet-head">
-        <h2>Настройки</h2>
-        <button class="close-btn" type="button" data-close="settings-dialog">×</button>
+  <!-- ========================================================================
+       МОДАЛЬНОЕ ОКНО 4: НАСТРОЙКИ (КАСТОМИЗАЦИЯ 1-В-1 КАК В ДНЕВНИКЕ + БЮДЖЕТ)
+       ======================================================================== -->
+  <div id="modal-settings" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center">
+    <div class="w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] p-5 pb-safe-nav space-y-5 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h2 class="text-[26px] font-bold tracking-tight text-primary-adaptive">Настройки</h2>
+        <button type="button" data-close-modal="modal-settings" class="ios-press text-[15px] font-semibold text-ios-accent">Готово</button>
       </div>
 
-      <div class="settings-group">
-        <div class="settings-title">Тема оформления</div>
-        <div class="seg-control" style="margin-bottom:0;">
-          <button class="seg-btn active" type="button" data-theme-choice="dark">Тёмная</button>
-          <button class="seg-btn" type="button" data-theme-choice="light">Светлая</button>
+      <!-- Статус синхронизации -->
+      <div class="flex items-center justify-between gap-3 py-2.5 px-3.5 rounded-2xl ios-surface">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span id="network-dot" class="w-2.5 h-2.5 rounded-full bg-ios-green shrink-0"></span>
+          <span id="network-text" class="text-[13px] font-medium text-primary-adaptive truncate">Онлайн · Облако готово</span>
         </div>
+        <span id="sync-status-label" class="text-[12px] text-secondary-adaptive shrink-0">solo-fpi-bank</span>
       </div>
 
-      <div class="settings-group">
-        <div class="settings-title">Кредитка и проезд (Пн–Пт)</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-          <div>
-            <label class="field-label" for="setting-bus-price" style="margin-top:0;">Автобус до вокзала (₽)</label>
-            <input class="text-input" id="setting-bus-price" type="number" inputmode="decimal" min="0" step="0.5" value="42">
+      <!-- СЕКЦИЯ 1: ОТОБРАЖЕНИЕ (ТОЧНО КАК В ДНЕВНИКЕ) -->
+      <div class="space-y-1">
+        <p class="text-[12px] font-semibold uppercase tracking-wider text-tertiary-adaptive pb-1">Отображение</p>
+        <div class="divide-y ios-divider">
+          <div class="py-3 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <i data-lucide="palette" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+                <span class="text-[15px] font-medium text-primary-adaptive">Акцентный цвет</span>
+              </div>
+              <span id="accent-label-val" class="text-[13px] text-secondary-adaptive">Фиолетовый</span>
+            </div>
+            <div class="flex items-center gap-3 pl-8">
+              <button type="button" data-set-accent="purple" class="accent-dot-btn ios-press w-7 h-7 rounded-full bg-[#8B5CF6] ring-2 ring-offset-2 ring-offset-black ring-white" title="Фиолетовый"></button>
+              <button type="button" data-set-accent="blue"   class="accent-dot-btn ios-press w-7 h-7 rounded-full bg-[#0A84FF]" title="Синий"></button>
+              <button type="button" data-set-accent="orange" class="accent-dot-btn ios-press w-7 h-7 rounded-full bg-[#FF9F0A]" title="Оранжевый"></button>
+              <button type="button" data-set-accent="green"  class="accent-dot-btn ios-press w-7 h-7 rounded-full bg-[#30D158]" title="Зелёный"></button>
+              <button type="button" data-set-accent="pink"   class="accent-dot-btn ios-press w-7 h-7 rounded-full bg-[#FF375F]" title="Розовый"></button>
+            </div>
           </div>
-          <div>
-            <label class="field-label" for="setting-home-price" style="margin-top:0;">Билет на вокзале (₽)</label>
-            <input class="text-input" id="setting-home-price" type="number" inputmode="decimal" min="0" step="0.5" value="175">
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <i data-lucide="moon" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Тема</span>
+            </div>
+            <div class="ios-segmented grid grid-cols-2 gap-1 w-36">
+              <button type="button" data-set-base-theme="dark" class="base-theme-btn ios-press py-1 rounded-[10px] text-[12px] font-semibold ios-seg-active">Тёмная</button>
+              <button type="button" data-set-base-theme="light" class="base-theme-btn ios-press py-1 rounded-[10px] text-[12px] font-semibold text-secondary-adaptive">Светлая</button>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <i data-lucide="contrast" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Монохромный режим</span>
+            </div>
+            <label class="ios-switch">
+              <input type="checkbox" id="toggle-mono-switch" />
+              <span class="ios-switch-track"><span class="ios-switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div class="py-3 space-y-2">
+            <div class="flex items-center gap-3">
+              <i data-lucide="layers" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Стиль интерфейса</span>
+            </div>
+            <div class="ios-segmented grid grid-cols-3 gap-1">
+              <button type="button" data-set-theme="minimal" class="theme-choice-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold ios-seg-active">Минимал</button>
+              <button type="button" data-set-theme="tg-glass" class="theme-choice-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Стекло</button>
+              <button type="button" data-set-theme="liquid" class="theme-choice-btn ios-press py-1.5 rounded-[11px] text-[12px] font-semibold text-secondary-adaptive">Liquid</button>
+            </div>
+          </div>
+
+          <div class="py-3 space-y-2.5">
+            <div class="flex items-center gap-3">
+              <i data-lucide="image" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Фон приложения</span>
+            </div>
+            <div class="ios-segmented grid grid-cols-4 gap-1">
+              <button type="button" data-set-bg="abstract" class="bg-choice-btn ios-press py-1.5 rounded-[11px] text-[11px] font-semibold ios-seg-active">Волны</button>
+              <button type="button" data-set-bg="black" class="bg-choice-btn ios-press py-1.5 rounded-[11px] text-[11px] font-semibold text-secondary-adaptive">Чёрный</button>
+              <button type="button" data-set-bg="white" class="bg-choice-btn ios-press py-1.5 rounded-[11px] text-[11px] font-semibold text-secondary-adaptive">Белый</button>
+              <button type="button" data-set-bg="custom" class="bg-choice-btn ios-press py-1.5 rounded-[11px] text-[11px] font-semibold text-secondary-adaptive">Фото</button>
+            </div>
+
+            <div class="flex items-center gap-2 pt-0.5">
+              <label class="ios-press flex-1 py-2 px-3 rounded-xl ios-surface text-[12px] font-medium text-ios-accent flex items-center justify-center gap-1.5 cursor-pointer">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                <span>Выбрать фото из галереи</span>
+                <input type="file" id="custom-bg-input" accept="image/*" class="hidden" />
+              </label>
+              <button type="button" id="btn-clear-custom-bg" class="ios-press py-2 px-3 rounded-xl ios-surface text-[12px] font-medium text-secondary-adaptive hover:text-ios-red">
+                Сбросить
+              </button>
+            </div>
+
+            <div class="flex items-center gap-3 pt-0.5">
+              <span class="text-[12px] text-secondary-adaptive shrink-0">Затемнение фона</span>
+              <input type="range" id="bg-dim-slider" min="0" max="85" value="25" class="flex-1 accent-ios-purple" />
+              <span id="bg-dim-value" class="text-[12px] text-secondary-adaptive w-8 text-right tabular-nums">25%</span>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <i data-lucide="panel-bottom" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Нижняя панель</span>
+            </div>
+            <div class="ios-segmented grid grid-cols-2 gap-1 w-44">
+              <button type="button" data-set-nav="floating" class="nav-style-btn ios-press py-1 rounded-[10px] text-[11px] font-semibold ios-seg-active">Парящая</button>
+              <button type="button" data-set-nav="docked" class="nav-style-btn ios-press py-1 rounded-[10px] text-[11px] font-semibold text-secondary-adaptive">Стандарт</button>
+            </div>
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <i data-lucide="sun" class="w-5 h-5 text-secondary-adaptive shrink-0"></i>
+              <span class="text-[15px] font-medium text-primary-adaptive">Яркость стекла</span>
+            </div>
+            <div class="ios-segmented grid grid-cols-3 gap-1 w-44">
+              <button type="button" data-set-rim="soft" class="rim-style-btn ios-press py-1 rounded-[10px] text-[11px] font-semibold text-secondary-adaptive">Мягк.</button>
+              <button type="button" data-set-rim="normal" class="rim-style-btn ios-press py-1 rounded-[10px] text-[11px] font-semibold ios-seg-active">Норм.</button>
+              <button type="button" data-set-rim="bright" class="rim-style-btn ios-press py-1 rounded-[10px] text-[11px] font-semibold text-secondary-adaptive">Ярк.</button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <label class="field-label" for="setting-credit-limit">Лимит Кредитки 1-го числа (₽)</label>
-        <input class="text-input" id="setting-credit-limit" type="number" inputmode="decimal" min="100" step="100" value="10000">
+      <!-- СЕКЦИЯ 2: КРЕДИТКА, ДОРОГА И БЫСТРЫЕ ПЛАТЕЖИ -->
+      <div class="space-y-1">
+        <p class="text-[12px] font-semibold uppercase tracking-wider text-tertiary-adaptive pb-1">Кредитка и дорога (Пн–Пт)</p>
+        <div class="divide-y ios-divider">
+          <div class="py-3 grid grid-cols-2 gap-2.5">
+            <div>
+              <label class="block text-[12px] text-secondary-adaptive mb-1">Автобус до вокзала (₽)</label>
+              <input id="setting-bus-price" type="number" inputmode="decimal" min="0" step="0.5" value="42" class="ios-input w-full px-3 py-2" />
+            </div>
+            <div>
+              <label class="block text-[12px] text-secondary-adaptive mb-1">Билет на вокзале (₽)</label>
+              <input id="setting-home-price" type="number" inputmode="decimal" min="0" step="0.5" value="175" class="ios-input w-full px-3 py-2" />
+            </div>
+          </div>
 
-        <div class="seg-control" style="margin-top:10px; margin-bottom:0;">
-          <button class="seg-btn active" type="button" data-auto-reset="true">Автосброс 1-го: ВКЛ</button>
-          <button class="seg-btn" type="button" data-auto-reset="false">ВЫКЛ</button>
+          <div class="py-3">
+            <label class="block text-[12px] text-secondary-adaptive mb-1">Лимит Кредитки 1-го числа (₽)</label>
+            <input id="setting-credit-limit" type="number" inputmode="decimal" min="100" step="100" value="10000" class="ios-input w-full px-3 py-2" />
+          </div>
+
+          <div class="py-3 flex items-center justify-between gap-3">
+            <span class="text-[15px] font-medium text-primary-adaptive">Автосброс Кредитки 1-го числа</span>
+            <label class="ios-switch">
+              <input type="checkbox" id="setting-autoreset-checkbox" checked />
+              <span class="ios-switch-track"><span class="ios-switch-thumb"></span></span>
+            </label>
+          </div>
+
+          <div class="py-3 space-y-2">
+            <button type="button" id="settings-reset-credit-now" class="ios-press w-full py-3 rounded-2xl ios-surface text-[14px] font-semibold text-primary-adaptive">
+              Выставить баланс 10 000 ₽ сейчас
+            </button>
+            <button type="button" id="settings-add-qp" data-close-modal="modal-settings" class="ios-press w-full py-3 rounded-2xl ios-accent-soft-btn text-[14px] font-semibold">
+              + Добавить свой быстрый платёж
+            </button>
+            <button type="button" id="settings-open-cards" data-close-modal="modal-settings" class="ios-press w-full py-3 rounded-2xl ios-surface text-[14px] font-semibold text-primary-adaptive">
+              Настроить 3 карты и балансы
+            </button>
+          </div>
         </div>
-
-        <button class="secondary-btn" type="button" id="settings-reset-credit-now">Выставить баланс 10 000 ₽ сейчас</button>
       </div>
-
-      <div class="settings-group">
-        <div class="settings-title">Банковские карты</div>
-        <button class="secondary-btn" type="button" id="settings-open-cards" style="margin-top:0;">Настроить карты и балансы</button>
-      </div>
-
-      <div class="status-note" id="firebase-help">Проверка облака ФПИ Банк…</div>
     </div>
-  </dialog>
+  </div>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=7" defer></script>
+  <!-- КОНТРОЛЛЕР ВНЕШНЕГО ВИДА ДО СТАРТА МОДУЛЯ (1-В-1 КАК В ДНЕВНИКЕ) -->
+  <script>
+    (function () {
+      var ACCENT_NAMES = {
+        purple: "Фиолетовый",
+        blue: "Синий",
+        orange: "Оранжевый",
+        green: "Зелёный",
+        pink: "Розовый"
+      };
+
+      function syncSegmented(selector, attr, val) {
+        document.querySelectorAll(selector).forEach(function (btn) {
+          var active = btn.getAttribute(attr) === val;
+          btn.classList.toggle("ios-seg-active", active);
+          btn.classList.toggle("text-secondary-adaptive", !active);
+        });
+      }
+
+      window.__applyAppAppearance = function () {
+        var cMode = localStorage.getItem("fpi_color_mode_v1") || "dark";
+        var accent = localStorage.getItem("fpi_accent_v1") || "purple";
+        var theme = localStorage.getItem("fpi_theme_v1") || "minimal";
+        var bgMode = localStorage.getItem("fpi_bg_mode_v1") || "abstract";
+        var navStyle = localStorage.getItem("fpi_nav_style_v1") || "floating";
+        var rimStyle = localStorage.getItem("fpi_rim_style_v1") || "normal";
+        var customBg = localStorage.getItem("fpi_custom_bg_img_v1") || "";
+        var dim = Number(localStorage.getItem("fpi_custom_bg_dim_v1") || 25);
+
+        var isLight = cMode === "light" || cMode === "mono-light";
+        var isMono = cMode === "mono-dark" || cMode === "mono-light";
+
+        document.documentElement.classList.toggle("dark", !isLight);
+        document.body.classList.toggle("mode-dark", !isLight);
+        document.body.classList.toggle("mode-light", isLight);
+        document.body.classList.toggle("mono-mode", isMono);
+
+        document.body.classList.remove("accent-purple", "accent-blue", "accent-orange", "accent-green", "accent-pink");
+        document.body.classList.add("accent-" + accent);
+
+        document.body.classList.remove("theme-minimal", "theme-liquid", "theme-tg-glass");
+        document.body.classList.add("theme-" + theme);
+
+        document.body.classList.remove("bg-mode-black", "bg-mode-white", "bg-mode-abstract", "bg-mode-custom");
+        document.body.classList.add("bg-mode-" + bgMode);
+
+        document.body.classList.toggle("nav-docked", navStyle === "docked");
+        document.body.classList.remove("rim-soft", "rim-normal", "rim-bright");
+        document.body.classList.add("rim-" + rimStyle);
+
+        var layer = document.getElementById("custom-bg-layer");
+        if (layer) layer.style.backgroundImage = customBg ? 'url("' + customBg + '")' : "none";
+        document.documentElement.style.setProperty("--custom-bg-dim", (dim / 100).toFixed(2));
+
+        var meta = document.getElementById("meta-theme-color");
+        if (meta) meta.setAttribute("content", isLight ? "#F5F5F9" : "#050508");
+
+        syncSegmented(".base-theme-btn", "data-set-base-theme", isLight ? "light" : "dark");
+        syncSegmented(".theme-choice-btn", "data-set-theme", theme);
+        syncSegmented(".bg-choice-btn", "data-set-bg", bgMode);
+        syncSegmented(".nav-style-btn", "data-set-nav", navStyle);
+        syncSegmented(".rim-style-btn", "data-set-rim", rimStyle);
+
+        var monoSw = document.getElementById("toggle-mono-switch");
+        if (monoSw) monoSw.checked = isMono;
+
+        var accentLabel = document.getElementById("accent-label-val");
+        if (accentLabel) accentLabel.textContent = isMono ? "Монохром" : (ACCENT_NAMES[accent] || "Фиолетовый");
+
+        document.querySelectorAll(".accent-dot-btn").forEach(function (dot) {
+          var isAct = !isMono && dot.getAttribute("data-set-accent") === accent;
+          dot.classList.toggle("ring-2", isAct);
+          dot.classList.toggle("ring-offset-2", isAct);
+          dot.classList.toggle("ring-offset-black", isAct && !isLight);
+          dot.classList.toggle("ring-white", isAct && !isLight);
+          dot.classList.toggle("ring-black", isAct && isLight);
+        });
+      };
+
+      document.addEventListener("click", function (e) {
+        var accentBtn = e.target.closest("[data-set-accent]");
+        if (accentBtn) {
+          localStorage.setItem("fpi_accent_v1", accentBtn.getAttribute("data-set-accent"));
+          var cm = localStorage.getItem("fpi_color_mode_v1") || "dark";
+          if (cm === "mono-dark") localStorage.setItem("fpi_color_mode_v1", "dark");
+          if (cm === "mono-light") localStorage.setItem("fpi_color_mode_v1", "light");
+          window.__applyAppAppearance();
+          return;
+        }
+
+        var baseBtn = e.target.closest("[data-set-base-theme]");
+        if (baseBtn) {
+          var targetBase = baseBtn.getAttribute("data-set-base-theme");
+          var cur = localStorage.getItem("fpi_color_mode_v1") || "dark";
+          var isMono = cur === "mono-dark" || cur === "mono-light";
+          localStorage.setItem("fpi_color_mode_v1", isMono ? "mono-" + targetBase : targetBase);
+          var curBg = localStorage.getItem("fpi_bg_mode_v1") || "abstract";
+          if (targetBase === "light" && curBg === "black") localStorage.setItem("fpi_bg_mode_v1", "white");
+          if (targetBase === "dark" && curBg === "white") localStorage.setItem("fpi_bg_mode_v1", "black");
+          window.__applyAppAppearance();
+          return;
+        }
+
+        var themeBtn = e.target.closest("[data-set-theme]");
+        if (themeBtn) {
+          localStorage.setItem("fpi_theme_v1", themeBtn.getAttribute("data-set-theme"));
+          window.__applyAppAppearance();
+          return;
+        }
+
+        var bgBtn = e.target.closest("[data-set-bg]");
+        if (bgBtn) {
+          var bg = bgBtn.getAttribute("data-set-bg");
+          if (bg === "custom" && !localStorage.getItem("fpi_custom_bg_img_v1")) {
+            var fileInp = document.getElementById("custom-bg-input");
+            if (fileInp) fileInp.click();
+            return;
+          }
+          localStorage.setItem("fpi_bg_mode_v1", bg);
+          if (bg === "white") {
+            var cmW = localStorage.getItem("fpi_color_mode_v1") || "dark";
+            if (cmW === "dark") localStorage.setItem("fpi_color_mode_v1", "light");
+            if (cmW === "mono-dark") localStorage.setItem("fpi_color_mode_v1", "mono-light");
+          } else if (bg === "black") {
+            var cmB = localStorage.getItem("fpi_color_mode_v1") || "dark";
+            if (cmB === "light") localStorage.setItem("fpi_color_mode_v1", "dark");
+            if (cmB === "mono-light") localStorage.setItem("fpi_color_mode_v1", "mono-dark");
+          }
+          window.__applyAppAppearance();
+          return;
+        }
+
+        var navBtn = e.target.closest("[data-set-nav]");
+        if (navBtn) {
+          localStorage.setItem("fpi_nav_style_v1", navBtn.getAttribute("data-set-nav"));
+          window.__applyAppAppearance();
+          return;
+        }
+
+        var rimBtn = e.target.closest("[data-set-rim]");
+        if (rimBtn) {
+          localStorage.setItem("fpi_rim_style_v1", rimBtn.getAttribute("data-set-rim"));
+          window.__applyAppAppearance();
+          return;
+        }
+      });
+
+      document.addEventListener("change", function (e) {
+        if (e.target && e.target.id === "toggle-mono-switch") {
+          var cur = localStorage.getItem("fpi_color_mode_v1") || "dark";
+          var isLight = cur === "light" || cur === "mono-light";
+          localStorage.setItem("fpi_color_mode_v1", e.target.checked ? (isLight ? "mono-light" : "mono-dark") : (isLight ? "light" : "dark"));
+          window.__applyAppAppearance();
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", window.__applyAppAppearance);
+    })();
+  </script>
+
+  <script type="module" src="./app.js?v=9"></script>
 </body>
 </html>
