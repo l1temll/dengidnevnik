@@ -1,6 +1,6 @@
 /*
- * ФПИ Банк — Личный финансовый дневник (Solo Edition)
- * Local-first PWA + Firebase Firestore Sync + 3 кастомные карты + Радиальная аналитика и Календарь
+ * ФПИ Банк — Личный финансовый дневник (Apple Minimalist Redesign)
+ * Local-first PWA + Firebase Firestore Sync + Stacked Card Deck + Fixed Commute Math
  */
 
 const firebaseConfig = {
@@ -15,28 +15,39 @@ const FIREBASE_CONFIG = firebaseConfig;
 
 const FIREBASE_VERSION = "10.13.1";
 const STORAGE_KEY = "solo_fpi_state_v1";
-const THEME_KEY = "solo_fpi_theme_v1";
-const SURFACE_KEY = "solo_fpi_surface_v1";
-const DESIGN_KEY = "solo_fpi_design_v1";
-const PATTERN_KEY = "solo_fpi_pattern_v1";
-const DEFAULT_PERIOD_KEY = "solo_fpi_default_period_v1";
-const APP_CUSTOM_BG_KEY = "solo_fpi_custom_bg_v1";
-const PLANNER_KEY = "solo_fpi_planner_v1";
+const THEME_KEY = "solo_fpi_theme_v2";
+const PLANNER_KEY = "solo_fpi_planner_v2";
 const GROUP_ID = "solo_fpi_v1";
 
+/* Единый набор векторных SVG-иконок (1.75px stroke, без эмодзи) */
+const ICONS = {
+  food:      `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>`,
+  groceries: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>`,
+  cafe:      `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2M14 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h12a4 4 0 1 1 0 8h-1"/></svg>`,
+  transport: `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v6M15 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></svg>`,
+  shopping:  `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg>`,
+  home:      `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  subs:      `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  fun:       `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M8 10v4M15 13h.01M18 11h.01"/></svg>`,
+  health:    `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`,
+  beauty:    `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>`,
+  transfer:  `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></svg>`,
+  other:     `<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`
+};
+
 const CATEGORIES = {
-  food:      { label: "Еда",         emoji: "🍔", color: "#a855f7" },
-  groceries: { label: "Продукты",    emoji: "🛒", color: "#22c55e" },
-  cafe:      { label: "Кафе",        emoji: "☕", color: "#f97316" },
-  transport: { label: "Транспорт",   emoji: "🚕", color: "#38bdf8" },
-  shopping:  { label: "Покупки",     emoji: "🛍️", color: "#ec4899" },
-  home:      { label: "Дом",         emoji: "🏠", color: "#6366f1" },
-  subs:      { label: "Подписки",    emoji: "💎", color: "#14b8a6" },
-  fun:       { label: "Развлечения", emoji: "🎮", color: "#eab308" },
-  health:    { label: "Аптека",      emoji: "💊", color: "#f43f5e" },
-  beauty:    { label: "Уход",        emoji: "✨", color: "#d946ef" },
-  transfer:  { label: "Переводы",    emoji: "💸", color: "#64748b" },
-  other:     { label: "Другое",      emoji: "•••", color: "#94a3b8" }
+  food:      { label: "Еда",         color: "#a855f7" },
+  groceries: { label: "Продукты",    color: "#34d399" },
+  cafe:      { label: "Кафе",        color: "#fb923c" },
+  transport: { label: "Транспорт",   color: "#38bdf8" },
+  shopping:  { label: "Покупки",     color: "#f472b6" },
+  home:      { label: "Дом",         color: "#818cf8" },
+  subs:      { label: "Подписки",    color: "#2dd4bf" },
+  fun:       { label: "Развлечения", color: "#facc15" },
+  health:    { label: "Аптека",      color: "#fb7185" },
+  beauty:    { label: "Уход",        color: "#e879f9" },
+  transfer:  { label: "Переводы",    color: "#94a3b8" },
+  other:     { label: "Другое",      color: "#64748b" }
 };
 
 function getDefaultPlanner() {
@@ -44,116 +55,22 @@ function getDefaultPlanner() {
     const saved = JSON.parse(localStorage.getItem(PLANNER_KEY) || "{}");
     return {
       busPrice: Number.isFinite(Number(saved.busPrice)) ? Number(saved.busPrice) : 42,
-      homeTicketPrice: Number.isFinite(Number(saved.homeTicketPrice)) ? Number(saved.homeTicketPrice) : 189,
+      homeTicketPrice: Number.isFinite(Number(saved.homeTicketPrice)) ? Number(saved.homeTicketPrice) : 175,
       creditLimit: Number.isFinite(Number(saved.creditLimit)) && Number(saved.creditLimit) > 0 ? Number(saved.creditLimit) : 10000,
       autoResetCredit: saved.autoResetCredit !== false,
       lastResetMonth: String(saved.lastResetMonth || "")
     };
   } catch (_) {
-    return { busPrice: 42, homeTicketPrice: 189, creditLimit: 10000, autoResetCredit: true, lastResetMonth: "" };
+    return { busPrice: 42, homeTicketPrice: 175, creditLimit: 10000, autoResetCredit: true, lastResetMonth: "" };
   }
 }
 
 function getDefaultCards() {
   return [
-    {
-      id: "card_1",
-      slot: 0,
-      name: "Кредитка ФПИ",
-      bank: "ФПИ БАНК",
-      subtitle: "Финансово-Пакостный Институт",
-      digits: "2004",
-      balance: 10000,
-      skin: "fpi-purple",
-      customBg: "",
-      updatedAt: 0
-    },
-    {
-      id: "card_2",
-      slot: 1,
-      name: "Повседневная",
-      bank: "ФПИ BLACK",
-      subtitle: "LIQUID GLASS EDITION",
-      digits: "7741",
-      balance: 28450,
-      skin: "liquid-glass",
-      customBg: "",
-      updatedAt: 0
-    },
-    {
-      id: "card_3",
-      slot: 2,
-      name: "Накопительная",
-      bank: "ФПИ ПРАЙМ",
-      subtitle: "HOLO SAVINGS VAULT",
-      digits: "9012",
-      balance: 310000,
-      skin: "holo",
-      customBg: "",
-      updatedAt: 0
-    }
+    { id: "card_1", slot: 0, name: "Кредитка ФПИ", bank: "ФПИ БАНК", digits: "2004", balance: 10000, skin: "fpi-obsidian", customBg: "", updatedAt: 0 },
+    { id: "card_2", slot: 1, name: "Повседневная", bank: "ФПИ BLACK", digits: "7741", balance: 0, skin: "titanium-dark", customBg: "", updatedAt: 0 },
+    { id: "card_3", slot: 2, name: "Накопительная", bank: "ФПИ ПРАЙМ", digits: "9012", balance: 0, skin: "pacific-blue", customBg: "", updatedAt: 0 }
   ];
-}
-
-const defaultPeriodPref = localStorage.getItem(DEFAULT_PERIOD_KEY) === "28days" ? "28days" : "month";
-
-const state = {
-  cards: getDefaultCards(),
-  expenses: [],
-  planner: getDefaultPlanner(),
-  theme: localStorage.getItem(THEME_KEY) || "dark",
-  surface: localStorage.getItem(SURFACE_KEY) || "liquid",
-  design: localStorage.getItem(DESIGN_KEY) || "liquid",
-  pattern: localStorage.getItem(PATTERN_KEY) || "bold",
-  appCustomBg: localStorage.getItem(APP_CUSTOM_BG_KEY) || "",
-  defaultPeriod: defaultPeriodPref,
-  periodMode: defaultPeriodPref,
-  analyticsMonth: localISODate().slice(0, 7),
-  analyticsCardId: "all",
-  selectedAnalyticsCategory: null,
-  selectedCalendarDate: localISODate(),
-  activeCardSlot: 0,
-  editingCardSlot: 0,
-  editingCardSkin: "fpi-purple",
-  editingCardCustomBg: "",
-  filterCardId: "all",
-  txType: "expense",
-  txCardId: "card_1",
-  txCategory: "food",
-  editingExpenseId: null,
-  firebaseReady: false,
-  unsubscribers: []
-};
-
-let firestore = null;
-let firebaseFns = null;
-let toastTimer = null;
-
-const $ = (selector, root = document) => root.querySelector(selector);
-const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
-function isFirebaseConfigured() {
-  return Boolean(
-    FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("PASTE_") &&
-    FIREBASE_CONFIG.projectId && !FIREBASE_CONFIG.projectId.startsWith("PASTE_") &&
-    FIREBASE_CONFIG.appId && !FIREBASE_CONFIG.appId.startsWith("PASTE_")
-  );
-}
-
-function roundMoney(value) {
-  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
-}
-
-function money(value) {
-  return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(Number(value) || 0) + " ₽";
-}
-
-function compactMoney(value) {
-  const num = Math.abs(Number(value) || 0);
-  if (num === 0) return "";
-  if (num >= 10000) return `${Math.round(num / 1000)}к`;
-  if (num >= 1000) return `${(num / 1000).toFixed(1).replace(".0", "")}к`;
-  return `${Math.round(num)}`;
 }
 
 function localISODate(date = new Date()) {
@@ -161,74 +78,111 @@ function localISODate(date = new Date()) {
   return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 10);
 }
 
-function dateLabel(isoDate) {
-  if (!isoDate) return "";
-  const date = new Date(`${isoDate}T12:00:00`);
+const state = {
+  cards: getDefaultCards(),
+  expenses: [],
+  planner: getDefaultPlanner(),
+  theme: localStorage.getItem(THEME_KEY) || "dark",
+  activeCardSlot: 0,
+  filterCardId: "all",
+  analyticsCardId: "all",
+  periodMode: "month",
+  analyticsMonth: localISODate().slice(0, 7),
+  selectedAnalyticsCategory: null,
+  selectedCalendarDate: localISODate(),
+  editingCardSlot: 0,
+  editingCardSkin: "fpi-obsidian",
+  txType: "expense",
+  txCardId: "card_1",
+  txCategory: "food",
+  editingExpenseId: null,
+  unsubscribers: []
+};
+
+let firestore = null;
+let firebaseFns = null;
+let toastTimer = null;
+
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+function roundMoney(v) { return Math.round((Number(v) + Number.EPSILON) * 100) / 100; }
+function money(v) { return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(Number(v) || 0) + " ₽"; }
+function compactMoney(v) {
+  const n = Math.abs(Number(v) || 0);
+  if (!n) return "";
+  if (n >= 10000) return `${Math.round(n / 1000)}к`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1).replace(".0", "")}к`;
+  return `${Math.round(n)}`;
+}
+function escapeHTML(v) {
+  return String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+function dateLabel(iso) {
+  if (!iso) return "";
   const today = localISODate();
   const yesterday = localISODate(new Date(Date.now() - 86400000));
-  if (isoDate === today) return "Сегодня";
-  if (isoDate === yesterday) return "Вчера";
-  return date.toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
+  if (iso === today) return "Сегодня";
+  if (iso === yesterday) return "Вчера";
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
 }
-
-function shortDate(isoDate) {
-  if (!isoDate) return "";
-  return new Date(`${isoDate}T12:00:00`).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
+function shortDate(iso) {
+  if (!iso) return "";
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
 }
-
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[char]);
-}
-
-function showToast(message) {
-  const toast = $("#toast");
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.add("show");
+function showToast(msg) {
+  const el = $("#toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+}
+function setSyncStatus(mode) {
+  const dot = $("#sync-dot");
+  if (!dot) return;
+  dot.classList.remove("online", "busy");
+  if (mode === "online") dot.classList.add("online");
+  if (mode === "busy") dot.classList.add("busy");
 }
 
-function setSyncStatus(mode, label) {
-  const pill = $("#sync-pill");
-  const lbl = $("#sync-label");
-  if (pill) {
-    pill.classList.remove("online", "busy");
-    if (mode === "online") pill.classList.add("online");
-    if (mode === "busy") pill.classList.add("busy");
-  }
-  if (lbl) lbl.textContent = label;
+/* ================= ХРАНИЛИЩЕ ================= */
+
+function mapLegacySkin(skin) {
+  const valid = ["fpi-obsidian", "titanium-dark", "pacific-blue", "alpine-green", "natural-titanium", "crimson-noir", "custom"];
+  if (valid.includes(skin)) return skin;
+  if (skin === "fpi-purple" || skin === "cyber") return "fpi-obsidian";
+  if (skin === "emerald") return "alpine-green";
+  if (skin === "ruby") return "crimson-noir";
+  if (skin === "gold") return "natural-titanium";
+  if (skin === "holo" || skin === "liquid-glass") return "pacific-blue";
+  return "titanium-dark";
 }
 
-/* ================= ЛОКАЛЬНОЕ ХРАНИЛИЩЕ ================= */
-
-function normalizeCards(rawCards) {
-  const defaults = getDefaultCards();
-  if (!Array.isArray(rawCards) || !rawCards.length) return defaults;
-  return defaults.map((def, idx) => {
-    const found = rawCards.find(c => c && (c.id === def.id || Number(c.slot) === idx)) || {};
+function normalizeCards(raw) {
+  const defs = getDefaultCards();
+  if (!Array.isArray(raw) || !raw.length) return defs;
+  return defs.map((def, idx) => {
+    const f = raw.find(c => c && (c.id === def.id || Number(c.slot) === idx)) || {};
     return {
       id: def.id,
       slot: idx,
-      name: String(found.name || def.name).slice(0, 28),
-      bank: String(found.bank || def.bank).slice(0, 22),
-      subtitle: String(found.subtitle || def.subtitle).slice(0, 32),
-      digits: String(found.digits || def.digits).replace(/\D/g, "").slice(-4) || def.digits,
-      balance: Number.isFinite(Number(found.balance)) ? roundMoney(Number(found.balance)) : def.balance,
-      skin: String(found.skin || def.skin),
-      customBg: String(found.customBg || ""),
-      updatedAt: Number(found.updatedAt) || 0
+      name: String(f.name || def.name).slice(0, 28),
+      bank: String(f.bank || def.bank).slice(0, 20),
+      digits: String(f.digits || def.digits).replace(/\D/g, "").slice(-4) || def.digits,
+      balance: Number.isFinite(Number(f.balance)) ? roundMoney(Number(f.balance)) : def.balance,
+      skin: mapLegacySkin(f.skin || def.skin),
+      customBg: String(f.customBg || ""),
+      updatedAt: Number(f.updatedAt) || 0
     };
   });
 }
 
 function readLocal() {
   try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    state.cards = normalizeCards(parsed.cards);
-    state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
+    const p = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    state.cards = normalizeCards(p.cards);
+    state.expenses = Array.isArray(p.expenses) ? p.expenses : [];
   } catch (_) {
     state.cards = getDefaultCards();
     state.expenses = [];
@@ -237,1030 +191,153 @@ function readLocal() {
 
 function writeLocal() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      cards: state.cards,
-      expenses: state.expenses
-    }));
-  } catch (error) {
-    console.warn("Ошибка сохранения в localStorage:", error);
-  }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ cards: state.cards, expenses: state.expenses }));
+  } catch (_) {}
 }
 
-/* ================= ТЕМЫ И ВНЕШНИЙ ВИД ================= */
-
-function isDarkLikeTheme(theme) {
-  return !["light", "latte", "nord", "bw"].includes(theme);
+function savePlanner() {
+  try { localStorage.setItem(PLANNER_KEY, JSON.stringify(state.planner)); } catch (_) {}
 }
 
 function setTheme(theme) {
-  // При повторном клике на кнопку ЧБ/БЧ переключаем между ЧБ и БЧ
-  if (theme === "bw" && state.theme === "bw") theme = "wb";
-  const valid = ["dark", "ocean", "emerald", "rose", "obsidian", "amoled", "light", "latte", "nord", "bw", "wb"];
-  state.theme = valid.includes(theme) ? theme : "dark";
-  const darkLike = isDarkLikeTheme(state.theme);
-
-  const root = document.documentElement;
-  root.dataset.theme = state.theme;
-  root.style.colorScheme = darkLike ? "dark" : "light";
-  document.body?.setAttribute("data-theme", state.theme);
-
-  const themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) {
-    const colorMap = {
-      dark: "#0c0b14",
-      ocean: "#071018",
-      emerald: "#06120e",
-      rose: "#14080e",
-      obsidian: "#110e0a",
-      amoled: "#000000",
-      light: "#f4f3f9",
-      latte: "#f6f3ec",
-      nord: "#ecf2f8",
-      bw: "#ffffff",
-      wb: "#000000"
-    };
-    themeColor.content = colorMap[state.theme] || "#0c0b14";
-  }
-
-  const toggle = $("#theme-toggle");
-  if (toggle) {
-    toggle.innerHTML = darkLike
-      ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/></svg>';
-  }
-
-  $$("[data-theme-choice]").forEach(btn => {
-    const choice = btn.dataset.themeChoice;
-    const isSelected = choice === state.theme || (choice === "bw" && state.theme === "wb");
-    btn.classList.toggle("selected", isSelected);
-  });
-
-  updateBrandTexts();
+  state.theme = theme === "light" ? "light" : "dark";
+  document.documentElement.dataset.theme = state.theme;
+  document.documentElement.style.colorScheme = state.theme;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = state.theme === "light" ? "#f5f5f7" : "#07070b";
+  $$("[data-theme-choice]").forEach(b => b.classList.toggle("active", b.dataset.themeChoice === state.theme));
   try { localStorage.setItem(THEME_KEY, state.theme); } catch (_) {}
 }
 
-function setSurface(surface) {
-  const valid = ["liquid", "matte", "frosted", "brutal", "glossy", "outline"];
-  state.surface = valid.includes(surface) ? surface : "liquid";
-  document.documentElement.dataset.surface = state.surface;
-  document.body?.setAttribute("data-surface", state.surface);
+/* ================= СТОПКА КАРТ (АНИМАЦИЯ ЛИСТАНИЯ ДРУГ ИЗ-ПОД ДРУГА) ================= */
 
-  $$("[data-surface-choice]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.surfaceChoice === state.surface);
-  });
+function renderCardDeck() {
+  const deck = $("#card-deck");
+  if (!deck) return;
 
-  try { localStorage.setItem(SURFACE_KEY, state.surface); } catch (_) {}
-}
-
-function cycleThemeQuick() {
-  const order = ["dark", "ocean", "emerald", "rose", "obsidian", "amoled", "light", "latte", "nord", "bw", "wb"];
-  const next = order[(order.indexOf(state.theme) + 1) % order.length];
-  setTheme(next);
-  const labels = {
-    dark: "🔮 ФПИ Ночь",
-    ocean: "🌊 Океан Cyan",
-    emerald: "🌲 Изумруд",
-    rose: "🍷 Бархат Роза",
-    obsidian: "🔥 Обсидиан Gold",
-    amoled: "🌑 Amoled 0%",
-    light: "☀️ Снежный iOS",
-    latte: "🍵 Матча Латте",
-    nord: "❄️ Норд Арктика",
-    bw: "◐ Монохром ЧБ",
-    wb: "◑ Контраст БЧ"
-  };
-  showToast(labels[next] || "Палитра изменена");
-}
-
-function applyCustomAppBg() {
-  if (state.appCustomBg) {
-    document.documentElement.style.setProperty("--custom-bg-image", `url("${state.appCustomBg.replace(/"/g, '\\"')}")`);
-  } else {
-    document.documentElement.style.setProperty("--custom-bg-image", "none");
-  }
-}
-
-function setDesign(design) {
-  const valid = ["liquid", "cats", "zolo", "topo", "dots", "waves", "cyber", "clean", "custom"];
-  state.design = valid.includes(design) ? design : "liquid";
-  document.documentElement.dataset.design = state.design;
-  document.body?.setAttribute("data-design", state.design);
-
-  $$("[data-design-choice]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.designChoice === state.design);
-  });
-
-  const customWrap = $("#app-custom-bg-wrap");
-  if (customWrap) {
-    customWrap.classList.toggle("hidden", state.design !== "custom");
-  }
-
-  applyCustomAppBg();
-  updateBrandTexts();
-  try { localStorage.setItem(DESIGN_KEY, state.design); } catch (_) {}
-}
-
-function setPatternDensity(mode) {
-  state.pattern = mode === "soft" ? "soft" : "bold";
-  document.documentElement.dataset.pattern = state.pattern;
-  $$("[data-pattern-choice]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.patternChoice === state.pattern);
-  });
-  try { localStorage.setItem(PATTERN_KEY, state.pattern); } catch (_) {}
-}
-
-function setDefaultPeriod(mode) {
-  state.defaultPeriod = mode === "28days" ? "28days" : "month";
-  $$("[data-default-period]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.defaultPeriod === state.defaultPeriod);
-  });
-  try { localStorage.setItem(DEFAULT_PERIOD_KEY, state.defaultPeriod); } catch (_) {}
-  setPeriodMode(state.defaultPeriod);
-}
-
-function updateBrandTexts() {
-  const brandMark = $("#brand-mark");
-  const brandSub = $("#brand-sub");
-  const darkLike = isDarkLikeTheme(state.theme);
-
-  if (state.design === "cats") {
-    if (brandMark) brandMark.textContent = darkLike ? "🐱" : "🐈‍⬛";
-    if (brandSub) brandSub.textContent = "маркерные котики · ФПИ";
-  } else if (state.design === "zolo") {
-    if (brandMark) brandMark.textContent = "👑";
-    if (brandSub) brandSub.textContent = "золотой резерв 2004";
-  } else if (state.design === "cyber") {
-    if (brandMark) brandMark.textContent = "⚡";
-    if (brandSub) brandSub.textContent = "cyber ledger v2.6";
-  } else {
-    if (brandMark) brandMark.textContent = "ФПИ";
-    if (brandSub) brandSub.textContent = "личный финансовый дневник";
-  }
-}
-
-/* ================= КАРУСЕЛЬ 3 БАНКОВСКИХ КАРТ ================= */
-
-function getCardMonthOutflow(cardId) {
-  const monthPrefix = localISODate().slice(0, 7);
-  return roundMoney(
-    state.expenses
-      .filter(tx => tx.cardId === cardId && tx.type !== "income" && String(tx.date || "").startsWith(monthPrefix))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-  );
-}
-
-function renderCardsCarousel() {
-  const track = $("#cards-track");
-  if (!track) return;
-
-  const networth = roundMoney(state.cards.reduce((sum, c) => sum + (Number(c.balance) || 0), 0));
-  const networthEl = $("#total-networth");
-  if (networthEl) networthEl.textContent = money(networth);
-
-  track.innerHTML = state.cards.map((card, idx) => {
-    const outflow = getCardMonthOutflow(card.id);
+  deck.innerHTML = state.cards.map((card, idx) => {
+    const pos = (idx - state.activeCardSlot + 3) % 3;
     const customStyle = card.skin === "custom" && card.customBg
       ? `style="--card-custom-img: url('${escapeHTML(card.customBg)}')"`
       : "";
-    const logoText = (card.bank || "ФПИ").trim().slice(0, 3).toUpperCase();
 
     return `
-      <article class="bank-card" data-card-index="${idx}" data-skin="${escapeHTML(card.skin)}" ${customStyle}>
-        <div class="fpi-card-top">
-          <div class="fpi-brand-wrap">
-            <div class="fpi-logo-shield">${escapeHTML(logoText)}</div>
-            <div>
-              <div class="fpi-bank-title">${escapeHTML(card.bank || "ФПИ БАНК")}</div>
-              <div class="fpi-bank-subtitle">${escapeHTML(card.subtitle || "PERSONAL VIP CARD")}</div>
-            </div>
-          </div>
-          <div class="card-top-actions">
-            <button class="card-action-pill" type="button" data-customize-card="${idx}" title="Настроить дизайн и счёт">
-              🎨 Дизайн и счёт
-            </button>
-          </div>
+      <article class="bank-card" data-slot="${idx}" data-pos="${pos}" data-skin="${escapeHTML(card.skin)}" ${customStyle}>
+        <svg class="card-wave-svg" viewBox="0 0 340 214" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 165 Q110 85 210 135 T340 35 L340 214 L0 214 Z" fill="rgba(255,255,255,0.12)"/>
+        </svg>
+        <div class="card-top-row">
+          <span class="card-bank-name">${escapeHTML(card.bank || "ФПИ БАНК")}</span>
+          <button class="card-edit-trigger" type="button" data-edit-card="${idx}" aria-label="Настроить карту">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
         </div>
-
-        <div class="fpi-chip-row">
-          <div class="fpi-emv-chip" aria-hidden="true"></div>
-          <div class="fpi-card-number">2204 •••• •••• ${escapeHTML(card.digits || "2004")}</div>
+        <div class="card-mid-row">
+          <div class="emv-chip"></div>
+          <svg class="nfc-icon" viewBox="0 0 24 24" stroke-linecap="round">
+            <path d="M8.5 14.5A4 4 0 0 0 8.5 9.5M12 17a7.5 7.5 0 0 0 0-10M15.5 19.5a11 11 0 0 0 0-15"/>
+          </svg>
         </div>
-
-        <div class="card-MainBottom">
-          <div class="card-balance-block">
-            <div class="card-balance-caption">
-              <span>${escapeHTML(card.name)}</span>
-            </div>
-            <div class="card-balance-row" data-edit-balance="${idx}" title="Нажмите, чтобы вписать баланс">
-              <span class="card-balance-amount">${money(card.balance)}</span>
-              <span class="card-edit-badge">✎</span>
-            </div>
+        <div class="card-bottom-row">
+          <div>
+            <div class="card-name-sub">${escapeHTML(card.name)}</div>
+            <div class="card-balance">${money(card.balance)}</div>
           </div>
-          <div class="card-month-Outflow">
-            <div>Траты за мес.</div>
-            <strong>−${money(outflow)}</strong>
-          </div>
+          <div class="card-digits">•••• ${escapeHTML(card.digits || "2004")}</div>
         </div>
       </article>
     `;
   }).join("");
 
-  // Обновляем подписи на чипсах-фильтрах (на главной и в аналитике) и в диалоге операции
-  state.cards.forEach((card, idx) => {
-    const pill = $(`#filter-pill-${idx}`);
-    if (pill) pill.textContent = card.name;
-    const analyticsPill = $(`#analytics-pill-${idx}`);
-    if (analyticsPill) analyticsPill.textContent = card.name;
-  });
+  $$("[data-deck-dot]").forEach((dot, i) => dot.classList.toggle("active", i === state.activeCardSlot));
 
-  $$("#expense-card-selector [data-select-card]").forEach((btn, idx) => {
-    if (state.cards[idx]) {
-      btn.textContent = state.cards[idx].name;
+  state.cards.forEach((c, i) => {
+    const anPill = $(`#an-pill-${i}`);
+    if (anPill) anPill.textContent = c.name;
+    const selBtn = $(`#expense-card-selector [data-select-card="${c.id}"]`);
+    if (selBtn) selBtn.textContent = c.name;
+  });
+}
+
+function cycleCard(dir = 1) {
+  const deck = $("#card-deck");
+  const front = deck?.querySelector('.bank-card[data-pos="0"]');
+  if (front) {
+    front.classList.add(dir > 0 ? "exit-left" : "exit-right");
+  }
+  setTimeout(() => {
+    state.activeCardSlot = (state.activeCardSlot + dir + 3) % 3;
+    renderCardDeck();
+  }, 160);
+}
+
+function initDeckGestures() {
+  const deck = $("#card-deck");
+  if (!deck) return;
+
+  let startX = 0;
+  let currentX = 0;
+  let dragging = false;
+  let activeEl = null;
+
+  deck.addEventListener("pointerdown", e => {
+    if (e.target.closest("[data-edit-card]")) return;
+    const card = e.target.closest(".bank-card");
+    if (!card) return;
+    if (card.dataset.pos !== "0") {
+      state.activeCardSlot = Number(card.dataset.slot);
+      renderCardDeck();
+      return;
     }
+    dragging = true;
+    activeEl = card;
+    startX = e.clientX;
+    currentX = 0;
+    activeEl.classList.add("dragging");
+    activeEl.setPointerCapture?.(e.pointerId);
   });
 
-  updateCarouselIndicators(state.activeCardSlot);
-}
-
-function updateCarouselIndicators(slot) {
-  const index = Math.max(0, Math.min(2, Number(slot) || 0));
-  state.activeCardSlot = index;
-
-  $$("#carousel-dots [data-card-dot]").forEach((dot, idx) => {
-    dot.classList.toggle("active", idx === index);
+  deck.addEventListener("pointermove", e => {
+    if (!dragging || !activeEl) return;
+    currentX = e.clientX - startX;
+    const rot = Math.max(-8, Math.min(8, currentX * 0.03));
+    activeEl.style.transform = `translate3d(${currentX}px, 0, 0) rotate(${rot}deg)`;
   });
 
-  const indicator = $("#active-card-indicator");
-  if (indicator && state.cards[index]) {
-    indicator.textContent = `${state.cards[index].name} (${index + 1} из 3) · свайп ›`;
-  }
-}
-
-function scrollToCardSlot(slot) {
-  const track = $("#cards-track");
-  const cardEl = track?.querySelector(`[data-card-index="${slot}"]`);
-  if (cardEl && track) {
-    track.scrollTo({ left: cardEl.offsetLeft - 18, behavior: "smooth" });
-    updateCarouselIndicators(slot);
-  }
-}
-
-/* ================= ОКНО КАСТОМИЗАЦИИ КАРТЫ И БАЛАНСА ================= */
-
-function loadCardIntoCustomizer(slot) {
-  const idx = Math.max(0, Math.min(2, Number(slot) || 0));
-  state.editingCardSlot = idx;
-  const card = state.cards[idx] || getDefaultCards()[idx];
-
-  state.editingCardSkin = card.skin || "fpi-purple";
-  state.editingCardCustomBg = card.customBg || "";
-
-  $$("[data-edit-card-slot]").forEach(btn => {
-    btn.classList.toggle("selected", Number(btn.dataset.editCardSlot) === idx);
-    const c = state.cards[Number(btn.dataset.editCardSlot)];
-    if (c) btn.textContent = c.name;
-  });
-
-  const balInput = $("#card-balance-input");
-  const nameInput = $("#card-name-input");
-  const bankInput = $("#card-bank-input");
-  const digitsInput = $("#card-digits-input");
-  const bgUrlInput = $("#card-bg-url");
-
-  if (balInput) balInput.value = String(card.balance);
-  if (nameInput) nameInput.value = card.name;
-  if (bankInput) bankInput.value = card.bank;
-  if (digitsInput) digitsInput.value = card.digits;
-  if (bgUrlInput) bgUrlInput.value = card.customBg.startsWith("data:") ? "" : card.customBg;
-
-  selectCardSkinInModal(state.editingCardSkin);
-  updateCardPreviewInModal();
-}
-
-function selectCardSkinInModal(skin) {
-  state.editingCardSkin = skin;
-  $$("#card-skins-grid [data-card-skin]").forEach(tile => {
-    tile.classList.toggle("selected", tile.dataset.cardSkin === skin);
-  });
-  const customWrap = $("#card-custom-image-wrap");
-  if (customWrap) {
-    customWrap.classList.toggle("hidden", skin !== "custom");
-  }
-  updateCardPreviewInModal();
-}
-
-function updateCardPreviewInModal() {
-  const preview = $("#card-preview-box");
-  if (!preview) return;
-
-  const name = ($("#card-name-input")?.value || "Моя карта").trim();
-  const bank = ($("#card-bank-input")?.value || "ФПИ БАНК").trim();
-  const digits = ($("#card-digits-input")?.value || "2004").replace(/\D/g, "").slice(-4) || "2004";
-  const balance = Number($("#card-balance-input")?.value) || 0;
-
-  preview.dataset.skin = state.editingCardSkin;
-  if (state.editingCardSkin === "custom" && state.editingCardCustomBg) {
-    preview.style.setProperty("--card-custom-img", `url("${state.editingCardCustomBg.replace(/"/g, '\\"')}")`);
-  } else {
-    preview.style.removeProperty("--card-custom-img");
-  }
-
-  const logoEl = $("#preview-card-logo");
-  const bankEl = $("#preview-card-bank");
-  const digitsEl = $("#preview-card-digits");
-  const nameEl = $("#preview-card-name");
-  const balEl = $("#preview-card-balance");
-
-  if (logoEl) logoEl.textContent = bank.slice(0, 3).toUpperCase();
-  if (bankEl) bankEl.textContent = bank.toUpperCase();
-  if (digitsEl) digitsEl.textContent = `2204 •••• •••• ${digits}`;
-  if (nameEl) nameEl.textContent = name;
-  if (balEl) balEl.textContent = money(balance);
-}
-
-function openCardCustomizer(slot = state.activeCardSlot, focusBalance = false) {
-  loadCardIntoCustomizer(slot);
-  const dlg = $("#card-dialog");
-  if (dlg && !dlg.open) dlg.showModal();
-  if (focusBalance) {
-    setTimeout(() => {
-      const inp = $("#card-balance-input");
-      if (inp) {
-        inp.focus();
-        inp.select();
-      }
-    }, 70);
-  }
-}
-
-async function saveCardCustomization(event) {
-  event.preventDefault();
-  const idx = state.editingCardSlot;
-  const current = state.cards[idx];
-  if (!current) return;
-
-  const balance = roundMoney(Number($("#card-balance-input")?.value) || 0);
-  const name = ($("#card-name-input")?.value || "").trim() || current.name;
-  const bank = ($("#card-bank-input")?.value || "").trim() || "ФПИ БАНК";
-  const digits = ($("#card-digits-input")?.value || "").replace(/\D/g, "").slice(-4) || "2004";
-  const urlVal = ($("#card-bg-url")?.value || "").trim();
-  const customBg = urlVal || state.editingCardCustomBg || "";
-
-  const updatedCard = {
-    ...current,
-    name,
-    bank,
-    digits,
-    balance,
-    skin: state.editingCardSkin,
-    customBg,
-    updatedAt: Date.now()
-  };
-
-  state.cards[idx] = updatedCard;
-  writeLocal();
-  renderAll();
-  $("#card-dialog")?.close();
-  scrollToCardSlot(idx);
-  showToast(`Карта «${name}» обновлена`);
-
-  await syncCardToCloud(updatedCard);
-}
-
-async function syncCardToCloud(card) {
-  if (!firestore || !firebaseFns) return;
-  try {
-    setSyncStatus("busy", "Сохраняю…");
-    await firebaseFns.setDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "cards", card.id), card);
-    setSyncStatus("online", "Онлайн");
-  } catch (err) {
-    console.warn("Не удалось синхронизировать карту:", err);
-  }
-}
-
-async function adjustCardBalanceByDelta(cardId, delta) {
-  const idx = state.cards.findIndex(c => c.id === cardId);
-  if (idx === -1 || !delta) return;
-  state.cards[idx] = {
-    ...state.cards[idx],
-    balance: roundMoney((Number(state.cards[idx].balance) || 0) + delta),
-    updatedAt: Date.now()
-  };
-  writeLocal();
-  await syncCardToCloud(state.cards[idx]);
-}
-
-/* ================= СПИСОК РАСХОДОВ НА ГЛАВНОМ ЭКРАНЕ ================= */
-
-function renderHomeExpenses() {
-  const list = $("#expense-list");
-  if (!list) return;
-
-  const filtered = state.expenses.filter(item => {
-    if (state.filterCardId === "all") return true;
-    return item.cardId === state.filterCardId;
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    const dateCmp = String(b.date || "").localeCompare(String(a.date || ""));
-    return dateCmp || Number(b.createdAt || 0) - Number(a.createdAt || 0);
-  });
-
-  const monthPrefix = localISODate().slice(0, 7);
-  const monthSpent = roundMoney(
-    filtered
-      .filter(tx => tx.type !== "income" && String(tx.date || "").startsWith(monthPrefix))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-  );
-
-  const totalEl = $("#home-period-total");
-  if (totalEl) totalEl.textContent = `−${money(monthSpent)} за месяц`;
-
-  const titleEl = $("#expenses-list-title");
-  if (titleEl) {
-    const cardObj = state.cards.find(c => c.id === state.filterCardId);
-    titleEl.textContent = cardObj ? `Операции · ${cardObj.name}` : "Все операции";
-  }
-
-  if (!sorted.length) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-symbol">💳</div>
-        <div class="empty-title">Пока нет операций</div>
-        <div class="empty-text">Нажми «+» внизу экрана, чтобы записать расход или пополнение карты.</div>
-      </div>`;
-    return;
-  }
-
-  let lastDate = "";
-  const html = [];
-  let idx = 0;
-
-  for (const item of sorted) {
-    const date = item.date || "";
-    if (date !== lastDate) {
-      const daySum = roundMoney(
-        sorted
-          .filter(x => x.date === date && x.type !== "income")
-          .reduce((s, x) => s + (Number(x.amount) || 0), 0)
-      );
-      html.push(`
-        <div class="day-label">
-          <span>${escapeHTML(dateLabel(date))}</span>
-          <span>${daySum > 0 ? `−${money(daySum)}` : ""}</span>
-        </div>
-      `);
-      lastDate = date;
-    }
-
-    const cat = CATEGORIES[item.category] || CATEGORIES.other;
-    const cardObj = state.cards.find(c => c.id === item.cardId) || state.cards[0];
-    const isIncome = item.type === "income";
-    const sign = isIncome ? "+" : "−";
-    const delayIdx = Math.min(idx++, 12);
-
-    html.push(`
-      <button class="expense-row" style="--i:${delayIdx}" type="button" data-expense-id="${escapeHTML(item.id)}">
-        <span class="category-icon" style="background: color-mix(in srgb, ${cat.color} 18%, var(--surface-2));">${cat.emoji}</span>
-        <span class="expense-copy">
-          <span class="expense-title">${escapeHTML(item.description || cat.label)}</span>
-          <span class="expense-meta">
-            <span class="expense-card-tag">${escapeHTML(cardObj?.name || "ФПИ")}</span>
-            <span>${escapeHTML(cat.label)}</span>
-          </span>
-        </span>
-        <span class="expense-right">
-          <span class="expense-amount ${isIncome ? "income" : ""}">${sign}${money(item.amount)}</span>
-          <span class="expense-date">${escapeHTML(shortDate(date))}</span>
-        </span>
-      </button>
-    `);
-  }
-
-  list.innerHTML = html.join("");
-}
-
-/* ================= ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ОПЕРАЦИИ ================= */
-
-function setTxType(type) {
-  state.txType = type === "income" ? "income" : "expense";
-  $$("[data-tx-type]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.txType === state.txType);
-  });
-}
-
-function setTxCard(cardId) {
-  state.txCardId = cardId;
-  $$("[data-select-card]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.selectCard === cardId);
-  });
-}
-
-function setTxCategory(cat) {
-  state.txCategory = CATEGORIES[cat] ? cat : "other";
-  $$("#category-grid [data-category]").forEach(btn => {
-    btn.classList.toggle("selected", btn.dataset.category === state.txCategory);
-  });
-}
-
-function openNewExpense() {
-  state.editingExpenseId = null;
-  $("#expense-form")?.reset();
-  $("#expense-id").value = "";
-  $("#expense-date").value = localISODate();
-  $("#expense-dialog-title").textContent = "Новая операция";
-  $("#expense-save").textContent = "Сохранить";
-  $("#expense-delete")?.classList.add("hidden");
-  $("#expense-error").textContent = "";
-
-  setTxType("expense");
-  const defaultCardId = state.filterCardId !== "all"
-    ? state.filterCardId
-    : (state.cards[state.activeCardSlot]?.id || "card_1");
-  setTxCard(defaultCardId);
-  setTxCategory("food");
-
-  $("#expense-dialog")?.showModal();
-  setTimeout(() => $("#expense-amount")?.focus(), 70);
-}
-
-function openEditExpense(id) {
-  const item = state.expenses.find(e => e.id === id);
-  if (!item) return;
-
-  state.editingExpenseId = item.id;
-  $("#expense-id").value = item.id;
-  $("#expense-amount").value = String(item.amount);
-  $("#expense-description").value = item.description || "";
-  $("#expense-date").value = item.date || localISODate();
-  $("#expense-dialog-title").textContent = "Редактировать операцию";
-  $("#expense-save").textContent = "Сохранить изменения";
-  $("#expense-delete")?.classList.remove("hidden");
-  $("#expense-error").textContent = "";
-
-  setTxType(item.type === "income" ? "income" : "expense");
-  setTxCard(item.cardId || "card_1");
-  setTxCategory(item.category || "other");
-
-  $("#expense-dialog")?.showModal();
-}
-
-async function saveExpense(event) {
-  event.preventDefault();
-  const amount = roundMoney(Number($("#expense-amount")?.value));
-  const date = $("#expense-date")?.value;
-  const errEl = $("#expense-error");
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    if (errEl) errEl.textContent = "Введите сумму больше нуля.";
-    return;
-  }
-  if (!date) {
-    if (errEl) errEl.textContent = "Укажите дату операции.";
-    return;
-  }
-
-  const id = $("#expense-id")?.value || (crypto.randomUUID ? crypto.randomUUID() : `tx_${Date.now()}_${Math.random().toString(16).slice(2, 7)}`);
-  const existing = state.expenses.find(item => item.id === id);
-  const timestamp = Date.now();
-
-  const newTx = {
-    id,
-    type: state.txType,
-    amount,
-    cardId: state.txCardId,
-    category: state.txCategory,
-    description: ($("#expense-description")?.value || "").trim(),
-    date,
-    createdAt: existing ? Number(existing.createdAt) : timestamp,
-    updatedAt: timestamp
-  };
-
-  // Автоматическая корректировка баланса карты
-  if (existing) {
-    const oldDelta = existing.type === "income" ? -existing.amount : existing.amount;
-    await adjustCardBalanceByDelta(existing.cardId, oldDelta);
-  }
-  const newDelta = newTx.type === "income" ? newTx.amount : -newTx.amount;
-  await adjustCardBalanceByDelta(newTx.cardId, newDelta);
-
-  try {
-    if (firestore && firebaseFns) {
-      setSyncStatus("busy", "Сохраняю…");
-      await firebaseFns.setDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "expenses", id), newTx);
+  const finishDrag = () => {
+    if (!dragging || !activeEl) return;
+    dragging = false;
+    activeEl.classList.remove("dragging");
+    if (Math.abs(currentX) > 55) {
+      const dir = currentX < 0 ? 1 : -1;
+      activeEl.style.transform = "";
+      cycleCard(dir);
     } else {
-      if (existing) {
-        state.expenses = state.expenses.map(row => row.id === id ? newTx : row);
-      } else {
-        state.expenses.push(newTx);
-      }
-      writeLocal();
+      activeEl.style.transform = "";
     }
-    renderAll();
-    $("#expense-dialog")?.close();
-    showToast(existing ? "Операция обновлена" : (newTx.type === "income" ? "Баланс пополнен" : "Расход записан"));
-    setSyncStatus("online", "Онлайн");
-  } catch (error) {
-    console.error(error);
-    if (errEl) errEl.textContent = "Ошибка сохранения в облако.";
-  }
-}
-
-async function deleteCurrentExpense() {
-  const id = $("#expense-id")?.value;
-  if (!id) return;
-  const existing = state.expenses.find(item => item.id === id);
-  if (!existing) return;
-  if (!confirm("Удалить эту операцию? Баланс карты будет восстановлен.")) return;
-
-  const restoreDelta = existing.type === "income" ? -existing.amount : existing.amount;
-  await adjustCardBalanceByDelta(existing.cardId, restoreDelta);
-
-  try {
-    if (firestore && firebaseFns) {
-      setSyncStatus("busy", "Удаляю…");
-      await firebaseFns.deleteDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "expenses", id));
-    } else {
-      state.expenses = state.expenses.filter(item => item.id !== id);
-      writeLocal();
-    }
-    renderAll();
-    $("#expense-dialog")?.close();
-    showToast("Операция удалена");
-    setSyncStatus("online", "Онлайн");
-  } catch (_) {
-    showToast("Не удалось удалить операцию");
-  }
-}
-
-/* ================= ВКЛАДКА 2: АНАЛИТИКА (РАДИАЛЬНОЕ МЕНЮ + КАЛЕНДАРЬ + 28 ДНЕЙ) ================= */
-
-function setPeriodMode(mode) {
-  state.periodMode = mode === "28days" ? "28days" : "month";
-  state.selectedAnalyticsCategory = null;
-
-  $$("[data-period-mode]").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.periodMode === state.periodMode);
-  });
-
-  const prevBtn = $("#month-prev");
-  const nextBtn = $("#month-next");
-  if (prevBtn && nextBtn) {
-    const hideArrows = state.periodMode === "28days";
-    prevBtn.style.visibility = hideArrows ? "hidden" : "visible";
-    nextBtn.style.visibility = hideArrows ? "hidden" : "visible";
-  }
-
-  renderAnalytics();
-}
-
-function shiftAnalyticsMonth(delta) {
-  const [y, m] = state.analyticsMonth.split("-").map(Number);
-  const d = new Date(y, m - 1 + delta, 1);
-  state.analyticsMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-  state.selectedAnalyticsCategory = null;
-  renderAnalytics();
-}
-
-function getPeriodRange() {
-  if (state.periodMode === "28days") {
-    const end = new Date();
-    const start = new Date(Date.now() - 27 * 86400000);
-    const startISO = localISODate(start);
-    const endISO = localISODate(end);
-    const label = `Последние 28 дней (${shortDate(startISO)} — ${shortDate(endISO)})`;
-    return { startISO, endISO, daysCount: 28, label };
-  }
-
-  const [y, m] = state.analyticsMonth.split("-").map(Number);
-  const firstDay = new Date(y, m - 1, 1);
-  const lastDay = new Date(y, m, 0);
-  const startISO = localISODate(firstDay);
-  const endISO = localISODate(lastDay);
-  const rawName = firstDay.toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
-  const label = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-  return { startISO, endISO, daysCount: lastDay.getDate(), label, year: y, month: m };
-}
-
-function getPeriodExpenses() {
-  const { startISO, endISO } = getPeriodRange();
-  return state.expenses.filter(tx => {
-    if (tx.type === "income") return false;
-    if (state.analyticsCardId !== "all" && tx.cardId !== state.analyticsCardId) return false;
-    const d = String(tx.date || "");
-    return d >= startISO && d <= endISO;
-  });
-}
-
-function renderRadialChart(periodExpenses, totalSpent) {
-  const segGroup = $("#radial-segments");
-  const chipsWrap = $("#radial-chips");
-  const centerTitle = $("#radial-center-title");
-  const centerAmount = $("#radial-center-amount");
-  const centerSub = $("#radial-center-sub");
-  if (!segGroup || !chipsWrap) return;
-
-  const radius = 84;
-  const circumference = 2 * Math.PI * radius;
-
-  const byCat = {};
-  for (const tx of periodExpenses) {
-    const key = CATEGORIES[tx.category] ? tx.category : "other";
-    byCat[key] = roundMoney((byCat[key] || 0) + (Number(tx.amount) || 0));
-  }
-
-  const entries = Object.entries(byCat)
-    .filter(([, sum]) => sum > 0)
-    .sort((a, b) => b[1] - a[1]);
-
-  if (!entries.length || totalSpent <= 0) {
-    segGroup.innerHTML = "";
-    chipsWrap.innerHTML = `<span style="font-size:11px; color:var(--muted);">Нет трат за выбранный период</span>`;
-    if (centerTitle) centerTitle.textContent = "Потрачено";
-    if (centerAmount) centerAmount.textContent = "0 ₽";
-    if (centerSub) centerSub.textContent = state.periodMode === "28days" ? "За 28 дней" : "За месяц";
-    return;
-  }
-
-  let cumulativeFraction = 0;
-  const gapPx = entries.length > 1 ? 6 : 0;
-
-  segGroup.innerHTML = entries.map(([catKey, sum]) => {
-    const cat = CATEGORIES[catKey] || CATEGORIES.other;
-    const fraction = sum / totalSpent;
-    const arcLen = Math.max(4, fraction * circumference - gapPx);
-    const dashArray = `${arcLen} ${circumference}`;
-    const dashOffset = -(cumulativeFraction * circumference);
-    cumulativeFraction += fraction;
-    const isSelected = state.selectedAnalyticsCategory === catKey;
-
-    return `
-      <circle
-        class="radial-segment ${isSelected ? "active" : ""}"
-        cx="110"
-        cy="110"
-        r="${radius}"
-        stroke="${cat.color}"
-        stroke-dasharray="${dashArray}"
-        stroke-dashoffset="${dashOffset}"
-        data-radial-cat="${catKey}"
-      />
-    `;
-  }).join("");
-
-  chipsWrap.innerHTML = entries.map(([catKey, sum]) => {
-    const cat = CATEGORIES[catKey] || CATEGORIES.other;
-    const pct = Math.round((sum / totalSpent) * 100);
-    const isSelected = state.selectedAnalyticsCategory === catKey;
-    return `
-      <button class="radial-chip ${isSelected ? "active" : ""}" type="button" data-radial-cat="${catKey}">
-        <span class="radial-chip-dot" style="background:${cat.color}"></span>
-        <span>${cat.emoji} ${escapeHTML(cat.label)} ${pct}%</span>
-      </button>
-    `;
-  }).join("");
-
-  // Центральная подпись внутри радиального кольца
-  const activeKey = state.selectedAnalyticsCategory;
-  const selectedCardObj = state.cards.find(c => c.id === state.analyticsCardId);
-  const cardScopeLabel = selectedCardObj ? selectedCardObj.name : "Все карты";
-
-  if (activeKey && byCat[activeKey]) {
-    const cat = CATEGORIES[activeKey] || CATEGORIES.other;
-    const pct = Math.round((byCat[activeKey] / totalSpent) * 100);
-    if (centerTitle) centerTitle.textContent = `${cat.emoji} ${cat.label}`;
-    if (centerAmount) centerAmount.textContent = money(byCat[activeKey]);
-    if (centerSub) centerSub.textContent = `${pct}% · ${cardScopeLabel}`;
-  } else {
-    if (centerTitle) centerTitle.textContent = selectedCardObj ? `Траты · ${selectedCardObj.name}` : "Всего потрачено";
-    if (centerAmount) centerAmount.textContent = money(totalSpent);
-    if (centerSub) centerSub.textContent = state.periodMode === "28days" ? `${cardScopeLabel} · 28 дней` : `${cardScopeLabel} · за месяц`;
-  }
-}
-
-function renderCalendar(periodExpenses) {
-  const grid = $("#calendar-grid");
-  if (!grid) return;
-
-  const range = getPeriodRange();
-  const todayISO = localISODate();
-
-  // Группируем расходы по дате YYYY-MM-DD
-  const byDate = {};
-  for (const tx of periodExpenses) {
-    const d = tx.date;
-    if (!d) continue;
-    if (!byDate[d]) byDate[d] = { sum: 0, colors: [], items: [] };
-    byDate[d].sum = roundMoney(byDate[d].sum + (Number(tx.amount) || 0));
-    const color = (CATEGORIES[tx.category] || CATEGORIES.other).color;
-    if (byDate[d].colors.length < 4 && !byDate[d].colors.includes(color)) {
-      byDate[d].colors.push(color);
-    }
-    byDate[d].items.push(tx);
-  }
-
-  const cells = [];
-
-  if (state.periodMode === "28days") {
-    const startObj = new Date(`${range.startISO}T12:00:00`);
-    const startWeekday = (startObj.getDay() + 6) % 7; // Пн = 0 .. Вс = 6
-    for (let i = 0; i < startWeekday; i++) {
-      cells.push(`<div class="cal-day empty"></div>`);
-    }
-    for (let i = 0; i < 28; i++) {
-      const cur = new Date(startObj.getTime() + i * 86400000);
-      const iso = localISODate(cur);
-      const dayNum = cur.getDate();
-      const info = byDate[iso];
-      const isToday = iso === todayISO;
-      const isSelected = iso === state.selectedCalendarDate;
-      const dotsHTML = info
-        ? info.colors.map(c => `<span class="cal-dot" style="background:${c}"></span>`).join("")
-        : "";
-
-      cells.push(`
-        <button class="cal-day ${info ? "has-spend" : ""} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}" type="button" data-cal-date="${iso}">
-          <span class="cal-day-num">${dayNum}</span>
-          <span class="cal-day-sum">${info ? compactMoney(info.sum) : "·"}</span>
-          <span class="cal-dots">${dotsHTML}</span>
-        </button>
-      `);
-    }
-  } else {
-    const firstObj = new Date(range.year, range.month - 1, 1);
-    const startWeekday = (firstObj.getDay() + 6) % 7;
-    for (let i = 0; i < startWeekday; i++) {
-      cells.push(`<div class="cal-day empty"></div>`);
-    }
-    for (let day = 1; day <= range.daysCount; day++) {
-      const iso = `${ state.analyticsMonth }-${String(day).padStart(2, "0")}`;
-      const info = byDate[iso];
-      const isToday = iso === todayISO;
-      const isSelected = iso === state.selectedCalendarDate;
-      const dotsHTML = info
-        ? info.colors.map(c => `<span class="cal-dot" style="background:${c}"></span>`).join("")
-        : "";
-
-      cells.push(`
-        <button class="cal-day ${info ? "has-spend" : ""} ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}" type="button" data-cal-date="${iso}">
-          <span class="cal-day-num">${day}</span>
-          <span class="cal-day-sum">${info ? compactMoney(info.sum) : "·"}</span>
-          <span class="cal-dots">${dotsHTML}</span>
-        </button>
-      `);
-    }
-  }
-
-  grid.innerHTML = cells.join("");
-  renderSelectedCalendarDay(byDate);
-}
-
-function renderSelectedCalendarDay(byDateMap) {
-  const box = $("#calendar-day-details");
-  const dateEl = $("#cal-selected-date");
-  const totalEl = $("#cal-selected-total");
-  const listEl = $("#cal-detail-list");
-  if (!box || !dateEl || !totalEl || !listEl) return;
-
-  const iso = state.selectedCalendarDate;
-  if (!iso) {
-    box.classList.add("hidden");
-    return;
-  }
-
-  box.classList.remove("hidden");
-  dateEl.textContent = dateLabel(iso);
-
-  const dayData = byDateMap?.[iso] || {
-    sum: 0,
-    items: state.expenses.filter(tx =>
-      tx.date === iso &&
-      tx.type !== "income" &&
-      (state.analyticsCardId === "all" || tx.cardId === state.analyticsCardId)
-    )
+    activeEl = null;
   };
-  const sum = roundMoney(dayData.items.reduce((acc, item) => acc + (Number(item.amount) || 0), 0));
-  totalEl.textContent = sum > 0 ? `−${money(sum)}` : "0 ₽";
 
-  if (!dayData.items.length) {
-    listEl.innerHTML = `<div style="font-size:11px; color:var(--muted);">В этот день расходов не было</div>`;
-    return;
-  }
+  deck.addEventListener("pointerup", finishDrag);
+  deck.addEventListener("pointercancel", finishDrag);
 
-  listEl.innerHTML = dayData.items.map(tx => {
-    const cat = CATEGORIES[tx.category] || CATEGORIES.other;
-    const card = state.cards.find(c => c.id === tx.cardId);
-    return `
-      <div class="cal-detail-item" data-expense-id="${escapeHTML(tx.id)}" style="cursor:pointer;">
-        <span>${cat.emoji} ${escapeHTML(tx.description || cat.label)} <small style="color:var(--muted);">· ${escapeHTML(card?.name || "ФПИ")}</small></span>
-        <strong>−${money(tx.amount)}</strong>
-      </div>
-    `;
-  }).join("");
-}
-
-function renderCategoryBars(periodExpenses, totalSpent, daysCount) {
-  const listEl = $("#category-bars-list");
-  const avgEl = $("#avg-daily-spend");
-  if (!listEl) return;
-
-  const avg = daysCount > 0 ? roundMoney(totalSpent / daysCount) : 0;
-  if (avgEl) avgEl.textContent = `В среднем ${money(avg)} / день`;
-
-  const byCat = {};
-  for (const tx of periodExpenses) {
-    const key = CATEGORIES[tx.category] ? tx.category : "other";
-    byCat[key] = roundMoney((byCat[key] || 0) + (Number(tx.amount) || 0));
-  }
-
-  const entries = Object.entries(byCat)
-    .filter(([, sum]) => sum > 0)
-    .sort((a, b) => b[1] - a[1]);
-
-  if (!entries.length) {
-    listEl.innerHTML = `<div style="font-size:12px; color:var(--muted); text-align:center; padding:10px 0;">Категории появятся после добавления расходов</div>`;
-    return;
-  }
-
-  listEl.innerHTML = entries.map(([catKey, sum]) => {
-    const cat = CATEGORIES[catKey] || CATEGORIES.other;
-    const pct = totalSpent > 0 ? Math.round((sum / totalSpent) * 100) : 0;
-    return `
-      <div class="cat-bar-row">
-        <div class="cat-bar-top">
-          <span>${cat.emoji} ${escapeHTML(cat.label)} <small style="color:var(--muted);">(${pct}%)</small></span>
-          <strong>${money(sum)}</strong>
-        </div>
-        <div class="cat-bar-track">
-          <div class="cat-bar-fill" style="width:${pct}%; background:${cat.color};"></div>
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-function renderAnalytics() {
-  const range = getPeriodRange();
-  const labelEl = $("#analytics-period-label");
-  if (labelEl) labelEl.textContent = range.label;
-
-  const periodExpenses = getPeriodExpenses();
-  const totalSpent = roundMoney(periodExpenses.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0));
-
-  renderRadialChart(periodExpenses, totalSpent);
-  renderCalendar(periodExpenses);
-  renderCategoryBars(periodExpenses, totalSpent, range.daysCount);
-}
-
-function savePlannerSettings() {
-  try {
-    localStorage.setItem(PLANNER_KEY, JSON.stringify(state.planner));
-  } catch (_) {}
-}
-
-async function checkMonthlyCreditReset() {
-  const currentMonth = localISODate().slice(0, 7);
-  if (!state.planner.autoResetCredit) return;
-  if (!state.planner.lastResetMonth) {
-    state.planner.lastResetMonth = currentMonth;
-    savePlannerSettings();
-    return;
-  }
-  if (state.planner.lastResetMonth !== currentMonth) {
-    state.planner.lastResetMonth = currentMonth;
-    savePlannerSettings();
-    const limit = roundMoney(state.planner.creditLimit || 10000);
-    if (state.cards[0]) {
-      state.cards[0].balance = limit;
-      state.cards[0].updatedAt = Date.now();
-      writeLocal();
-      renderAll();
-      showToast(`1-е число месяца: баланс Кредитки обновлён до ${money(limit)}`);
-      await syncCardToCloud(state.cards[0]);
+  deck.addEventListener("click", e => {
+    const editBtn = e.target.closest("[data-edit-card]");
+    if (editBtn) {
+      e.stopPropagation();
+      openCardModal(Number(editBtn.dataset.editCard));
     }
-  }
+  });
 }
 
-async function resetCreditCardToLimitNow() {
-  const limit = roundMoney(state.planner.creditLimit || 10000);
-  if (!state.cards[0]) return;
-  if (!confirm(`Выставить баланс карты «${state.cards[0].name}» ровно на ${money(limit)}?`)) return;
-  state.cards[0].balance = limit;
-  state.cards[0].updatedAt = Date.now();
-  state.planner.lastResetMonth = localISODate().slice(0, 7);
-  savePlannerSettings();
-  writeLocal();
-  renderAll();
-  showToast(`Баланс Кредитки выставлен на ${money(limit)}`);
-  await syncCardToCloud(state.cards[0]);
-}
+/* ================= ИСПРАВЛЕННЫЙ РАСЧЁТ ДНЕВНОГО ЛИМИТА КРЕДИТКИ ================= */
 
-function calculateCreditCardAnalytics() {
-  const creditCard = state.cards[0] || getDefaultCards()[0];
-  const balance = roundMoney(Number(creditCard.balance) || 0);
+function calculateCreditMath() {
+  const card = state.cards[0] || getDefaultCards()[0];
+  const balance = roundMoney(Number(card.balance) || 0);
   const limit = roundMoney(Number(state.planner.creditLimit) || 10000);
-  const busPrice = roundMoney(Number(state.planner.busPrice) || 0);
-  const homePrice = roundMoney(Number(state.planner.homeTicketPrice) || 0);
+  const busPrice = roundMoney(Number(state.planner.busPrice) || 42);
+  const homePrice = roundMoney(Number(state.planner.homeTicketPrice) || 175);
   const dailyCommuteCost = roundMoney(busPrice + homePrice);
 
   const now = new Date();
@@ -1269,595 +346,701 @@ function calculateCreditCardAnalytics() {
   const todayDate = now.getDate();
   const lastDay = new Date(year, month + 1, 0).getDate();
   const todayISO = localISODate(now);
-  const monthPrefix = todayISO.slice(0, 7);
 
   const daysLeft = Math.max(1, lastDay - todayDate + 1);
-
-  // Считаем будние дни (Пн=1 .. Пт=5) со следующего дня до конца месяца
   let futureWeekdays = 0;
   for (let d = todayDate + 1; d <= lastDay; d++) {
     const dow = new Date(year, month, d).getDay();
     if (dow >= 1 && dow <= 5) futureWeekdays++;
   }
-
   const todayDow = now.getDay();
   const isTodayWeekday = todayDow >= 1 && todayDow <= 5;
   const totalWeekdaysLeft = futureWeekdays + (isTodayWeekday ? 1 : 0);
 
-  // Проверяем, сколько уже потрачено сегодня с кредитки на транспорт и прочее
-  const todayCreditTxs = state.expenses.filter(
+  const todayTxs = state.expenses.filter(
     tx => tx.cardId === "card_1" && tx.type !== "income" && tx.date === todayISO
   );
 
+  // Считаем траты на транспорт и остальные траты за сегодня
+  const todayTotalSpent = roundMoney(todayTxs.reduce((s, tx) => s + (Number(tx.amount) || 0), 0));
   const todayTransportSpent = roundMoney(
-    todayCreditTxs
-      .filter(tx => tx.category === "transport" || /автобус|билет|проезд/i.test(String(tx.description || "")))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+    todayTxs
+      .filter(tx => tx.category === "transport" || /автобус|билет|проезд|вокзал/i.test(String(tx.description || "")))
+      .reduce((s, tx) => s + (Number(tx.amount) || 0), 0)
   );
 
-  const todayOtherSpent = roundMoney(
-    todayCreditTxs
-      .filter(tx => !(tx.category === "transport" || /автобус|билет|проезд/i.test(String(tx.description || ""))))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-  );
-
-  // Если сегодня будний день и проезд ещё не оплачен (или оплачен частично), бронируем остаток сегодняшнего проезда
-  const todayRemainingCommute = isTodayWeekday
-    ? roundMoney(Math.max(0, dailyCommuteCost - todayTransportSpent))
-    : 0;
+  // Бронь покрывает только обязательный будний проезд (до dailyCommuteCost).
+  // Любой обычный проезд сверх 217 ₽ (или любой проезд в выходные) вычитается из свободного дневного лимита!
+  const todayCommuteCovered = isTodayWeekday ? Math.min(todayTransportSpent, dailyCommuteCost) : 0;
+  const todayNonCommuteSpent = roundMoney(todayTotalSpent - todayCommuteCovered);
+  const todayRemainingCommute = isTodayWeekday ? roundMoney(Math.max(0, dailyCommuteCost - todayCommuteCovered)) : 0;
 
   const reservedForCommute = roundMoney(futureWeekdays * dailyCommuteCost + todayRemainingCommute);
   const freeBalance = roundMoney(Math.max(0, balance - reservedForCommute));
-  const shortage = roundMoney(Math.max(0, reservedForCommute - balance));
 
-  const todayTotalSpent = roundMoney(todayTransportSpent + todayOtherSpent);
+  const dailyFreeAllowance = roundMoney(Math.max(0, (freeBalance + todayNonCommuteSpent) / daysLeft));
+  const todayFreeLeft = roundMoney(dailyFreeAllowance - todayNonCommuteSpent);
 
-  // Сколько можно свободно тратить в день сверх проезда:
-  // прибавляем todayOtherSpent к базе деления, чтобы лимит на день не менялся хаотично внутри одного дня
-  const dailyFreeAllowance = roundMoney(Math.max(0, (freeBalance + todayOtherSpent) / daysLeft));
-  const todayFreeLeft = roundMoney(dailyFreeAllowance - todayOtherSpent);
-
-  // Полная сумма в день и остаток на сегодня, если вообще не вычитать дорогу
+  // Полный расчёт без вычета дороги (учитывает ВСЕ сегодняшние траты, включая обычный проезд)
   const dailyFullAllowance = roundMoney(Math.max(0, (balance + todayTotalSpent) / daysLeft));
   const todayFullLeft = roundMoney(dailyFullAllowance - todayTotalSpent);
 
-  const weekdayTotalAllowance = roundMoney(dailyFreeAllowance + dailyCommuteCost);
-
-  const monthSpentOnCredit = roundMoney(
-    state.expenses
-      .filter(tx => tx.cardId === "card_1" && tx.type !== "income" && String(tx.date || "").startsWith(monthPrefix))
-      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
-  );
-
-  const baseScale = Math.max(limit, balance + monthSpentOnCredit, 1);
-  const spentPct = Math.min(100, Math.max(0, ((baseScale - balance) / baseScale) * 100));
-  const reservedPct = Math.min(100 - spentPct, Math.max(0, (reservedForCommute / baseScale) * 100));
+  const base = Math.max(limit, balance, 1);
+  const spentPct = Math.min(100, Math.max(0, ((base - balance) / base) * 100));
+  const reservedPct = Math.min(100 - spentPct, Math.max(0, (reservedForCommute / base) * 100));
   const freePct = Math.max(0, 100 - spentPct - reservedPct);
 
   return {
-    cardName: creditCard.name,
-    balance,
-    limit,
-    busPrice,
-    homePrice,
-    dailyCommuteCost,
-    daysLeft,
-    totalWeekdaysLeft,
-    reservedForCommute,
-    freeBalance,
-    shortage,
-    dailyFreeAllowance,
-    todayFreeLeft,
-    dailyFullAllowance,
-    todayFullLeft,
-    weekdayTotalAllowance,
-    spentAmount: roundMoney(Math.max(0, limit - balance)),
-    spentPct,
-    reservedPct,
-    freePct
+    balance, limit, busPrice, homePrice, dailyCommuteCost,
+    daysLeft, totalWeekdaysLeft, reservedForCommute, freeBalance,
+    dailyFreeAllowance, todayFreeLeft, dailyFullAllowance, todayFullLeft,
+    spentPct, reservedPct, freePct
   };
 }
 
 function renderCreditPlanner() {
-  const info = calculateCreditCardAnalytics();
+  const info = calculateCreditMath();
 
-  // Обновляем цены на быстрых кнопках в диалоге добавления расхода
-  const busEl = $("#preset-bus-price");
-  const homeEl = $("#preset-home-price");
-  const bothEl = $("#preset-both-price");
-  if (busEl) busEl.textContent = money(info.busPrice);
-  if (homeEl) homeEl.textContent = money(info.homePrice);
-  if (bothEl) bothEl.textContent = money(info.dailyCommuteCost);
+  $("#home-daily-free").innerHTML = `${money(info.dailyFreeAllowance)} <span>/ день</span>`;
+  $("#home-daily-full").textContent = money(info.dailyFullAllowance);
 
-  // Синхронизируем поля в настройках
-  const setBus = $("#setting-bus-price");
-  const setHome = $("#setting-home-price");
-  const setLim = $("#setting-credit-limit");
-  if (setBus && document.activeElement !== setBus) setBus.value = String(info.busPrice);
-  if (setHome && document.activeElement !== setHome) setHome.value = String(info.homePrice);
-  if (setLim && document.activeElement !== setLim) setLim.value = String(info.limit);
+  $("#bar-spent").style.width = `${info.spentPct}%`;
+  $("#bar-reserved").style.width = `${info.reservedPct}%`;
+  $("#bar-free").style.width = `${info.freePct}%`;
 
-  $$("[data-auto-reset]").forEach(btn => {
-    btn.classList.toggle("selected", (btn.dataset.autoReset === "true") === state.planner.autoResetCredit);
+  const detFree = $("#det-today-free");
+  detFree.textContent = info.todayFreeLeft >= 0 ? money(info.todayFreeLeft) : `−${money(Math.abs(info.todayFreeLeft))}`;
+  detFree.style.color = info.todayFreeLeft >= 0 ? "var(--green)" : "var(--red)";
+
+  const detFull = $("#det-today-full");
+  detFull.textContent = info.todayFullLeft >= 0 ? money(info.todayFullLeft) : `−${money(Math.abs(info.todayFullLeft))}`;
+  detFull.style.color = info.todayFullLeft >= 0 ? "var(--text)" : "var(--red)";
+
+  $("#det-reserved").textContent = `${money(info.reservedForCommute)} (${info.totalWeekdaysLeft} будн.)`;
+  $("#det-free-bal").textContent = money(info.freeBalance);
+
+  // Аналитика
+  $("#an-daily-free").textContent = `${money(info.dailyFreeAllowance)}/д`;
+  $("#an-daily-full").textContent = `${money(info.dailyFullAllowance)}/д`;
+  $("#an-reserve-line").textContent = `Бронь Пн–Пт: ${money(info.reservedForCommute)} (${info.totalWeekdaysLeft} будн.)`;
+  $("#an-days-line").textContent = `Осталось ${info.daysLeft} дн.`;
+  $("#an-bar-spent").style.width = `${info.spentPct}%`;
+  $("#an-bar-reserved").style.width = `${info.reservedPct}%`;
+  $("#an-bar-free").style.width = `${info.freePct}%`;
+
+  // Кнопки быстрого ввода и настройки
+  $("#preset-bus-price").textContent = money(info.busPrice);
+  $("#preset-home-price").textContent = money(info.homePrice);
+  $("#preset-both-price").textContent = money(info.dailyCommuteCost);
+
+  if (document.activeElement !== $("#setting-bus-price")) $("#setting-bus-price").value = String(info.busPrice);
+  if (document.activeElement !== $("#setting-home-price")) $("#setting-home-price").value = String(info.homePrice);
+  if (document.activeElement !== $("#setting-credit-limit")) $("#setting-credit-limit").value = String(info.limit);
+
+  $$("[data-auto-reset]").forEach(b => b.classList.toggle("active", (b.dataset.autoReset === "true") === state.planner.autoResetCredit));
+  $("#settings-reset-credit-now").textContent = `Выставить баланс ${money(info.limit)} сейчас`;
+}
+
+async function checkMonthlyCreditReset() {
+  const curMonth = localISODate().slice(0, 7);
+  if (!state.planner.autoResetCredit) return;
+  if (!state.planner.lastResetMonth) {
+    state.planner.lastResetMonth = curMonth;
+    savePlanner();
+    return;
+  }
+  if (state.planner.lastResetMonth !== curMonth) {
+    state.planner.lastResetMonth = curMonth;
+    savePlanner();
+    const lim = roundMoney(state.planner.creditLimit || 10000);
+    if (state.cards[0]) {
+      state.cards[0].balance = lim;
+      state.cards[0].updatedAt = Date.now();
+      writeLocal();
+      renderAll();
+      showToast(`1-е число: баланс Кредитки обновлён до ${money(lim)}`);
+      await syncCardToCloud(state.cards[0]);
+    }
+  }
+}
+
+/* ================= ЛЕНТА ОПЕРАЦИЙ (БЕЗ ПЛИТОК) ================= */
+
+function renderHomeExpenses() {
+  const list = $("#expense-list");
+  if (!list) return;
+
+  const filtered = state.expenses.filter(tx => state.filterCardId === "all" || tx.cardId === state.filterCardId);
+  const sorted = [...filtered].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")) || Number(b.createdAt || 0) - Number(a.createdAt || 0));
+
+  const cardObj = state.cards.find(c => c.id === state.filterCardId);
+  $("#home-filter-label").textContent = cardObj ? cardObj.name : "Все операции";
+  $("#home-filter-cycle").classList.toggle("active", state.filterCardId !== "all");
+
+  if (!sorted.length) {
+    list.innerHTML = `<div class="empty-block">Пока нет операций. Нажми «+» внизу, чтобы записать первую трату.</div>`;
+    return;
+  }
+
+  const todayISO = localISODate();
+  let lastDate = "";
+  const html = [];
+  let idx = 0;
+
+  for (const tx of sorted) {
+    const d = tx.date || "";
+    if (d !== lastDate) {
+      if (d !== todayISO || lastDate !== "") {
+        const daySum = roundMoney(sorted.filter(x => x.date === d && x.type !== "income").reduce((s, x) => s + (Number(x.amount) || 0), 0));
+        html.push(`<div class="tx-group-label"><span>${escapeHTML(dateLabel(d))}</span><span>${daySum > 0 ? `−${money(daySum)}` : ""}</span></div>`);
+      }
+      lastDate = d;
+    }
+
+    const cat = CATEGORIES[tx.category] || CATEGORIES.other;
+    const iconSvg = ICONS[tx.category] || ICONS.other;
+    const cObj = state.cards.find(c => c.id === tx.cardId) || state.cards[0];
+    const isInc = tx.type === "income";
+
+    html.push(`
+      <button class="tx-row" style="--i:${Math.min(idx++, 10)}" type="button" data-expense-id="${escapeHTML(tx.id)}">
+        <span class="tx-icon">${iconSvg}</span>
+        <span class="tx-copy">
+          <div class="tx-name">${escapeHTML(tx.description || cat.label)}</div>
+          <div class="tx-sub">${escapeHTML(cObj?.name || "ФПИ")} · ${escapeHTML(cat.label)}</div>
+        </span>
+        <span class="tx-amount ${isInc ? "income" : ""}">${isInc ? "+" : "−"}${money(tx.amount)}</span>
+      </button>
+    `);
+  }
+
+  list.innerHTML = html.join("");
+}
+
+/* ================= АНАЛИТИКА ================= */
+
+function getPeriodRange() {
+  if (state.periodMode === "28days") {
+    const end = new Date();
+    const start = new Date(Date.now() - 27 * 86400000);
+    const startISO = localISODate(start);
+    const endISO = localISODate(end);
+    return { startISO, endISO, daysCount: 28, label: `${shortDate(startISO)} — ${shortDate(endISO)}` };
+  }
+  const [y, m] = state.analyticsMonth.split("-").map(Number);
+  const first = new Date(y, m - 1, 1);
+  const last = new Date(y, m, 0);
+  const raw = first.toLocaleDateString("ru-RU", { month: "long", year: "numeric" });
+  return {
+    startISO: localISODate(first),
+    endISO: localISODate(last),
+    daysCount: last.getDate(),
+    label: raw.charAt(0).toUpperCase() + raw.slice(1),
+    year: y, month: m
+  };
+}
+
+function renderAnalytics() {
+  const range = getPeriodRange();
+  $("#analytics-period-label").textContent = range.label;
+  $("#month-prev").style.visibility = state.periodMode === "28days" ? "hidden" : "visible";
+  $("#month-next").style.visibility = state.periodMode === "28days" ? "hidden" : "visible";
+
+  const txs = state.expenses.filter(tx => {
+    if (tx.type === "income") return false;
+    if (state.analyticsCardId !== "all" && tx.cardId !== state.analyticsCardId) return false;
+    return String(tx.date || "") >= range.startISO && String(tx.date || "") <= range.endISO;
   });
 
-  const resetNowBtn = $("#settings-reset-credit-now");
-  if (resetNowBtn) {
-    resetNowBtn.textContent = `🔄 Выставить на Кредитке ${money(info.limit)} сейчас`;
+  const total = roundMoney(txs.reduce((s, t) => s + (Number(t.amount) || 0), 0));
+
+  // Donut + Legend
+  const byCat = {};
+  for (const t of txs) {
+    const k = CATEGORIES[t.category] ? t.category : "other";
+    byCat[k] = roundMoney((byCat[k] || 0) + (Number(t.amount) || 0));
+  }
+  const entries = Object.entries(byCat).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+
+  const segGroup = $("#radial-segments");
+  const legend = $("#radial-legend");
+  const r = 54;
+  const circ = 2 * Math.PI * r;
+
+  if (!entries.length || total <= 0) {
+    segGroup.innerHTML = "";
+    legend.innerHTML = `<div style="font-size:12px; color:var(--muted);">Нет трат за период</div>`;
+    $("#radial-center-amount").textContent = "0 ₽";
+    $("#radial-center-sub").textContent = "Потрачено";
+  } else {
+    let cum = 0;
+    const gap = entries.length > 1 ? 5 : 0;
+    segGroup.innerHTML = entries.map(([k, v]) => {
+      const frac = v / total;
+      const len = Math.max(3, frac * circ - gap);
+      const offset = -(cum * circ);
+      cum += frac;
+      return `<circle class="donut-seg ${state.selectedAnalyticsCategory === k ? "active" : ""}" cx="70" cy="70" r="${r}" stroke="${CATEGORIES[k].color}" stroke-dasharray="${len} ${circ}" stroke-dashoffset="${offset}" data-radial-cat="${k}"/>`;
+    }).join("");
+
+    legend.innerHTML = entries.slice(0, 5).map(([k, v]) => `
+      <button class="legend-item" type="button" data-radial-cat="${k}">
+        <span class="legend-left">
+          <span class="legend-dot" style="background:${CATEGORIES[k].color}"></span>
+          <span class="legend-name">${CATEGORIES[k].label}</span>
+        </span>
+        <span class="legend-val">${money(v)}</span>
+      </button>
+    `).join("");
+
+    const sel = state.selectedAnalyticsCategory;
+    if (sel && byCat[sel]) {
+      $("#radial-center-amount").textContent = money(byCat[sel]);
+      $("#radial-center-sub").textContent = CATEGORIES[sel].label;
+    } else {
+      $("#radial-center-amount").textContent = money(total);
+      $("#radial-center-sub").textContent = "Потрачено";
+    }
   }
 
-  // 1. Виджет на Главной
-  const homeDailyEl = $("#home-credit-daily-free");
-  const homeDailyFullEl = $("#home-credit-daily-full");
-  const homeNoteEl = $("#home-credit-daily-note");
-  const homeTodayLeftEl = $("#home-credit-today-left");
-  const homeTodayFullEl = $("#home-credit-today-full");
-  const homeFreeSumEl = $("#home-credit-free-sum");
-  const homeResSumEl = $("#home-credit-reserved-sum");
+  // Calendar
+  const byDate = {};
+  for (const t of txs) {
+    if (!t.date) continue;
+    if (!byDate[t.date]) byDate[t.date] = { sum: 0, items: [] };
+    byDate[t.date].sum = roundMoney(byDate[t.date].sum + (Number(t.amount) || 0));
+    byDate[t.date].items.push(t);
+  }
 
-  if (homeDailyEl) homeDailyEl.textContent = `${money(info.dailyFreeAllowance)} / день`;
-  if (homeDailyFullEl) {
-    homeDailyFullEl.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  const todayISO = localISODate();
+  const cells = [];
+  if (state.periodMode === "28days") {
+    const startObj = new Date(`${range.startISO}T12:00:00`);
+    const pad = (startObj.getDay() + 6) % 7;
+    for (let i = 0; i < pad; i++) cells.push(`<div class="cal-cell empty"></div>`);
+    for (let i = 0; i < 28; i++) {
+      const cur = new Date(startObj.getTime() + i * 86400000);
+      const iso = localISODate(cur);
+      const info = byDate[iso];
+      cells.push(`<button class="cal-cell ${iso === todayISO ? "today" : ""} ${iso === state.selectedCalendarDate ? "selected" : ""}" type="button" data-cal-date="${iso}"><span class="cal-num">${cur.getDate()}</span><span class="cal-sum">${info ? compactMoney(info.sum) : ""}</span></button>`);
+    }
+  } else {
+    const firstObj = new Date(range.year, range.month - 1, 1);
+    const pad = (firstObj.getDay() + 6) % 7;
+    for (let i = 0; i < pad; i++) cells.push(`<div class="cal-cell empty"></div>`);
+    for (let d = 1; d <= range.daysCount; d++) {
+      const iso = `${state.analyticsMonth}-${String(d).padStart(2, "0")}`;
+      const info = byDate[iso];
+      cells.push(`<button class="cal-cell ${iso === todayISO ? "today" : ""} ${iso === state.selectedCalendarDate ? "selected" : ""}" type="button" data-cal-date="${iso}"><span class="cal-num">${d}</span><span class="cal-sum">${info ? compactMoney(info.sum) : ""}</span></button>`);
+    }
   }
-  if (homeNoteEl) {
-    homeNoteEl.textContent = info.shortage > 0
-      ? `⚠️ На проезд до конца месяца не хватает ${money(info.shortage)}`
-      : `Свободно сверх проезда (${money(info.weekdayTotalAllowance)}/день в будни с проездом)`;
-  }
-  if (homeTodayLeftEl) {
-    homeTodayLeftEl.textContent = info.todayFreeLeft >= 0 ? money(info.todayFreeLeft) : `−${money(Math.abs(info.todayFreeLeft))}`;
-    homeTodayLeftEl.style.color = info.todayFreeLeft >= 0 ? "var(--green)" : "var(--danger)";
-  }
-  if (homeTodayFullEl) {
-    homeTodayFullEl.textContent = info.todayFullLeft >= 0 ? money(info.todayFullLeft) : `−${money(Math.abs(info.todayFullLeft))}`;
-    homeTodayFullEl.style.color = info.todayFullLeft >= 0 ? "var(--text)" : "var(--danger)";
-  }
-  if (homeFreeSumEl) homeFreeSumEl.textContent = money(info.freeBalance);
-  if (homeResSumEl) homeResSumEl.textContent = `${money(info.reservedForCommute)} (${info.totalWeekdaysLeft} будн.)`;
+  $("#calendar-grid").innerHTML = cells.join("");
 
-  const hSpent = $("#home-bar-spent");
-  const hRes = $("#home-bar-reserved");
-  const hFree = $("#home-bar-free");
-  if (hSpent) hSpent.style.width = `${info.spentPct}%`;
-  if (hRes) hRes.style.width = `${info.reservedPct}%`;
-  if (hFree) hFree.style.width = `${info.freePct}%`;
-
-  // 2. Карточка во вкладке Аналитика
-  const anBadge = $("#an-credit-badge");
-  const anDaily = $("#an-credit-daily-free");
-  const anDailyFull = $("#an-credit-daily-full");
-  const anSub = $("#an-credit-subtitle");
-  const anResetBtn = $("#an-reset-credit-btn");
-  const anSpent = $("#an-credit-spent");
-  const anRes = $("#an-credit-reserved");
-  const anFree = $("#an-credit-free");
-  const anBal = $("#an-credit-balance");
-  const anDays = $("#an-credit-days");
-  const anCommute = $("#an-credit-commute-info");
-  const anWeekday = $("#an-credit-weekday-total");
-
-  if (anBadge) anBadge.textContent = `💳 ${info.cardName} · лимит ${money(info.limit)}`;
-  if (anDaily) anDaily.textContent = `${money(info.dailyFreeAllowance)} / день`;
-  if (anDailyFull) {
-    anDailyFull.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  const detBox = $("#calendar-day-details");
+  const dayData = byDate[state.selectedCalendarDate];
+  if (!state.selectedCalendarDate) {
+    detBox.classList.add("hidden");
+  } else {
+    detBox.classList.remove("hidden");
+    $("#cal-selected-date").textContent = dateLabel(state.selectedCalendarDate);
+    $("#cal-selected-total").textContent = dayData ? `−${money(dayData.sum)}` : "0 ₽";
+    $("#cal-detail-list").innerHTML = dayData?.items.length
+      ? dayData.items.map(t => `
+          <button class="tx-row" type="button" data-expense-id="${escapeHTML(t.id)}" style="padding:9px 0;">
+            <span class="tx-icon" style="width:28px;height:28px;">${ICONS[t.category] || ICONS.other}</span>
+            <span class="tx-copy"><div class="tx-name" style="font-size:13px;">${escapeHTML(t.description || (CATEGORIES[t.category]?.label || "Другое"))}</div></span>
+            <span class="tx-amount" style="font-size:13px;">−${money(t.amount)}</span>
+          </button>`).join("")
+      : `<div style="font-size:12px; color:var(--muted); padding:6px 0;">Расходов не было</div>`;
   }
-  if (anSub) {
-    anSub.textContent = info.shortage > 0
-      ? `Внимание: баланс меньше брони на проезд на ${money(info.shortage)}`
-      : `Безопасный расход сверх автобуса (${money(info.busPrice)}) и билета домой (${money(info.homePrice)})`;
-  }
-  if (anResetBtn) anResetBtn.textContent = `🔄 ${money(info.limit)}`;
-  if (anSpent) anSpent.textContent = money(info.spentAmount);
-  if (anRes) anRes.textContent = money(info.reservedForCommute);
-  if (anFree) anFree.textContent = money(info.freeBalance);
-  if (anBal) anBal.textContent = money(info.balance);
-  if (anDays) anDays.textContent = `${info.daysLeft} дн. (${info.totalWeekdaysLeft} будн.)`;
-  if (anCommute) anCommute.textContent = `${info.totalWeekdaysLeft} × ${money(info.dailyCommuteCost)} = ${money(info.reservedForCommute)}`;
-  if (anWeekday) anWeekday.textContent = `${money(info.weekdayTotalAllowance)} / день`;
+}
 
-  const aSpent = $("#an-bar-spent");
-  const aRes = $("#an-bar-reserved");
-  const aFree = $("#an-bar-free");
-  if (aSpent) aSpent.style.width = `${info.spentPct}%`;
-  if (aRes) aRes.style.width = `${info.reservedPct}%`;
-  if (aFree) aFree.style.width = `${info.freePct}%`;
+/* ================= МОДАЛКИ: ОПЕРАЦИИ И КАРТЫ ================= */
+
+function buildCategoryGrid() {
+  const grid = $("#category-grid");
+  if (!grid) return;
+  grid.innerHTML = Object.entries(CATEGORIES).map(([k, v]) => `
+    <button class="cat-btn ${k === state.txCategory ? "selected" : ""}" type="button" data-category="${k}">
+      ${ICONS[k] || ICONS.other}
+      <span>${v.label}</span>
+    </button>
+  `).join("");
+}
+
+function setTxType(t) {
+  state.txType = t === "income" ? "income" : "expense";
+  $$("[data-tx-type]").forEach(b => b.classList.toggle("active", b.dataset.txType === state.txType));
+}
+function setTxCard(id) {
+  state.txCardId = id;
+  $$("[data-select-card]").forEach(b => b.classList.toggle("active", b.dataset.selectCard === id));
+}
+function setTxCategory(c) {
+  state.txCategory = CATEGORIES[c] ? c : "other";
+  $$("#category-grid [data-category]").forEach(b => b.classList.toggle("selected", b.dataset.category === state.txCategory));
+}
+
+function openNewExpense() {
+  state.editingExpenseId = null;
+  $("#expense-form").reset();
+  $("#expense-id").value = "";
+  $("#expense-date").value = localISODate();
+  $("#expense-dialog-title").textContent = "Новая операция";
+  $("#expense-delete").classList.add("hidden");
+  $("#expense-error").textContent = "";
+  setTxType("expense");
+  setTxCard(state.cards[state.activeCardSlot]?.id || "card_1");
+  setTxCategory("food");
+  $("#expense-dialog").showModal();
+  setTimeout(() => $("#expense-amount").focus(), 60);
+}
+
+function openEditExpense(id) {
+  const item = state.expenses.find(e => e.id === id);
+  if (!item) return;
+  state.editingExpenseId = id;
+  $("#expense-id").value = id;
+  $("#expense-amount").value = String(item.amount);
+  $("#expense-description").value = item.description || "";
+  $("#expense-date").value = item.date || localISODate();
+  $("#expense-dialog-title").textContent = "Редактировать";
+  $("#expense-delete").classList.remove("hidden");
+  $("#expense-error").textContent = "";
+  setTxType(item.type);
+  setTxCard(item.cardId || "card_1");
+  setTxCategory(item.category || "other");
+  $("#expense-dialog").showModal();
 }
 
 function applyQuickPreset(type) {
-  const busPrice = roundMoney(Number(state.planner.busPrice) || 42);
-  const homePrice = roundMoney(Number(state.planner.homeTicketPrice) || 189);
-
+  const bus = roundMoney(state.planner.busPrice || 42);
+  const home = roundMoney(state.planner.homeTicketPrice || 175);
   setTxType("expense");
   setTxCard("card_1");
   setTxCategory("transport");
-
-  const amountEl = $("#expense-amount");
-  const descEl = $("#expense-description");
-
   if (type === "bus") {
-    if (amountEl) amountEl.value = String(busPrice);
-    if (descEl) descEl.value = "Проезд на автобусе";
+    $("#expense-amount").value = String(bus);
+    $("#expense-description").value = "Автобус";
   } else if (type === "home") {
-    if (amountEl) amountEl.value = String(homePrice);
-    if (descEl) descEl.value = "Билет домой";
-  } else if (type === "both") {
-    if (amountEl) amountEl.value = String(roundMoney(busPrice + homePrice));
-    if (descEl) descEl.value = "Проезд на автобусе + Билет домой";
+    $("#expense-amount").value = String(home);
+    $("#expense-description").value = "Билет домой";
+  } else {
+    $("#expense-amount").value = String(roundMoney(bus + home));
+    $("#expense-description").value = "Автобус + Билет домой";
   }
 }
 
+async function saveExpense(e) {
+  e.preventDefault();
+  const amount = roundMoney(Number($("#expense-amount").value));
+  const date = $("#expense-date").value;
+  if (!Number.isFinite(amount) || amount <= 0) {
+    $("#expense-error").textContent = "Введите сумму больше нуля";
+    return;
+  }
+  const id = $("#expense-id").value || (crypto.randomUUID ? crypto.randomUUID() : `tx_${Date.now()}`);
+  const existing = state.expenses.find(x => x.id === id);
+  const tx = {
+    id, type: state.txType, amount, cardId: state.txCardId, category: state.txCategory,
+    description: ($("#expense-description").value || "").trim(),
+    date, createdAt: existing ? Number(existing.createdAt) : Date.now(), updatedAt: Date.now()
+  };
+
+  if (existing) {
+    await adjustCardBalance(existing.cardId, existing.type === "income" ? -existing.amount : existing.amount);
+  }
+  await adjustCardBalance(tx.cardId, tx.type === "income" ? tx.amount : -tx.amount);
+
+  if (firestore && firebaseFns) {
+    setSyncStatus("busy");
+    await firebaseFns.setDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "expenses", id), tx);
+    setSyncStatus("online");
+  } else {
+    state.expenses = existing ? state.expenses.map(r => r.id === id ? tx : r) : [...state.expenses, tx];
+    writeLocal();
+  }
+  renderAll();
+  $("#expense-dialog").close();
+  showToast(existing ? "Обновлено" : "Сохранено");
+}
+
+async function deleteExpense() {
+  const id = $("#expense-id").value;
+  const ex = state.expenses.find(x => x.id === id);
+  if (!ex || !confirm("Удалить операцию?")) return;
+  await adjustCardBalance(ex.cardId, ex.type === "income" ? -ex.amount : ex.amount);
+  if (firestore && firebaseFns) {
+    setSyncStatus("busy");
+    await firebaseFns.deleteDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "expenses", id));
+    setSyncStatus("online");
+  } else {
+    state.expenses = state.expenses.filter(x => x.id !== id);
+    writeLocal();
+  }
+  renderAll();
+  $("#expense-dialog").close();
+  showToast("Удалено");
+}
+
+function openCardModal(slot = state.activeCardSlot) {
+  state.editingCardSlot = slot;
+  const c = state.cards[slot] || getDefaultCards()[slot];
+  state.editingCardSkin = c.skin;
+  $$("[data-edit-card-slot]").forEach(b => {
+    const i = Number(b.dataset.editCardSlot);
+    b.classList.toggle("active", i === slot);
+    b.textContent = state.cards[i]?.name || `Карта ${i + 1}`;
+  });
+  $("#card-balance-input").value = String(c.balance);
+  $("#card-name-input").value = c.name;
+  $("#card-bank-input").value = c.bank;
+  $("#card-digits-input").value = c.digits;
+  $$("[data-card-skin]").forEach(b => b.classList.toggle("selected", b.dataset.cardSkin === c.skin));
+  if (!$("#card-dialog").open) $("#card-dialog").showModal();
+}
+
+async function saveCard(e) {
+  e.preventDefault();
+  const idx = state.editingCardSlot;
+  const cur = state.cards[idx];
+  const updated = {
+    ...cur,
+    balance: roundMoney(Number($("#card-balance-input").value) || 0),
+    name: ($("#card-name-input").value || "").trim() || cur.name,
+    bank: ($("#card-bank-input").value || "").trim() || "ФПИ БАНК",
+    digits: ($("#card-digits-input").value || "").replace(/\D/g, "").slice(-4) || "2004",
+    skin: state.editingCardSkin,
+    updatedAt: Date.now()
+  };
+  state.cards[idx] = updated;
+  writeLocal();
+  renderAll();
+  $("#card-dialog").close();
+  showToast("Карта обновлена");
+  await syncCardToCloud(updated);
+}
+
+async function adjustCardBalance(cardId, delta) {
+  const i = state.cards.findIndex(c => c.id === cardId);
+  if (i === -1 || !delta) return;
+  state.cards[i] = { ...state.cards[i], balance: roundMoney((Number(state.cards[i].balance) || 0) + delta), updatedAt: Date.now() };
+  writeLocal();
+  await syncCardToCloud(state.cards[i]);
+}
+
+async function syncCardToCloud(card) {
+  if (!firestore || !firebaseFns) return;
+  try {
+    setSyncStatus("busy");
+    await firebaseFns.setDoc(firebaseFns.doc(firestore, "groups", GROUP_ID, "cards", card.id), card);
+    setSyncStatus("online");
+  } catch (_) {}
+}
+
+/* ================= FIREBASE ================= */
+
+async function initFirebase() {
+  const help = $("#firebase-help");
+  try {
+    setSyncStatus("busy");
+    const [appMod, fsMod] = await Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-firestore.js`)
+    ]);
+    const app = appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(FIREBASE_CONFIG);
+    firestore = fsMod.getFirestore(app);
+    firebaseFns = { collection: fsMod.collection, doc: fsMod.doc, onSnapshot: fsMod.onSnapshot, setDoc: fsMod.setDoc, deleteDoc: fsMod.deleteDoc };
+    setSyncStatus("online");
+    if (help) help.innerHTML = `<strong>Облако подключено (${FIREBASE_CONFIG.projectId}):</strong> все карты и траты синхронизируются автоматически.`;
+
+    firebaseFns.onSnapshot(firebaseFns.collection(firestore, "groups", GROUP_ID, "cards"), snap => {
+      if (!snap.empty) {
+        state.cards = normalizeCards(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+        writeLocal();
+        renderAll();
+      } else {
+        state.cards.forEach(c => syncCardToCloud(c));
+      }
+      setSyncStatus("online");
+    });
+
+    firebaseFns.onSnapshot(firebaseFns.collection(firestore, "groups", GROUP_ID, "expenses"), snap => {
+      state.expenses = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+      writeLocal();
+      renderAll();
+      setSyncStatus("online");
+    });
+  } catch (err) {
+    console.warn("Firebase offline:", err);
+    setSyncStatus("");
+    if (help) help.innerHTML = "<strong>Локальный режим:</strong> нет связи с облаком.";
+  }
+}
+
+/* ================= СОБЫТИЯ И ЗАПУСК ================= */
+
 function renderAll() {
-  renderCardsCarousel();
+  renderCardDeck();
   renderCreditPlanner();
   renderHomeExpenses();
   renderAnalytics();
 }
 
 function switchTab(tab) {
-  const isAnalytics = tab === "analytics";
-  $("#screen-home")?.classList.toggle("active", !isAnalytics);
-  $("#screen-analytics")?.classList.toggle("active", isAnalytics);
-
-  $$(".nav-item").forEach(btn => {
-    const active = btn.dataset.tab === tab;
-    btn.classList.toggle("active", active);
-    if (active) btn.setAttribute("aria-current", "page");
-    else btn.removeAttribute("aria-current");
-  });
-
-  if (isAnalytics) renderAnalytics();
+  const isAn = tab === "analytics";
+  $("#screen-home").classList.toggle("active", !isAn);
+  $("#screen-analytics").classList.toggle("active", isAn);
+  $("#screen-heading").textContent = isAn ? "Аналитика" : "ФПИ Банк";
+  $$("[data-tab]").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  if (isAn) renderAnalytics();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ================= ЗАГРУЗКА СВОИХ КАРТИНОК (СЖАТИЕ ЧЕРЕЗ CANVAS) ================= */
-
-function compressImageFile(file, maxWidth = 900, quality = 0.78) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const scale = Math.min(1, maxWidth / img.width);
-        const canvas = document.createElement("canvas");
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
-      };
-      img.onerror = reject;
-      img.src = reader.result;
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-/* ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ FIREBASE ================= */
-
-async function initFirebase() {
-  const helpEl = $("#firebase-help");
-  if (!isFirebaseConfigured()) {
-    setSyncStatus("", "Локально");
-    if (helpEl) helpEl.innerHTML = "<strong>Локальный режим:</strong> данные хранятся на устройстве.";
-    return;
-  }
-
-  try {
-    const [appModule, firestoreModule] = await Promise.all([
-      import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
-      import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-firestore.js`)
-    ]);
-    const app = appModule.getApps().length ? appModule.getApp() : appModule.initializeApp(FIREBASE_CONFIG);
-    firestore = firestoreModule.getFirestore(app);
-    firebaseFns = {
-      collection: firestoreModule.collection,
-      doc: firestoreModule.doc,
-      onSnapshot: firestoreModule.onSnapshot,
-      setDoc: firestoreModule.setDoc,
-      deleteDoc: firestoreModule.deleteDoc
-    };
-    state.firebaseReady = true;
-    attachCloudListeners();
-    setSyncStatus("online", "Онлайн");
-    if (helpEl) helpEl.innerHTML = "<strong>Облако ФПИ Банк подключено:</strong> все 3 карты, скины и расходы синхронизируются автоматически.";
-  } catch (error) {
-    console.warn("Firebase init error:", error);
-    setSyncStatus("", "Офлайн");
-    if (helpEl) helpEl.innerHTML = "<strong>Офлайн-режим:</strong> все изменения сохраняются локально.";
-  }
-}
-
-function attachCloudListeners() {
-  if (!firestore || !firebaseFns) return;
-
-  const cardsRef = firebaseFns.collection(firestore, "groups", GROUP_ID, "cards");
-  const expensesRef = firebaseFns.collection(firestore, "groups", GROUP_ID, "expenses");
-
-  state.unsubscribers.push(
-    firebaseFns.onSnapshot(cardsRef, snapshot => {
-      if (!snapshot.empty) {
-        const cloudCards = snapshot.docs.map(docSnap => ({ ...docSnap.data(), id: docSnap.id }));
-        state.cards = normalizeCards(cloudCards);
-        writeLocal();
-        renderAll();
-      } else {
-        // Первичная запись дефолтных карт в облако
-        state.cards.forEach(c => syncCardToCloud(c));
-      }
-      setSyncStatus("online", "Онлайн");
-    }, () => setSyncStatus("", "Локально"))
-  );
-
-  state.unsubscribers.push(
-    firebaseFns.onSnapshot(expensesRef, snapshot => {
-      state.expenses = snapshot.docs.map(docSnap => ({ ...docSnap.data(), id: docSnap.id }));
-      writeLocal();
-      renderAll();
-      setSyncStatus("online", "Онлайн");
-    }, () => setSyncStatus("", "Локально"))
-  );
-}
-
-/* ================= ПРИВЯЗКА СОБЫТИЙ ================= */
-
 function bindEvents() {
-  // Навигация по вкладкам
-  $$("[data-tab]").forEach(btn => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
-  });
+  $$("[data-tab]").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+  $("#settings-open").addEventListener("click", () => $("#settings-dialog").showModal());
+  $("#add-open").addEventListener("click", openNewExpense);
 
-  // Верхние кнопки
-  $("#theme-toggle")?.addEventListener("click", cycleThemeQuick);
-  $("#settings-open")?.addEventListener("click", () => $("#settings-dialog")?.showModal());
-  $("#open-card-customizer-top")?.addEventListener("click", () => openCardCustomizer(state.activeCardSlot, false));
-  $("#settings-open-cards")?.addEventListener("click", () => {
-    $("#settings-dialog")?.close();
-    openCardCustomizer(state.activeCardSlot, false);
-  });
+  $$("[data-deck-dot]").forEach(d => d.addEventListener("click", () => {
+    state.activeCardSlot = Number(d.dataset.deckDot);
+    renderCardDeck();
+  }));
 
-  // Свайп и клики по карусели карт
-  const track = $("#cards-track");
-  if (track) {
-    let scrollTimer = null;
-    track.addEventListener("scroll", () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        const width = track.clientWidth || 1;
-        const slot = Math.round(track.scrollLeft / width);
-        updateCarouselIndicators(slot);
-      }, 50);
-    }, { passive: true });
+  $("#limit-strip-toggle").addEventListener("click", () => $("#limit-strip").classList.toggle("expanded"));
 
-    track.addEventListener("click", event => {
-      const editBalBtn = event.target.closest("[data-edit-balance]");
-      if (editBalBtn) {
-        openCardCustomizer(Number(editBalBtn.dataset.editBalance), true);
-        return;
-      }
-      const custBtn = event.target.closest("[data-customize-card]");
-      if (custBtn) {
-        openCardCustomizer(Number(custBtn.dataset.customizeCard), false);
-      }
-    });
-  }
-
-  $$("#carousel-dots [data-card-dot]").forEach(dot => {
-    dot.addEventListener("click", () => scrollToCardSlot(Number(dot.dataset.cardDot)));
-  });
-
-  // Фильтр операций по картам на главной
-  $("#card-filter-pills")?.addEventListener("click", event => {
-    const pill = event.target.closest("[data-filter-card]");
-    if (!pill) return;
-    state.filterCardId = pill.dataset.filterCard;
-    $$("#card-filter-pills [data-filter-card]").forEach(p => {
-      p.classList.toggle("active", p.dataset.filterCard === state.filterCardId);
-    });
+  $("#home-filter-cycle").addEventListener("click", () => {
+    const order = ["all", "card_1", "card_2", "card_3"];
+    state.filterCardId = order[(order.indexOf(state.filterCardId) + 1) % order.length];
     renderHomeExpenses();
   });
 
-  // Окно кастомизации карт
-  $$("[data-edit-card-slot]").forEach(btn => {
-    btn.addEventListener("click", () => loadCardIntoCustomizer(Number(btn.dataset.editCardSlot)));
-  });
-
-  $$("[data-balance-delta]").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const inp = $("#card-balance-input");
-      if (!inp) return;
-      const delta = Number(chip.dataset.balanceDelta) || 0;
-      inp.value = String(roundMoney((Number(inp.value) || 0) + delta));
-      updateCardPreviewInModal();
-    });
-  });
-
-  ["#card-balance-input", "#card-name-input", "#card-bank-input", "#card-digits-input"].forEach(sel => {
-    $(sel)?.addEventListener("input", updateCardPreviewInModal);
-  });
-
-  $("#card-skins-grid")?.addEventListener("click", event => {
-    const tile = event.target.closest("[data-card-skin]");
-    if (tile) selectCardSkinInModal(tile.dataset.cardSkin);
-  });
-
-  $("#card-bg-url")?.addEventListener("input", event => {
-    state.editingCardCustomBg = event.target.value.trim();
-    updateCardPreviewInModal();
-  });
-
-  $("#card-bg-file")?.addEventListener("change", async event => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      state.editingCardCustomBg = await compressImageFile(file, 800, 0.78);
-      updateCardPreviewInModal();
-      showToast("Фото карты загружено");
-    } catch (_) {
-      showToast("Не удалось обработать фото");
-    }
-  });
-
-  $("#card-custom-form")?.addEventListener("submit", saveCardCustomization);
-
-  // Добавление и редактирование расходов
-  $("#add-open")?.addEventListener("click", openNewExpense);
-
-  $$("[data-tx-type]").forEach(btn => {
-    btn.addEventListener("click", () => setTxType(btn.dataset.txType));
-  });
-
-  $$("#expense-card-selector [data-select-card]").forEach(btn => {
-    btn.addEventListener("click", () => setTxCard(btn.dataset.selectCard));
-  });
-
-  $("#category-grid")?.addEventListener("click", event => {
-    const btn = event.target.closest("[data-category]");
-    if (btn) setTxCategory(btn.dataset.category);
-  });
-
-  $("#quick-expense-presets")?.addEventListener("click", event => {
-    const btn = event.target.closest("[data-quick-preset]");
-    if (btn) applyQuickPreset(btn.dataset.quickPreset);
-  });
-
-  const updatePlannerInputs = () => {
-    const b = Number($("#setting-bus-price")?.value);
-    const h = Number($("#setting-home-price")?.value);
-    const l = Number($("#setting-credit-limit")?.value);
-    if (Number.isFinite(b) && b >= 0) state.planner.busPrice = roundMoney(b);
-    if (Number.isFinite(h) && h >= 0) state.planner.homeTicketPrice = roundMoney(h);
-    if (Number.isFinite(l) && l > 0) state.planner.creditLimit = roundMoney(l);
-    savePlannerSettings();
-    renderCreditPlanner();
-  };
-
-  ["#setting-bus-price", "#setting-home-price", "#setting-credit-limit"].forEach(sel => {
-    $(sel)?.addEventListener("input", updatePlannerInputs);
-  });
-
-  $$("[data-auto-reset]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      state.planner.autoResetCredit = btn.dataset.autoReset === "true";
-      savePlannerSettings();
-      renderCreditPlanner();
-    });
-  });
-
-  $("#settings-reset-credit-now")?.addEventListener("click", resetCreditCardToLimitNow);
-  $("#an-reset-credit-btn")?.addEventListener("click", resetCreditCardToLimitNow);
-
-  $("#expense-form")?.addEventListener("submit", saveExpense);
-  $("#expense-delete")?.addEventListener("click", deleteCurrentExpense);
-
-  $("#expense-list")?.addEventListener("click", event => {
-    const row = event.target.closest("[data-expense-id]");
+  $("#expense-list").addEventListener("click", e => {
+    const row = e.target.closest("[data-expense-id]");
     if (row) openEditExpense(row.dataset.expenseId);
   });
 
-  // Аналитика: фильтр по картам (Все карты или каждая отдельно)
-  $("#analytics-card-pills")?.addEventListener("click", event => {
-    const pill = event.target.closest("[data-analytics-card]");
-    if (!pill) return;
-    state.analyticsCardId = pill.dataset.analyticsCard;
+  $("#cal-detail-list").addEventListener("click", e => {
+    const row = e.target.closest("[data-expense-id]");
+    if (row) openEditExpense(row.dataset.expenseId);
+  });
+
+  $("#quick-expense-presets").addEventListener("click", e => {
+    const b = e.target.closest("[data-quick-preset]");
+    if (b) applyQuickPreset(b.dataset.quickPreset);
+  });
+
+  $$("[data-tx-type]").forEach(b => b.addEventListener("click", () => setTxType(b.dataset.txType)));
+  $$("[data-select-card]").forEach(b => b.addEventListener("click", () => setTxCard(b.dataset.selectCard)));
+  $("#category-grid").addEventListener("click", e => {
+    const b = e.target.closest("[data-category]");
+    if (b) setTxCategory(b.dataset.category);
+  });
+  $("#expense-form").addEventListener("submit", saveExpense);
+  $("#expense-delete").addEventListener("click", deleteExpense);
+
+  $$("[data-edit-card-slot]").forEach(b => b.addEventListener("click", () => openCardModal(Number(b.dataset.editCardSlot))));
+  $("#card-skins-grid").addEventListener("click", e => {
+    const b = e.target.closest("[data-card-skin]");
+    if (!b) return;
+    state.editingCardSkin = b.dataset.cardSkin;
+    $$("[data-card-skin]").forEach(x => x.classList.toggle("selected", x === b));
+  });
+  $("#card-custom-form").addEventListener("submit", saveCard);
+
+  $("#analytics-card-pills").addEventListener("click", e => {
+    const b = e.target.closest("[data-analytics-card]");
+    if (!b) return;
+    state.analyticsCardId = b.dataset.analyticsCard;
     state.selectedAnalyticsCategory = null;
-    $$("#analytics-card-pills [data-analytics-card]").forEach(p => {
-      p.classList.toggle("active", p.dataset.analyticsCard === state.analyticsCardId);
-    });
+    $$("[data-analytics-card]").forEach(x => x.classList.toggle("active", x === b));
     renderAnalytics();
   });
 
-  // Аналитика: переключение периодов, радиальное меню и календарь
-  $$("[data-period-mode]").forEach(btn => {
-    btn.addEventListener("click", () => setPeriodMode(btn.dataset.periodMode));
+  $$("[data-period-mode]").forEach(b => b.addEventListener("click", () => {
+    state.periodMode = b.dataset.periodMode;
+    $$("[data-period-mode]").forEach(x => x.classList.toggle("active", x === b));
+    renderAnalytics();
+  }));
+
+  $("#month-prev").addEventListener("click", () => {
+    const [y, m] = state.analyticsMonth.split("-").map(Number);
+    const d = new Date(y, m - 2, 1);
+    state.analyticsMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    renderAnalytics();
+  });
+  $("#month-next").addEventListener("click", () => {
+    const [y, m] = state.analyticsMonth.split("-").map(Number);
+    const d = new Date(y, m, 1);
+    state.analyticsMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    renderAnalytics();
   });
 
-  $("#month-prev")?.addEventListener("click", () => shiftAnalyticsMonth(-1));
-  $("#month-next")?.addEventListener("click", () => shiftAnalyticsMonth(1));
-
-  const toggleRadialCat = event => {
-    const target = event.target.closest("[data-radial-cat]");
-    if (!target) return;
-    const cat = target.dataset.radialCat;
-    state.selectedAnalyticsCategory = state.selectedAnalyticsCategory === cat ? null : cat;
+  const toggleCat = e => {
+    const t = e.target.closest("[data-radial-cat]");
+    if (!t) return;
+    state.selectedAnalyticsCategory = state.selectedAnalyticsCategory === t.dataset.radialCat ? null : t.dataset.radialCat;
     renderAnalytics();
   };
-  $("#radial-svg")?.addEventListener("click", toggleRadialCat);
-  $("#radial-chips")?.addEventListener("click", toggleRadialCat);
+  $("#radial-svg").addEventListener("click", toggleCat);
+  $("#radial-legend").addEventListener("click", toggleCat);
 
-  $("#calendar-grid")?.addEventListener("click", event => {
-    const dayBtn = event.target.closest("[data-cal-date]");
-    if (!dayBtn) return;
-    state.selectedCalendarDate = dayBtn.dataset.calDate;
+  $("#calendar-grid").addEventListener("click", e => {
+    const c = e.target.closest("[data-cal-date]");
+    if (!c) return;
+    state.selectedCalendarDate = c.dataset.calDate;
     renderAnalytics();
   });
 
-  $("#cal-detail-list")?.addEventListener("click", event => {
-    const item = event.target.closest("[data-expense-id]");
-    if (item) openEditExpense(item.dataset.expenseId);
+  $$("[data-theme-choice]").forEach(b => b.addEventListener("click", () => setTheme(b.dataset.themeChoice)));
+
+  const onPlannerChange = () => {
+    const b = Number($("#setting-bus-price").value);
+    const h = Number($("#setting-home-price").value);
+    const l = Number($("#setting-credit-limit").value);
+    if (Number.isFinite(b) && b >= 0) state.planner.busPrice = roundMoney(b);
+    if (Number.isFinite(h) && h >= 0) state.planner.homeTicketPrice = roundMoney(h);
+    if (Number.isFinite(l) && l > 0) state.planner.creditLimit = roundMoney(l);
+    savePlanner();
+    renderCreditPlanner();
+  };
+  ["#setting-bus-price", "#setting-home-price", "#setting-credit-limit"].forEach(s => $(s).addEventListener("input", onPlannerChange));
+
+  $$("[data-auto-reset]").forEach(b => b.addEventListener("click", () => {
+    state.planner.autoResetCredit = b.dataset.autoReset === "true";
+    savePlanner();
+    renderCreditPlanner();
+  }));
+
+  $("#settings-reset-credit-now").addEventListener("click", async () => {
+    const lim = roundMoney(state.planner.creditLimit || 10000);
+    if (!confirm(`Выставить баланс Кредитки на ${money(lim)}?`)) return;
+    state.cards[0].balance = lim;
+    state.cards[0].updatedAt = Date.now();
+    writeLocal();
+    renderAll();
+    showToast(`Баланс обновлён: ${money(lim)}`);
+    await syncCardToCloud(state.cards[0]);
   });
 
-  // Глобальные настройки: стиль кнопок/поверхностей и цветовые палитры
-  $$("[data-surface-choice]").forEach(btn => {
-    btn.addEventListener("click", () => setSurface(btn.dataset.surfaceChoice));
+  $("#settings-open-cards").addEventListener("click", () => {
+    $("#settings-dialog").close();
+    openCardModal(state.activeCardSlot);
   });
 
-  $$("[data-theme-choice]").forEach(btn => {
-    btn.addEventListener("click", () => setTheme(btn.dataset.themeChoice));
-  });
-
-  $$("[data-design-choice]").forEach(btn => {
-    btn.addEventListener("click", () => setDesign(btn.dataset.designChoice));
-  });
-
-  $$("[data-pattern-choice]").forEach(btn => {
-    btn.addEventListener("click", () => setPatternDensity(btn.dataset.patternChoice));
-  });
-
-  $$("[data-default-period]").forEach(btn => {
-    btn.addEventListener("click", () => setDefaultPeriod(btn.dataset.defaultPeriod));
-  });
-
-  $("#app-bg-url")?.addEventListener("input", event => {
-    state.appCustomBg = event.target.value.trim();
-    applyCustomAppBg();
-    try { localStorage.setItem(APP_CUSTOM_BG_KEY, state.appCustomBg); } catch (_) {}
-  });
-
-  $("#app-bg-file")?.addEventListener("change", async event => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      state.appCustomBg = await compressImageFile(file, 1080, 0.76);
-      applyCustomAppBg();
-      try { localStorage.setItem(APP_CUSTOM_BG_KEY, state.appCustomBg); } catch (_) {}
-      showToast("Фон приложения установлен");
-    } catch (_) {
-      showToast("Ошибка загрузки фона");
-    }
-  });
-
-  // Закрытие модалок по кнопке × или клику в фон
-  $$("[data-close]").forEach(btn => {
-    btn.addEventListener("click", () => $(`#${btn.dataset.close}`)?.close());
-  });
-
-  ["#card-dialog", "#expense-dialog", "#settings-dialog"].forEach(sel => {
-    const dlg = $(sel);
-    dlg?.addEventListener("click", event => {
-      if (event.target === dlg) dlg.close();
-    });
+  $$("[data-close]").forEach(b => b.addEventListener("click", () => $(`#${b.dataset.close}`)?.close()));
+  ["#expense-dialog", "#card-dialog", "#settings-dialog"].forEach(s => {
+    const d = $(s);
+    d?.addEventListener("click", e => { if (e.target === d) d.close(); });
   });
 }
 
 function bootstrap() {
   readLocal();
   setTheme(state.theme);
-  setSurface(state.surface);
-  setDesign(state.design);
-  setPatternDensity(state.pattern);
-  setDefaultPeriod(state.defaultPeriod);
+  buildCategoryGrid();
   renderAll();
+  initDeckGestures();
   bindEvents();
   checkMonthlyCreditReset();
   initFirebase();
