@@ -1309,10 +1309,17 @@ function calculateCreditCardAnalytics() {
   const freeBalance = roundMoney(Math.max(0, balance - reservedForCommute));
   const shortage = roundMoney(Math.max(0, reservedForCommute - balance));
 
+  const todayTotalSpent = roundMoney(todayTransportSpent + todayOtherSpent);
+
   // Сколько можно свободно тратить в день сверх проезда:
   // прибавляем todayOtherSpent к базе деления, чтобы лимит на день не менялся хаотично внутри одного дня
   const dailyFreeAllowance = roundMoney(Math.max(0, (freeBalance + todayOtherSpent) / daysLeft));
   const todayFreeLeft = roundMoney(dailyFreeAllowance - todayOtherSpent);
+
+  // Полная сумма в день и остаток на сегодня, если вообще не вычитать дорогу
+  const dailyFullAllowance = roundMoney(Math.max(0, (balance + todayTotalSpent) / daysLeft));
+  const todayFullLeft = roundMoney(dailyFullAllowance - todayTotalSpent);
+
   const weekdayTotalAllowance = roundMoney(dailyFreeAllowance + dailyCommuteCost);
 
   const monthSpentOnCredit = roundMoney(
@@ -1340,6 +1347,8 @@ function calculateCreditCardAnalytics() {
     shortage,
     dailyFreeAllowance,
     todayFreeLeft,
+    dailyFullAllowance,
+    todayFullLeft,
     weekdayTotalAllowance,
     spentAmount: roundMoney(Math.max(0, limit - balance)),
     spentPct,
@@ -1378,12 +1387,17 @@ function renderCreditPlanner() {
 
   // 1. Виджет на Главной
   const homeDailyEl = $("#home-credit-daily-free");
+  const homeDailyFullEl = $("#home-credit-daily-full");
   const homeNoteEl = $("#home-credit-daily-note");
   const homeTodayLeftEl = $("#home-credit-today-left");
+  const homeTodayFullEl = $("#home-credit-today-full");
   const homeFreeSumEl = $("#home-credit-free-sum");
   const homeResSumEl = $("#home-credit-reserved-sum");
 
   if (homeDailyEl) homeDailyEl.textContent = `${money(info.dailyFreeAllowance)} / день`;
+  if (homeDailyFullEl) {
+    homeDailyFullEl.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  }
   if (homeNoteEl) {
     homeNoteEl.textContent = info.shortage > 0
       ? `⚠️ На проезд до конца месяца не хватает ${money(info.shortage)}`
@@ -1392,6 +1406,10 @@ function renderCreditPlanner() {
   if (homeTodayLeftEl) {
     homeTodayLeftEl.textContent = info.todayFreeLeft >= 0 ? money(info.todayFreeLeft) : `−${money(Math.abs(info.todayFreeLeft))}`;
     homeTodayLeftEl.style.color = info.todayFreeLeft >= 0 ? "var(--green)" : "var(--danger)";
+  }
+  if (homeTodayFullEl) {
+    homeTodayFullEl.textContent = info.todayFullLeft >= 0 ? money(info.todayFullLeft) : `−${money(Math.abs(info.todayFullLeft))}`;
+    homeTodayFullEl.style.color = info.todayFullLeft >= 0 ? "var(--text)" : "var(--danger)";
   }
   if (homeFreeSumEl) homeFreeSumEl.textContent = money(info.freeBalance);
   if (homeResSumEl) homeResSumEl.textContent = `${money(info.reservedForCommute)} (${info.totalWeekdaysLeft} будн.)`;
@@ -1406,6 +1424,7 @@ function renderCreditPlanner() {
   // 2. Карточка во вкладке Аналитика
   const anBadge = $("#an-credit-badge");
   const anDaily = $("#an-credit-daily-free");
+  const anDailyFull = $("#an-credit-daily-full");
   const anSub = $("#an-credit-subtitle");
   const anResetBtn = $("#an-reset-credit-btn");
   const anSpent = $("#an-credit-spent");
@@ -1418,6 +1437,9 @@ function renderCreditPlanner() {
 
   if (anBadge) anBadge.textContent = `💳 ${info.cardName} · лимит ${money(info.limit)}`;
   if (anDaily) anDaily.textContent = `${money(info.dailyFreeAllowance)} / день`;
+  if (anDailyFull) {
+    anDailyFull.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  }
   if (anSub) {
     anSub.textContent = info.shortage > 0
       ? `Внимание: баланс меньше брони на проезд на ${money(info.shortage)}`
