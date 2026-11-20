@@ -1,2123 +1,1437 @@
 <!doctype html>
-<html lang="ru" data-theme="dark" data-surface="liquid" data-design="liquid" data-pattern="bold">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0d0d12">
-  <meta name="description" content="Личный финансовый дневник и карты ФПИ Банка">
-  <title>ФПИ Банк · Мои траты</title>
+  <meta name="theme-color" content="#07070b">
+  <meta name="description" content="ФПИ Банк — личный финансовый дневник">
+  <title>ФПИ Банк</title>
   <script>
     try {
-      const savedTheme = localStorage.getItem("solo_fpi_theme_v1") || "dark";
-      const savedSurface = localStorage.getItem("solo_fpi_surface_v1") || "liquid";
-      const savedDesign = localStorage.getItem("solo_fpi_design_v1") || "liquid";
-      const savedPattern = localStorage.getItem("solo_fpi_pattern_v1") || "bold";
-      const validThemes = ["dark", "ocean", "emerald", "rose", "obsidian", "amoled", "light", "latte", "nord", "bw", "wb"];
-      const validSurfaces = ["liquid", "matte", "frosted", "brutal", "glossy", "outline"];
-      const validDesigns = ["liquid", "cats", "zolo", "topo", "dots", "waves", "cyber", "clean", "custom"];
+      const savedTheme = localStorage.getItem("solo_fpi_theme_v2") || "dark";
+      const validThemes = ["dark", "light"];
       const theme = validThemes.includes(savedTheme) ? savedTheme : "dark";
-      const surface = validSurfaces.includes(savedSurface) ? savedSurface : "liquid";
-      const design = validDesigns.includes(savedDesign) ? savedDesign : "liquid";
-      const isLight = ["light", "latte", "nord", "bw"].includes(theme);
       document.documentElement.dataset.theme = theme;
-      document.documentElement.dataset.surface = surface;
-      document.documentElement.dataset.design = design;
-      document.documentElement.dataset.pattern = savedPattern === "soft" ? "soft" : "bold";
-      document.documentElement.style.colorScheme = isLight ? "light" : "dark";
+      document.documentElement.style.colorScheme = theme;
     } catch (_) {
       document.documentElement.dataset.theme = "dark";
-      document.documentElement.dataset.surface = "liquid";
-      document.documentElement.dataset.design = "liquid";
     }
   </script>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./assets/icon-192.png" type="image/png">
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f4f3f9;
-      --surface: rgba(255, 255, 255, 0.84);
-      --surface-solid: #ffffff;
-      --surface-2: rgba(238, 236, 246, 0.9);
-      --surface-3: #e1dfec;
-      --text: #15141c;
-      --muted: #767486;
-      --line: rgba(28, 24, 48, 0.1);
-      --accent: #7652ff;
-      --accent-strong: #5835d8;
-      --accent-soft: rgba(118, 82, 255, 0.14);
-      --green: #22a06b;
-      --green-soft: rgba(34, 160, 107, 0.14);
-      --orange: #d97706;
-      --orange-soft: rgba(245, 158, 11, 0.14);
-      --danger: #e11d48;
-      --shadow: 0 14px 36px rgba(32, 24, 64, 0.08);
-      --nav-bg: rgba(255, 255, 255, 0.74);
-      --overlay: rgba(12, 11, 18, 0.48);
-      --input-bg: rgba(242, 241, 248, 0.92);
-      --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(245, 243, 252, 0.62) 100%);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --glass-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(0, 0, 0, 0.04), 0 8px 22px rgba(32, 24, 64, 0.07);
-      --glass-primary-bg: linear-gradient(180deg, #322456 0%, #1a1230 100%);
-      --glass-primary-text: #ffffff;
-      --glass-primary-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35), 0 10px 24px rgba(26, 18, 48, 0.25);
+      color-scheme: dark;
+      --bg: #07070b;
+      --surface: #111117;
+      --surface-2: #181822;
+      --surface-3: #232332;
+      --text: #f5f5f7;
+      --muted: #8e8e98;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.14);
+      --accent: #8b5cf6;
+      --accent-soft: rgba(139, 92, 246, 0.16);
+      --accent-glow: rgba(139, 92, 246, 0.42);
+      --green: #34d399;
+      --amber: #f59e0b;
+      --red: #f43f5e;
+      --nav-bg: rgba(18, 18, 26, 0.82);
+      --overlay: rgba(0, 0, 0, 0.72);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --spring: cubic-bezier(0.22, 1, 0.36, 1);
-      --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --bg-pattern: none;
-      --pattern-size: 260px 260px;
-      --custom-bg-image: none;
+      --spring-snappy: cubic-bezier(0.32, 0.72, 0, 1);
     }
 
-    /* === 10 ЦВЕТОВЫХ СХЕМ (ПАЛИТР) === */
-
-    /* 1. ФПИ Ночь (Deep Purple Dark) */
-    html[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #0c0b14;
-      --surface: rgba(25, 23, 38, 0.78);
-      --surface-solid: #171524;
-      --surface-2: rgba(39, 36, 58, 0.88);
-      --surface-3: #322e4a;
-      --text: #f6f5fc;
-      --muted: #9a96b0;
-      --line: rgba(255, 255, 255, 0.09);
-      --accent: #b39cff;
-      --accent-strong: #ddd0ff;
-      --accent-soft: rgba(179, 156, 255, 0.17);
-      --green: #4ade80;
-      --green-soft: rgba(74, 222, 128, 0.14);
-      --orange: #fbbf24;
-      --orange-soft: rgba(251, 191, 36, 0.14);
-      --danger: #fb7185;
-      --nav-bg: rgba(20, 18, 32, 0.74);
-      --overlay: rgba(4, 3, 10, 0.7);
-      --input-bg: rgba(34, 31, 52, 0.92);
-      --glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
-      --glass-border: rgba(255, 255, 255, 0.18);
-      --glass-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.3), inset 0 -1px 1px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(0, 0, 0, 0.34);
-      --glass-primary-bg: linear-gradient(180deg, #ffffff 0%, #e0d4ff 100%);
-      --glass-primary-text: #16102c;
-      --glass-primary-shadow: inset 0 1px 1px #ffffff, 0 10px 28px rgba(109, 40, 217, 0.38);
-    }
-
-    /* 2. Полночный Океан (Midnight Ocean Cyan/Blue) */
-    html[data-theme="ocean"] {
-      color-scheme: dark;
-      --bg: #071018;
-      --surface: rgba(14, 29, 44, 0.78);
-      --surface-solid: #0d1e2e;
-      --surface-2: rgba(21, 43, 64, 0.88);
-      --surface-3: #1e3d5c;
-      --text: #f0f8ff;
-      --muted: #84a4c2;
-      --line: rgba(125, 211, 252, 0.12);
-      --accent: #38bdf8;
-      --accent-strong: #bae6fd;
-      --accent-soft: rgba(56, 189, 248, 0.18);
-      --green: #34d399;
-      --green-soft: rgba(52, 211, 153, 0.15);
-      --orange: #fbbf24;
-      --orange-soft: rgba(251, 191, 36, 0.15);
-      --danger: #fb7185;
-      --nav-bg: rgba(10, 22, 34, 0.76);
-      --overlay: rgba(2, 8, 14, 0.72);
-      --input-bg: rgba(17, 36, 54, 0.92);
-      --glass-bg: linear-gradient(145deg, rgba(186, 230, 253, 0.16) 0%, rgba(14, 116, 144, 0.06) 100%);
-      --glass-border: rgba(125, 211, 252, 0.24);
-      --glass-shadow: inset 0 1px 0.5px rgba(224, 242, 254, 0.35), 0 10px 28px rgba(2, 10, 20, 0.48);
-      --glass-primary-bg: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 100%);
-      --glass-primary-text: #041824;
-      --glass-primary-shadow: inset 0 1px 1px #ffffff, 0 10px 26px rgba(14, 165, 233, 0.4);
-    }
-
-    /* 3. Изумрудный Банк (Emerald Private Banking) */
-    html[data-theme="emerald"] {
-      color-scheme: dark;
-      --bg: #06120e;
-      --surface: rgba(14, 34, 27, 0.8);
-      --surface-solid: #0c2119;
-      --surface-2: rgba(20, 49, 39, 0.88);
-      --surface-3: #1b4335;
-      --text: #ecfdf5;
-      --muted: #84b4a0;
-      --line: rgba(110, 231, 183, 0.12);
-      --accent: #34d399;
-      --accent-strong: #a7f3d0;
-      --accent-soft: rgba(52, 211, 153, 0.18);
-      --green: #4ade80;
-      --green-soft: rgba(74, 222, 128, 0.16);
-      --orange: #fbbf24;
-      --orange-soft: rgba(251, 191, 36, 0.14);
-      --danger: #fda4af;
-      --nav-bg: rgba(9, 25, 19, 0.78);
-      --overlay: rgba(2, 10, 7, 0.74);
-      --input-bg: rgba(16, 40, 31, 0.92);
-      --glass-bg: linear-gradient(145deg, rgba(167, 243, 208, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
-      --glass-border: rgba(110, 231, 183, 0.24);
-      --glass-shadow: inset 0 1px 0.5px rgba(209, 250, 229, 0.32), 0 10px 28px rgba(0, 12, 8, 0.5);
-      --glass-primary-bg: linear-gradient(180deg, #d1fae5 0%, #34d399 100%);
-      --glass-primary-text: #042217;
-      --glass-primary-shadow: inset 0 1px 1px #ffffff, 0 10px 26px rgba(16, 185, 129, 0.38);
-    }
-
-    /* 4. Бархатная Роза (Velvet Rose & Wine) */
-    html[data-theme="rose"] {
-      color-scheme: dark;
-      --bg: #14080e;
-      --surface: rgba(38, 16, 28, 0.8);
-      --surface-solid: #24101b;
-      --surface-2: rgba(56, 24, 41, 0.88);
-      --surface-3: #4a2036;
-      --text: #fff1f5;
-      --muted: #be8da4;
-      --line: rgba(251, 113, 133, 0.13);
-      --accent: #fb7185;
-      --accent-strong: #fecdd3;
-      --accent-soft: rgba(251, 113, 133, 0.18);
-      --green: #4ade80;
-      --green-soft: rgba(74, 222, 128, 0.14);
-      --orange: #fbbf24;
-      --orange-soft: rgba(251, 191, 36, 0.14);
-      --danger: #f43f5e;
-      --nav-bg: rgba(28, 11, 20, 0.78);
-      --overlay: rgba(12, 3, 8, 0.74);
-      --input-bg: rgba(46, 19, 34, 0.92);
-      --glass-bg: linear-gradient(145deg, rgba(254, 205, 211, 0.16) 0%, rgba(225, 29, 72, 0.06) 100%);
-      --glass-border: rgba(253, 164, 175, 0.24);
-      --glass-shadow: inset 0 1px 0.5px rgba(255, 228, 230, 0.34), 0 10px 28px rgba(18, 4, 10, 0.52);
-      --glass-primary-bg: linear-gradient(180deg, #ffe4e6 0%, #fb7185 100%);
-      --glass-primary-text: #2b0816;
-      --glass-primary-shadow: inset 0 1px 1px #ffffff, 0 10px 26px rgba(225, 29, 72, 0.4);
-    }
-
-    /* 5. Обсидиан и Золото (Obsidian Sunset Gold) */
-    html[data-theme="obsidian"] {
-      color-scheme: dark;
-      --bg: #110e0a;
-      --surface: rgba(32, 26, 20, 0.82);
-      --surface-solid: #1e1812;
-      --surface-2: rgba(46, 38, 28, 0.9);
-      --surface-3: #3d3124;
-      --text: #fefce8;
-      --muted: #b5a48b;
-      --line: rgba(250, 204, 21, 0.13);
-      --accent: #f59e0b;
-      --accent-strong: #fde68a;
-      --accent-soft: rgba(245, 158, 11, 0.18);
-      --green: #4ade80;
-      --green-soft: rgba(74, 222, 128, 0.14);
-      --orange: #fb923c;
-      --orange-soft: rgba(251, 146, 60, 0.15);
-      --danger: #fb7185;
-      --nav-bg: rgba(24, 19, 14, 0.8);
-      --overlay: rgba(10, 8, 4, 0.75);
-      --input-bg: rgba(38, 30, 22, 0.92);
-      --glass-bg: linear-gradient(145deg, rgba(254, 240, 138, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%);
-      --glass-border: rgba(251, 191, 36, 0.25);
-      --glass-shadow: inset 0 1px 0.5px rgba(254, 249, 195, 0.32), 0 10px 28px rgba(12, 8, 2, 0.55);
-      --glass-primary-bg: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
-      --glass-primary-text: #241402;
-      --glass-primary-shadow: inset 0 1px 1px #ffffff, 0 10px 26px rgba(217, 119, 6, 0.42);
-    }
-
-    /* 6. Amoled 0% (Глубокий чёрный с неоновым акцентом) */
-    html[data-theme="amoled"] {
-      color-scheme: dark;
-      --bg: #000000;
-      --surface: rgba(15, 15, 20, 0.9);
-      --surface-solid: #0a0a0f;
-      --surface-2: rgba(26, 26, 35, 0.95);
-      --surface-3: #232330;
-      --text: #ffffff;
-      --muted: #8e8ca2;
-      --line: rgba(255, 255, 255, 0.11);
-      --accent: #a78bfa;
-      --accent-strong: #ddd6fe;
-      --accent-soft: rgba(167, 139, 250, 0.18);
-      --green: #4ade80;
-      --green-soft: rgba(74, 222, 128, 0.12);
-      --orange: #facc15;
-      --orange-soft: rgba(250, 204, 21, 0.12);
-      --danger: #fb7185;
-      --nav-bg: rgba(10, 10, 15, 0.86);
-      --overlay: rgba(0, 0, 0, 0.85);
-      --input-bg: #14141c;
-      --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
-      --glass-border: rgba(255, 255, 255, 0.16);
-      --glass-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.22), 0 10px 28px rgba(0, 0, 0, 0.85);
-      --glass-primary-bg: linear-gradient(180deg, #ffffff 0%, #e4e4e7 100%);
-      --glass-primary-text: #000000;
-    }
-
-    /* 7. Матча Латте (Тёплая кремовая светлая) */
-    html[data-theme="latte"] {
+    html[data-theme="light"] {
       color-scheme: light;
-      --bg: #f6f3ec;
-      --surface: rgba(255, 252, 245, 0.86);
-      --surface-solid: #fffdf8;
-      --surface-2: rgba(237, 231, 218, 0.92);
-      --surface-3: #dfd7c6;
-      --text: #221f1a;
-      --muted: #787062;
-      --line: rgba(44, 38, 28, 0.11);
-      --accent: #3f7d58;
-      --accent-strong: #28593c;
-      --accent-soft: rgba(63, 125, 88, 0.15);
-      --green: #2d7a53;
-      --green-soft: rgba(45, 122, 83, 0.14);
-      --orange: #c26d1f;
-      --orange-soft: rgba(194, 109, 31, 0.14);
-      --danger: #c93b4b;
-      --nav-bg: rgba(252, 248, 239, 0.82);
-      --overlay: rgba(28, 24, 18, 0.42);
-      --input-bg: rgba(240, 235, 224, 0.94);
-      --glass-bg: linear-gradient(180deg, rgba(255, 253, 248, 0.88) 0%, rgba(244, 239, 228, 0.68) 100%);
-      --glass-border: rgba(255, 255, 255, 0.85);
-      --glass-shadow: inset 0 1px 0.5px #ffffff, 0 8px 22px rgba(54, 44, 26, 0.08);
-      --glass-primary-bg: linear-gradient(180deg, #3f7d58 0%, #28593c 100%);
-      --glass-primary-text: #ffffff;
-      --glass-primary-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35), 0 10px 22px rgba(40, 89, 60, 0.25);
-    }
-
-    /* 8. Норд Арктика (Холодная ледяная светлая) */
-    html[data-theme="nord"] {
-      color-scheme: light;
-      --bg: #ecf2f8;
-      --surface: rgba(255, 255, 255, 0.85);
-      --surface-solid: #ffffff;
-      --surface-2: rgba(226, 236, 246, 0.92);
-      --surface-3: #cfddeb;
-      --text: #0f172a;
-      --muted: #64748b;
-      --line: rgba(15, 23, 42, 0.1);
-      --accent: #0284c7;
-      --accent-strong: #0369a1;
-      --accent-soft: rgba(2, 132, 199, 0.14);
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-2: #ebebf0;
+      --surface-3: #dcdce4;
+      --text: #111115;
+      --muted: #6e6e78;
+      --line: rgba(0, 0, 0, 0.08);
+      --line-strong: rgba(0, 0, 0, 0.14);
+      --accent: #6d28d9;
+      --accent-soft: rgba(109, 40, 217, 0.1);
+      --accent-glow: rgba(109, 40, 217, 0.28);
       --green: #059669;
-      --green-soft: rgba(5, 150, 105, 0.14);
-      --orange: #d97706;
-      --orange-soft: rgba(217, 119, 6, 0.14);
-      --danger: #e11d48;
-      --nav-bg: rgba(248, 251, 255, 0.8);
-      --overlay: rgba(15, 23, 42, 0.44);
-      --input-bg: rgba(233, 241, 249, 0.94);
-      --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(235, 244, 252, 0.7) 100%);
-      --glass-border: rgba(255, 255, 255, 0.9);
-      --glass-shadow: inset 0 1px 0.5px #ffffff, 0 8px 24px rgba(15, 35, 65, 0.08);
-      --glass-primary-bg: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-      --glass-primary-text: #ffffff;
-      --glass-primary-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.4), 0 10px 24px rgba(3, 105, 161, 0.26);
+      --amber: #d97706;
+      --red: #e11d48;
+      --nav-bg: rgba(255, 255, 255, 0.84);
+      --overlay: rgba(10, 10, 18, 0.42);
     }
 
-    /* 9. ТЕМА ЧБ (Чёрным по белому) */
-    html[data-theme="bw"] {
-      color-scheme: light;
-      --bg: #ffffff;
-      --surface: rgba(255, 255, 255, 0.94);
-      --surface-solid: #ffffff;
-      --surface-2: rgba(240, 240, 240, 0.96);
-      --surface-3: #e0e0e0;
-      --text: #000000;
-      --muted: #555555;
-      --line: rgba(0, 0, 0, 0.18);
-      --accent: #000000;
-      --accent-strong: #000000;
-      --accent-soft: rgba(0, 0, 0, 0.09);
-      --green: #111111;
-      --green-soft: #f0f0f0;
-      --orange: #111111;
-      --orange-soft: #f2f2f2;
-      --nav-bg: rgba(255, 255, 255, 0.88);
-      --input-bg: #f5f5f5;
-      --danger: #000000;
-      --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(238, 238, 238, 0.82) 100%);
-      --glass-border: rgba(0, 0, 0, 0.24);
-      --glass-shadow: inset 0 1px 0 #ffffff, 0 6px 16px rgba(0, 0, 0, 0.08);
-      --glass-primary-bg: linear-gradient(180deg, #222222 0%, #000000 100%);
-      --glass-primary-text: #ffffff;
-    }
-
-    /* 10. ТЕМА БЧ (Белым по чёрному) */
-    html[data-theme="wb"] {
-      color-scheme: dark;
-      --bg: #000000;
-      --surface: rgba(18, 18, 18, 0.92);
-      --surface-solid: #121212;
-      --surface-2: rgba(32, 32, 32, 0.95);
-      --surface-3: #2c2c2c;
-      --text: #ffffff;
-      --muted: #a8a8a8;
-      --line: rgba(255, 255, 255, 0.22);
-      --accent: #ffffff;
-      --accent-strong: #ffffff;
-      --accent-soft: rgba(255, 255, 255, 0.16);
-      --green: #ffffff;
-      --green-soft: #1c1c1c;
-      --orange: #ffffff;
-      --orange-soft: #1c1c1c;
-      --nav-bg: rgba(16, 16, 16, 0.86);
-      --input-bg: #1c1c1c;
-      --danger: #ffffff;
-      --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.06) 100%);
-      --glass-border: rgba(255, 255, 255, 0.28);
-      --glass-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35), 0 8px 24px rgba(0, 0, 0, 0.7);
-      --glass-primary-bg: linear-gradient(180deg, #ffffff 0%, #dcdcdc 100%);
-      --glass-primary-text: #000000;
-    }
-
-    /* === 6 ОТДЕЛЬНЫХ СТИЛЕЙ КНОПОК И ПОВЕРХНОСТЕЙ (DATA-SURFACE) === */
-
-    /* 1. Liquid Glass (Преломляющее жидкое стекло с бликом) */
-    html[data-surface="liquid"] .liquid-glass,
-    html[data-surface="liquid"] .expense-row,
-    html[data-surface="liquid"] .radial-card,
-    html[data-surface="liquid"] .calendar-card,
-    html[data-surface="liquid"] .category-bars-card,
-    html[data-surface="liquid"] .settings-section,
-    html[data-surface="liquid"] .period-segmented,
-    html[data-surface="liquid"] .month-nav-bar,
-    html[data-surface="liquid"] .filter-pill {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(20px) saturate(185%);
-      -webkit-backdrop-filter: blur(20px) saturate(185%);
-    }
-
-    /* 2. Матовый (Matte — плотный тактильный софт-тач без размытия и бликов) */
-    html[data-surface="matte"] .liquid-glass,
-    html[data-surface="matte"] .expense-row,
-    html[data-surface="matte"] .radial-card,
-    html[data-surface="matte"] .calendar-card,
-    html[data-surface="matte"] .category-bars-card,
-    html[data-surface="matte"] .settings-section,
-    html[data-surface="matte"] .period-segmented,
-    html[data-surface="matte"] .month-nav-bar,
-    html[data-surface="matte"] .filter-pill,
-    html[data-surface="matte"] .bottom-nav {
-      background: var(--surface-solid) !important;
-      border: 1px solid var(--line) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14) !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-    }
-    html[data-surface="matte"] .primary-button {
-      background: var(--accent) !important;
-      color: var(--bg) !important;
-      box-shadow: none !important;
-    }
-
-    /* 3. Морозный акрил (Frosted Acrylic — глубокое матовое стекло без резких бликов) */
-    html[data-surface="frosted"] .liquid-glass,
-    html[data-surface="frosted"] .expense-row,
-    html[data-surface="frosted"] .radial-card,
-    html[data-surface="frosted"] .calendar-card,
-    html[data-surface="frosted"] .category-bars-card,
-    html[data-surface="frosted"] .settings-section,
-    html[data-surface="frosted"] .period-segmented,
-    html[data-surface="frosted"] .month-nav-bar,
-    html[data-surface="frosted"] .filter-pill {
-      background: color-mix(in srgb, var(--surface-solid) 65%, transparent) !important;
-      border: 1px solid color-mix(in srgb, var(--text) 10%, transparent) !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18) !important;
-      backdrop-filter: blur(34px) saturate(140%) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(140%) !important;
-    }
-
-    /* 4. Необрутализм (Brutal — жёсткая обводка 2px и смещённая тень) */
-    html[data-surface="brutal"] .liquid-glass,
-    html[data-surface="brutal"] .expense-row,
-    html[data-surface="brutal"] .radial-card,
-    html[data-surface="brutal"] .calendar-card,
-    html[data-surface="brutal"] .category-bars-card,
-    html[data-surface="brutal"] .settings-section,
-    html[data-surface="brutal"] .period-segmented,
-    html[data-surface="brutal"] .month-nav-bar,
-    html[data-surface="brutal"] .filter-pill,
-    html[data-surface="brutal"] .bottom-nav {
-      background: var(--surface-solid) !important;
-      border: 2px solid var(--text) !important;
-      box-shadow: 4px 4px 0px var(--accent) !important;
-      border-radius: 14px !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-    }
-    html[data-surface="brutal"] .primary-button {
-      border: 2px solid var(--text) !important;
-      box-shadow: 3px 3px 0px var(--accent) !important;
-      border-radius: 14px !important;
-    }
-
-    /* 5. Глянец 3D (Glossy — выпуклые кнопки с двойным верхним бликом) */
-    html[data-surface="glossy"] .liquid-glass,
-    html[data-surface="glossy"] .expense-row,
-    html[data-surface="glossy"] .radial-card,
-    html[data-surface="glossy"] .calendar-card,
-    html[data-surface="glossy"] .category-bars-card,
-    html[data-surface="glossy"] .settings-section,
-    html[data-surface="glossy"] .filter-pill {
-      background: linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 92%, #ffffff 8%) 0%, var(--surface-solid) 52%, color-mix(in srgb, var(--surface-solid) 90%, #000000 10%) 100%) !important;
-      border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--glass-border)) !important;
-      box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.38), inset 0 -2px 3px rgba(0, 0, 0, 0.35), 0 10px 22px rgba(0, 0, 0, 0.28) !important;
-    }
-
-    /* 6. Тонкий контур (Outline Minimal — сверхлёгкий прозрачный wireframe) */
-    html[data-surface="outline"] .liquid-glass,
-    html[data-surface="outline"] .expense-row,
-    html[data-surface="outline"] .radial-card,
-    html[data-surface="outline"] .calendar-card,
-    html[data-surface="outline"] .category-bars-card,
-    html[data-surface="outline"] .settings-section,
-    html[data-surface="outline"] .period-segmented,
-    html[data-surface="outline"] .month-nav-bar,
-    html[data-surface="outline"] .filter-pill {
-      background: color-mix(in srgb, var(--surface-solid) 35%, transparent) !important;
-      border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--line)) !important;
-      box-shadow: none !important;
-      backdrop-filter: blur(8px) !important;
-      -webkit-backdrop-filter: blur(8px) !important;
-    }
-
-    /* === ФОНОВЫЕ СКИНЫ И ТЕКСТУРЫ (DATA-DESIGN) === */
-    /* 1. Аврора / Liquid Mesh */
-    html[data-design="liquid"] body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      background:
-        radial-gradient(65% 50% at 15% 10%, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 70%),
-        radial-gradient(60% 55% at 88% 25%, rgba(56, 189, 248, 0.18) 0%, transparent 70%),
-        radial-gradient(70% 60% at 50% 92%, rgba(217, 70, 239, 0.16) 0%, transparent 70%);
-    }
-
-    /* 2. Маркерные котики (Чёрный маркер для светлых тем) */
-    html[data-design="cats"][data-theme="light"],
-    html[data-design="cats"][data-theme="latte"],
-    html[data-design="cats"][data-theme="nord"],
-    html[data-design="cats"][data-theme="bw"] {
-      --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg stroke='%23111115' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none' opacity='0.16'%3E%3Cpath d='M18 42 L22 22 L34 32 H54 L66 22 L70 42 C76 52 76 68 66 74 H22 C12 68 12 52 18 42 Z'/%3E%3Cpath d='M30 48 Q34 44 38 48 M50 48 Q54 44 58 48'/%3E%3Cpath d='M41 54 L44 57 L47 54 M44 57 C41 61 37 60 36 58 M44 57 C47 61 51 60 52 58'/%3E%3Cpath d='M10 52 H20 M10 58 H20 M68 52 H78 M68 58 H78'/%3E%3Cpath d='M70 68 C86 68 90 50 80 44'/%3E%3Cpath d='M110 28 L114 12 L124 22 H138 L148 12 L152 28'/%3E%3Cpath d='M104 28 H158 V58 C158 70 148 76 131 76 C114 76 104 70 104 58 Z'/%3E%3Cpath d='M158 36 H166 C172 36 172 52 166 52 H158'/%3E%3Ccircle cx='121' cy='40' r='2.5' fill='%23111115'/%3E%3Ccircle cx='141' cy='40' r='2.5' fill='%23111115'/%3E%3Cpath d='M128 45 Q131 49 134 45'/%3E%3Cpath d='M195 36 L198 16 L210 28 H226 L238 16 L241 36 A26 24 0 1 1 195 36 Z'/%3E%3Ccircle cx='209' cy='44' r='4.5'/%3E%3Ccircle cx='209' cy='44' r='1.5' fill='%23111115'/%3E%3Ccircle cx='227' cy='44' r='4.5'/%3E%3Ccircle cx='227' cy='44' r='1.5' fill='%23111115'/%3E%3Cpath d='M215 53 L218 56 L221 53 Z' fill='%23111115'/%3E%3Cpath d='M16 116 L20 98 L30 108 H42 L52 98 L56 116 C56 126 46 132 36 132 C26 132 16 126 16 116 Z'/%3E%3Cpath d='M52 124 C78 124 96 114 118 122 C132 126 136 140 124 146 H32 C22 146 20 136 26 130'/%3E%3Cpath d='M168 112 L173 92 L185 104 H203 L215 92 L220 112 A28 25 0 1 1 168 112 Z'/%3E%3Crect x='173' y='112' width='17' height='11' rx='2' fill='%23111115'/%3E%3Crect x='198' y='112' width='17' height='11' rx='2' fill='%23111115'/%3E%3Cpath d='M190 116 H198'/%3E%3Cpath d='M22 195 L28 175 L39 186 H55 L66 175 L72 195 A27 24 0 1 1 22 195 Z'/%3E%3Cpath d='M110 212 C110 188 134 176 158 184 C178 190 184 214 168 228 C152 240 118 238 110 216 Z'/%3E%3Cpath d='M196 246 L202 220 L214 232 H230 L242 220 L248 246'/%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    /* Маркерные котики (Белый маркер для тёмных тем) */
-    html[data-design="cats"]:not([data-theme="light"]):not([data-theme="latte"]):not([data-theme="nord"]):not([data-theme="bw"]) {
-      --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cg stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none' opacity='0.15'%3E%3Cpath d='M18 42 L22 22 L34 32 H54 L66 22 L70 42 C76 52 76 68 66 74 H22 C12 68 12 52 18 42 Z'/%3E%3Cpath d='M30 48 Q34 44 38 48 M50 48 Q54 44 58 48'/%3E%3Cpath d='M41 54 L44 57 L47 54 M44 57 C41 61 37 60 36 58 M44 57 C47 61 51 60 52 58'/%3E%3Cpath d='M10 52 H20 M10 58 H20 M68 52 H78 M68 58 H78'/%3E%3Cpath d='M70 68 C86 68 90 50 80 44'/%3E%3Cpath d='M110 28 L114 12 L124 22 H138 L148 12 L152 28'/%3E%3Cpath d='M104 28 H158 V58 C158 70 148 76 131 76 C114 76 104 70 104 58 Z'/%3E%3Cpath d='M158 36 H166 C172 36 172 52 166 52 H158'/%3E%3Ccircle cx='121' cy='40' r='2.5' fill='%23ffffff'/%3E%3Ccircle cx='141' cy='40' r='2.5' fill='%23ffffff'/%3E%3Cpath d='M128 45 Q131 49 134 45'/%3E%3Cpath d='M195 36 L198 16 L210 28 H226 L238 16 L241 36 A26 24 0 1 1 195 36 Z'/%3E%3Ccircle cx='209' cy='44' r='4.5'/%3E%3Ccircle cx='209' cy='44' r='1.5' fill='%23ffffff'/%3E%3Ccircle cx='227' cy='44' r='4.5'/%3E%3Ccircle cx='227' cy='44' r='1.5' fill='%23ffffff'/%3E%3Cpath d='M215 53 L218 56 L221 53 Z' fill='%23ffffff'/%3E%3Cpath d='M16 116 L20 98 L30 108 H42 L52 98 L56 116 C56 126 46 132 36 132 C26 132 16 126 16 116 Z'/%3E%3Cpath d='M52 124 C78 124 96 114 118 122 C132 126 136 140 124 146 H32 C22 146 20 136 26 130'/%3E%3Cpath d='M168 112 L173 92 L185 104 H203 L215 92 L220 112 A28 25 0 1 1 168 112 Z'/%3E%3Crect x='173' y='112' width='17' height='11' rx='2' fill='%23ffffff'/%3E%3Crect x='198' y='112' width='17' height='11' rx='2' fill='%23ffffff'/%3E%3Cpath d='M190 116 H198'/%3E%3Cpath d='M22 195 L28 175 L39 186 H55 L66 175 L72 195 A27 24 0 1 1 22 195 Z'/%3E%3Cpath d='M110 212 C110 188 134 176 158 184 C178 190 184 214 168 228 C152 240 118 238 110 216 Z'/%3E%3Cpath d='M196 246 L202 220 L214 232 H230 L242 220 L248 246'/%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    /* 3. Иван Золо 2004 */
-    html[data-design="zolo"] {
-      --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='%23eab308' fill-opacity='0.13' font-family='sans-serif' font-weight='900'%3E%3Ctext x='18' y='45' font-size='18' transform='rotate(-10 18 45)'%3E2004%3C/text%3E%3Ctext x='120' y='105' font-size='14' transform='rotate(8 120 105)'%3EБАОБАБ%3C/text%3E%3Ctext x='24' y='175' font-size='15' transform='rotate(-6 24 175)'%3EZOLO👑%3C/text%3E%3Ctext x='130' y='185' font-size='13' transform='rotate(12 130 185)'%3EФПИ VIP%3C/text%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    /* 4. Топографические линии (Topo Map) */
-    html[data-design="topo"] {
-      --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%238b5cf6' stroke-opacity='0.16' stroke-width='1.5'%3E%3Cpath d='M0 40 Q60 10 120 40 T240 40 M0 90 Q70 50 140 90 T240 85 M0 150 Q50 190 130 150 T240 160 M0 205 Q85 170 160 205 T240 200'/%3E%3Cellipse cx='120' cy='120' rx='55' ry='32'/%3E%3Cellipse cx='120' cy='120' rx='26' ry='14'/%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    /* 5. Швейцарская точечная матрица (Swiss Dots) */
-    html[data-design="dots"] {
-      --bg-pattern: radial-gradient(color-mix(in srgb, var(--text) 18%, transparent) 1.5px, transparent 1.5px);
-      --pattern-size: 22px 22px;
-    }
-    html[data-design="dots"][data-pattern="soft"] { --pattern-size: 32px 32px; }
-
-    /* 6. Японские волны (Seigaiha Waves) */
-    html[data-design="waves"] {
-      --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Cg fill='none' stroke='%2394a3b8' stroke-opacity='0.16' stroke-width='1.6'%3E%3Ccircle cx='60' cy='60' r='50'/%3E%3Ccircle cx='60' cy='60' r='36'/%3E%3Ccircle cx='60' cy='60' r='22'/%3E%3Ccircle cx='0' cy='60' r='50'/%3E%3Ccircle cx='120' cy='60' r='50'/%3E%3C/g%3E%3C/svg%3E");
-      --pattern-size: 120px 60px;
-    }
-
-    /* 7. Retro Cyber Сетка */
-    html[data-design="cyber"] {
-      --bg-pattern:
-        linear-gradient(rgba(168, 85, 247, 0.11) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(56, 189, 248, 0.11) 1px, transparent 1px);
-      --pattern-size: 36px 36px;
-    }
-
-    /* 8. Свой пользовательский фон */
-    html[data-design="custom"] body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background-image: var(--custom-bg-image);
-      background-size: cover;
-      background-position: center;
-      opacity: 0.38;
-      pointer-events: none;
-    }
-
-    html[data-pattern="soft"]:not([data-design="dots"]) { --pattern-size: 310px 310px; }
-    html[data-pattern="bold"]:not([data-design="dots"]) { --pattern-size: 210px 210px; }
-
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { min-height: 100%; background: var(--bg); }
     body {
       margin: 0;
       min-height: 100vh;
-      background-color: var(--bg);
-      background-image: var(--bg-pattern);
-      background-size: var(--pattern-size);
-      background-repeat: repeat;
-      background-attachment: fixed;
+      background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -webkit-tap-highlight-color: transparent;
       overscroll-behavior-y: none;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
-    button, input, select { font: inherit; color: inherit; }
-    button:focus-visible, input:focus-visible {
-      outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
-      outline-offset: 2px;
+    html[data-theme="dark"] body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(85% 45% at 80% 18%, rgba(109, 40, 217, 0.16) 0%, transparent 65%),
+        radial-gradient(70% 40% at 15% 85%, rgba(76, 29, 149, 0.12) 0%, transparent 65%);
     }
 
-    /* === БАЗОВЫЙ КЛАСС КНОПОК И ПОВЕРХНОСТЕЙ === */
-    .liquid-glass {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(16px) saturate(170%);
-      -webkit-backdrop-filter: blur(16px) saturate(170%);
-      transform: translateZ(0);
-      transition: transform 0.22s var(--bounce), box-shadow 0.22s ease, background 0.22s ease;
-    }
-    .liquid-glass:active:not(:disabled) {
-      transform: scale(0.95) translateZ(0);
-    }
+    button, input, select { font: inherit; color: inherit; }
+    button { cursor: pointer; }
 
     .app-shell {
-      width: min(100%, 540px);
+      width: min(100%, 480px);
       min-height: 100vh;
       margin: 0 auto;
-      padding: max(16px, env(safe-area-inset-top)) 18px calc(116px + var(--safe-bottom));
+      padding: max(14px, env(safe-area-inset-top)) 18px calc(108px + var(--safe-bottom));
     }
 
-    /* === ВЕРХНЯЯ ПАНЕЛЬ (КНОПКА НАСТРОЕК В ПРАВОМ ВЕРХНЕМ УГЛУ) === */
+    /* === TOPBAR === */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 20px;
-      animation: slide-down 0.4s var(--spring) both;
+      margin-bottom: 18px;
+      animation: fade-down 0.4s var(--spring) both;
     }
-    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-    .brand-mark {
-      width: 40px; height: 40px; border-radius: 14px;
-      display: grid; place-items: center;
-      background: var(--accent-soft);
-      border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      color: var(--accent-strong);
-      font-weight: 900; font-size: 13px; letter-spacing: -0.5px;
-      transition: transform 0.3s var(--bounce);
+    .brand-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
     }
-    .brand:hover .brand-mark { transform: rotate(-6deg) scale(1.05); }
-    .brand-name { font-size: 15px; font-weight: 820; letter-spacing: -0.3px; }
-    .brand-sub { color: var(--muted); font-size: 11px; margin-top: 1px; }
-
-    .top-actions { display: flex; align-items: center; gap: 8px; }
-    .sync-pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 10px; border-radius: 999px;
-      color: var(--muted); font-size: 10px; font-weight: 750; white-space: nowrap;
+    .brand-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      margin: 0;
+      line-height: 1.1;
     }
     .sync-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #c39b60; transition: background 0.3s ease, box-shadow 0.3s ease;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      flex-shrink: 0;
     }
-    .sync-pill.online .sync-dot {
-      background: #4cd964;
-      box-shadow: 0 0 8px rgba(76, 217, 100, 0.75);
-      animation: pulse-dot 2.2s infinite ease-in-out;
+    .sync-dot.online {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.65);
     }
-    .sync-pill.busy .sync-dot {
-      background: #a78bfa;
-      animation: pulse-dot 0.9s infinite ease-in-out;
-    }
-    .icon-button {
-      width: 42px; height: 42px; border-radius: 15px;
-      display: grid; place-items: center; cursor: pointer;
-    }
-    .icon-button svg {
-      width: 19px; height: 19px; stroke: currentColor;
-      transition: transform 0.35s var(--bounce);
-    }
-    .icon-button:active svg { transform: rotate(28deg) scale(0.9); }
-
-    /* === СВОДКА ОБЩЕГО БАЛАНСА НАД КАРТАМИ === */
-    .summary-strip {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 10px; margin-bottom: 12px; padding: 0 2px;
-    }
-    .summary-total-wrap { display: flex; align-items: baseline; gap: 8px; }
-    .summary-label { font-size: 11px; font-weight: 750; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-    .summary-networth { font-size: 15px; font-weight: 850; font-variant-numeric: tabular-nums; color: var(--text); }
-    .cards-counter-pill {
-      font-size: 11px; font-weight: 780; color: var(--accent-strong);
-      background: var(--accent-soft); border: 1px solid var(--glass-border);
-      padding: 4px 10px; border-radius: 999px; cursor: pointer;
+    .sync-dot.busy {
+      background: var(--accent);
+      animation: pulse 1s infinite ease-in-out;
     }
 
-    /* === КАРУСЕЛЬ 3 БАНКОВСКИХ КАРТ === */
-    .cards-carousel-wrap {
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      transition: transform 0.2s var(--spring), background 0.2s ease;
+    }
+    .icon-btn:active { transform: scale(0.92); }
+    .icon-btn svg { width: 19px; height: 19px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+
+    /* === STACKED CARD DECK (ISO/IEC 7810 ID-1) === */
+    .deck-section {
       position: relative;
-      margin: 0 -18px 18px;
-      padding: 4px 0 8px;
+      margin-bottom: 16px;
+      user-select: none;
+      touch-action: pan-y;
     }
-    .cards-track {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      padding: 6px 18px 14px;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
+    .card-deck {
+      position: relative;
+      width: calc(100% - 16px);
+      aspect-ratio: 1.586 / 1;
+      margin: 0 auto 0 0;
     }
-    .cards-track::-webkit-scrollbar { display: none; }
-
     .bank-card {
-      flex: 0 0 100%;
-      scroll-snap-align: center;
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-      border-radius: 26px;
-      padding: 20px 20px 18px;
-      min-height: 212px;
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 20px 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.34);
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid rgba(255, 255, 255, 0.18);
       box-shadow:
-        inset 0 1.5px 1px rgba(255, 255, 255, 0.45),
-        inset 0 -1px 2px rgba(0, 0, 0, 0.45),
-        0 18px 36px -10px rgba(20, 10, 48, 0.55);
-      transform: translateZ(0);
-      transition: transform 0.3s var(--spring), box-shadow 0.3s ease;
+        inset 0 1px 0 rgba(255, 255, 255, 0.26),
+        0 18px 40px -12px rgba(0, 0, 0, 0.65);
+      transform-origin: center right;
+      transition:
+        transform 0.48s var(--spring),
+        opacity 0.42s ease,
+        filter 0.42s ease;
+      will-change: transform, opacity;
+      cursor: grab;
     }
-    .bank-card::before {
-      content: "";
-      position: absolute;
-      inset: -40% -60%;
-      background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.16) 48%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.1) 52%, transparent 58%);
-      transform: translateX(-45%) rotate(8deg);
-      animation: fpi-shimmer 7.5s infinite ease-in-out;
-      pointer-events: none;
-      z-index: 0;
+    .bank-card.dragging {
+      transition: none !important;
+      cursor: grabbing;
     }
-    .bank-card::after {
-      content: "";
-      position: absolute;
-      width: 190px; height: 190px;
-      right: -58px; top: -68px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 50%;
-      box-shadow: 0 0 0 22px rgba(255, 255, 255, 0.05), 0 0 0 44px rgba(255, 255, 255, 0.03);
-      pointer-events: none;
-      z-index: 0;
+    .bank-card[data-pos="0"] {
+      z-index: 3;
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+      filter: brightness(1);
+    }
+    .bank-card[data-pos="1"] {
+      z-index: 2;
+      transform: translate3d(14px, 0, 0) scale(0.945);
+      opacity: 0.78;
+      filter: brightness(0.72);
+      cursor: pointer;
+    }
+    .bank-card[data-pos="2"] {
+      z-index: 1;
+      transform: translate3d(26px, 0, 0) scale(0.89);
+      opacity: 0.46;
+      filter: brightness(0.5);
+      cursor: pointer;
+    }
+    .bank-card.exit-left {
+      transform: translate3d(-115%, 8px, 0) rotate(-6deg) scale(0.94) !important;
+      opacity: 0 !important;
+    }
+    .bank-card.exit-right {
+      transform: translate3d(115%, 8px, 0) rotate(6deg) scale(0.94) !important;
+      opacity: 0 !important;
     }
 
-    /* === 12 СКИНОВ ДЛЯ БАНКОВСКИХ КАРТ === */
-    /* 1. Классический фиолетовый ФПИ Банк */
-    .bank-card[data-skin="fpi-purple"] {
+    /* Modern Apple-grade Card Skins */
+    .bank-card[data-skin="fpi-obsidian"] {
       background:
-        radial-gradient(120% 100% at 100% 0%, rgba(208, 162, 255, 0.42) 0%, transparent 55%),
-        linear-gradient(135deg, #230c44 0%, #491d88 48%, #6f34c7 85%, #9356ec 100%);
+        radial-gradient(95% 95% at 95% 5%, rgba(139, 92, 246, 0.68) 0%, rgba(76, 29, 149, 0.35) 45%, transparent 72%),
+        radial-gradient(80% 70% at 10% 95%, rgba(59, 130, 246, 0.16) 0%, transparent 60%),
+        linear-gradient(135deg, #161521 0%, #0d0c14 55%, #1d1438 100%);
     }
-    /* 2. Жидкое стекло / Liquid Chrome */
-    .bank-card[data-skin="liquid-glass"] {
+    .bank-card[data-skin="titanium-dark"] {
       background:
-        radial-gradient(90% 85% at 15% 15%, rgba(255, 255, 255, 0.35) 0%, transparent 55%),
-        radial-gradient(85% 90% at 85% 85%, rgba(165, 243, 252, 0.32) 0%, transparent 60%),
-        linear-gradient(135deg, #1e293b 0%, #475569 32%, #94a3b8 66%, #334155 100%);
-      border-color: rgba(255, 255, 255, 0.55);
+        linear-gradient(120deg, rgba(255,255,255,0.08) 0%, transparent 45%, rgba(255,255,255,0.04) 100%),
+        linear-gradient(135deg, #2a2c32 0%, #17181c 52%, #0e0f12 100%);
     }
-    /* 3. Голографический Иридий (Holo) */
-    .bank-card[data-skin="holo"] {
+    .bank-card[data-skin="pacific-blue"] {
       background:
-        radial-gradient(80% 80% at 90% 10%, rgba(251, 207, 232, 0.65) 0%, transparent 55%),
-        radial-gradient(80% 80% at 10% 90%, rgba(165, 243, 252, 0.6) 0%, transparent 55%),
-        linear-gradient(130deg, #4f46e5 0%, #ec4899 38%, #06b6d4 75%, #8b5cf6 100%);
-      border-color: rgba(255, 255, 255, 0.6);
+        radial-gradient(90% 90% at 90% 10%, rgba(56, 189, 248, 0.38) 0%, transparent 60%),
+        linear-gradient(135deg, #0c192c 0%, #102a45 55%, #091322 100%);
     }
-    /* 4. Карбон Pro */
-    .bank-card[data-skin="carbon"] {
+    .bank-card[data-skin="alpine-green"] {
       background:
-        repeating-linear-gradient(45deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 3px, transparent 3px, transparent 8px),
-        linear-gradient(140deg, #09090b 0%, #18181b 52%, #27272a 100%);
-      border-color: rgba(255, 255, 255, 0.22);
+        radial-gradient(90% 90% at 90% 10%, rgba(52, 211, 153, 0.32) 0%, transparent 60%),
+        linear-gradient(135deg, #0b1c17 0%, #123328 55%, #071310 100%);
     }
-    /* 5. Золотой Металл (Gold Metal) */
-    .bank-card[data-skin="gold"] {
-      color: #1c1302;
+    .bank-card[data-skin="natural-titanium"] {
+      color: #161513;
+      border-color: rgba(255, 255, 255, 0.45);
       background:
-        radial-gradient(110% 90% at 100% 0%, rgba(255, 252, 220, 0.65) 0%, transparent 55%),
-        linear-gradient(135deg, #85581A 0%, #D4AF37 35%, #FFF3B0 65%, #AA7C11 100%);
-      border-color: rgba(255, 248, 210, 0.75);
+        linear-gradient(135deg, #d8d4cb 0%, #b8b3a8 50%, #9f9a8f 100%);
     }
-    .bank-card[data-skin="gold"] .fpi-bank-subtitle,
-    .bank-card[data-skin="gold"] .fpi-card-number,
-    .bank-card[data-skin="gold"] .card-balance-caption { color: rgba(28, 19, 2, 0.78); }
-    .bank-card[data-skin="gold"] .fpi-logo-shield,
-    .bank-card[data-skin="gold"] .card-action-pill {
-      background: rgba(28, 19, 2, 0.14);
-      border-color: rgba(28, 19, 2, 0.28);
-      color: #1c1302;
-    }
-    /* 6. Amoled Matte Black */
-    .bank-card[data-skin="amoled"] {
+    .bank-card[data-skin="natural-titanium"] .card-bank-name,
+    .bank-card[data-skin="natural-titanium"] .card-digits { color: rgba(22, 21, 19, 0.72); }
+    .bank-card[data-skin="crimson-noir"] {
       background:
-        radial-gradient(90% 90% at 100% 0%, rgba(139, 92, 246, 0.25) 0%, transparent 60%),
-        linear-gradient(145deg, #030305 0%, #0a0a0f 65%, #12121c 100%);
-      border-color: rgba(167, 139, 250, 0.35);
+        radial-gradient(90% 90% at 90% 10%, rgba(244, 63, 94, 0.45) 0%, transparent 60%),
+        linear-gradient(135deg, #1d0b12 0%, #3b0d1e 55%, #12060a 100%);
     }
-    /* 7. Киберпанк Неон */
-    .bank-card[data-skin="cyber"] {
-      background:
-        radial-gradient(90% 90% at 0% 100%, rgba(6, 182, 212, 0.5) 0%, transparent 55%),
-        linear-gradient(135deg, #090420 0%, #3b0764 45%, #be185d 85%, #f43f5e 100%);
-      border-color: rgba(34, 211, 238, 0.5);
-    }
-    /* 8. Изумруд Прайм */
-    .bank-card[data-skin="emerald"] {
-      background:
-        radial-gradient(110% 90% at 100% 0%, rgba(110, 231, 183, 0.35) 0%, transparent 55%),
-        linear-gradient(135deg, #042f2e 0%, #065f46 52%, #059669 88%, #34d399 100%);
-    }
-    /* 9. Алый Рубин */
-    .bank-card[data-skin="ruby"] {
-      background:
-        radial-gradient(110% 90% at 100% 0%, rgba(253, 164, 175, 0.35) 0%, transparent 55%),
-        linear-gradient(135deg, #3b0614 0%, #881337 52%, #e11d48 90%, #fb7185 100%);
-    }
-    /* 10. Иван Золо 2004 VIP */
-    .bank-card[data-skin="zolo"] {
-      background:
-        radial-gradient(100% 90% at 100% 0%, rgba(253, 224, 71, 0.45) 0%, transparent 60%),
-        linear-gradient(135deg, #1c1917 0%, #422006 48%, #a16207 85%, #eab308 100%);
-      border-color: rgba(254, 240, 138, 0.55);
-    }
-    /* 11. Котики Маркер */
-    .bank-card[data-skin="cats"] {
-      background-color: #1e1b4b;
-      background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 260 260'%3E%3Cg stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none' opacity='0.18'%3E%3Cpath d='M18 42 L22 22 L34 32 H54 L66 22 L70 42 C76 52 76 68 66 74 H22 C12 68 12 52 18 42 Z'/%3E%3Cpath d='M195 36 L198 16 L210 28 H226 L238 16 L241 36 A26 24 0 1 1 195 36 Z'/%3E%3Cpath d='M110 212 C110 188 134 176 158 184 C178 190 184 214 168 228 C152 240 118 238 110 216 Z'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(135deg, #1e1b4b 0%, #4338ca 55%, #7e22ce 100%);
-      background-size: 130px 130px, cover;
-    }
-    /* 12. Свой фон на карте */
     .bank-card[data-skin="custom"] {
-      background-color: #1e1b4b;
-      background-image: linear-gradient(180deg, rgba(10, 8, 22, 0.35) 0%, rgba(10, 8, 22, 0.72) 100%), var(--card-custom-img, linear-gradient(135deg, #311042, #6d33c2));
+      background-color: #14131d;
+      background-image: linear-gradient(180deg, rgba(8, 8, 14, 0.28) 0%, rgba(8, 8, 14, 0.75) 100%), var(--card-custom-img, linear-gradient(135deg, #1d1438, #0d0c14));
       background-size: cover;
       background-position: center;
     }
 
-    /* Элементы внутри банковской карты */
-    .fpi-card-top {
-      position: relative; z-index: 1;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    .card-wave-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.28;
+      z-index: 0;
     }
-    .fpi-brand-wrap { display: flex; align-items: center; gap: 10px; }
-    .fpi-logo-shield {
-      width: 34px; height: 34px; border-radius: 11px;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
-      border: 1px solid rgba(255, 255, 255, 0.42);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6);
-      display: grid; place-items: center;
-      font-weight: 900; font-size: 11px; letter-spacing: -0.5px;
+    .card-top-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .fpi-bank-title { font-size: 14px; font-weight: 900; letter-spacing: 0.04em; }
-    .fpi-bank-subtitle {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
-      color: rgba(240, 232, 255, 0.78); text-transform: uppercase;
+    .card-bank-name {
+      font-size: 13px;
+      font-weight: 760;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.86);
+    }
+    .card-edit-trigger {
+      border: 0;
+      background: rgba(255, 255, 255, 0.12);
+      color: inherit;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.18s var(--spring), background 0.18s ease;
+    }
+    .card-edit-trigger:active { transform: scale(0.88); }
+    .card-edit-trigger svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.9; }
+
+    .card-mid-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 6px 0;
+    }
+    .emv-chip {
+      width: 40px;
+      height: 30px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #d7d9de 0%, #9fa4ae 50%, #e5e7eb 100%);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7);
+    }
+    .emv-chip::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 31%, rgba(0,0,0,0.28) 31%, rgba(0,0,0,0.28) 34%, transparent 34%, transparent 66%, rgba(0,0,0,0.28) 66%, rgba(0,0,0,0.28) 69%, transparent 69%),
+        linear-gradient(0deg, transparent 47%, rgba(0,0,0,0.28) 47%, rgba(0,0,0,0.28) 53%, transparent 53%);
+    }
+    .nfc-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      opacity: 0.72;
     }
 
-    .card-top-actions {
-      display: flex; align-items: center; gap: 6px;
+    .card-bottom-row {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .card-action-pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 11px; border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.32);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      color: inherit; font-size: 10px; font-weight: 800;
-      cursor: pointer; transition: transform 0.18s var(--bounce), background 0.18s ease;
+    .card-name-sub {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.72;
+      margin-bottom: 2px;
     }
-    .card-action-pill:active { transform: scale(0.92); }
-
-    .fpi-chip-row {
-      position: relative; z-index: 1;
-      display: flex; align-items: center; justify-content: space-between;
-      margin: 12px 0 8px;
-    }
-    .fpi-emv-chip {
-      width: 36px; height: 26px; border-radius: 6px;
-      background: linear-gradient(135deg, #ffe999 0%, #d4af37 52%, #f9e498 100%);
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(0, 0, 0, 0.22);
-      position: relative; overflow: hidden;
-    }
-    .fpi-emv-chip::before, .fpi-emv-chip::after {
-      content: ""; position: absolute; background: rgba(92, 64, 10, 0.36);
-    }
-    .fpi-emv-chip::before { top: 0; bottom: 0; left: 11px; width: 1px; box-shadow: 11px 0 0 rgba(92, 64, 10, 0.36); }
-    .fpi-emv-chip::after { left: 0; right: 0; top: 12px; height: 1px; }
-    .fpi-card-number {
-      font-size: 11px; font-weight: 750; letter-spacing: 0.15em;
-      color: rgba(245, 238, 255, 0.85); font-variant-numeric: tabular-nums;
-    }
-
-    .card-MainBottom {
-      position: relative; z-index: 1;
-      display: flex; align-items: flex-end; justify-content: space-between; gap: 10px;
-    }
-    .card-balance-block { min-width: 0; flex: 1; }
-    .card-balance-caption {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 780; color: rgba(244, 238, 255, 0.9);
-    }
-    .card-balance-row {
-      display: inline-flex; align-items: center; gap: 8px;
-      margin-top: 3px; cursor: pointer;
-    }
-    .card-balance-amount {
-      font-size: 34px; line-height: 1.05; letter-spacing: -1.3px; font-weight: 860;
+    .card-balance {
+      font-size: 31px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.05;
       font-variant-numeric: tabular-nums;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+      white-space: nowrap;
     }
-    .card-edit-badge {
-      width: 26px; height: 26px; border-radius: 50%;
-      display: grid; place-items: center;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.32);
+    .card-digits {
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.78);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      margin-bottom: 4px;
+    }
+
+    .deck-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .deck-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 99px;
+      border: 0;
+      padding: 0;
+      background: var(--muted);
+      opacity: 0.35;
+      transition: width 0.3s var(--spring), opacity 0.25s ease, background 0.25s ease;
+    }
+    .deck-dot.active {
+      width: 20px;
+      opacity: 1;
+      background: var(--text);
+    }
+
+    /* === COMPACT LIMIT STRIP (MATCHING REFERENCE) === */
+    .limit-strip {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .limit-strip-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .limit-icon-box {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .limit-icon-box svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+    .limit-main-col { flex: 1; min-width: 0; }
+    .limit-kicker {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 550;
+    }
+    .limit-value {
+      font-size: 18px;
+      font-weight: 780;
+      letter-spacing: -0.4px;
+      font-variant-numeric: tabular-nums;
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+    .limit-value span {
+      font-size: 13px;
+      font-weight: 550;
+      color: var(--muted);
+    }
+    .limit-right-col {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .limit-full-val {
+      font-size: 14px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+    .limit-chevron {
+      width: 18px;
+      height: 18px;
+      stroke: var(--muted);
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+      transition: transform 0.28s var(--spring);
+    }
+    .limit-strip.expanded .limit-chevron { transform: rotate(180deg); }
+
+    .limit-progress {
+      height: 5px;
+      border-radius: 99px;
+      background: var(--surface-3);
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+      margin-top: 12px;
+    }
+    .limit-seg {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.45s var(--spring);
+    }
+    .limit-details {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s var(--spring), margin-top 0.3s var(--spring);
+    }
+    .limit-strip.expanded .limit-details {
+      grid-template-rows: 1fr;
+      margin-top: 12px;
+    }
+    .limit-details-inner {
+      overflow: hidden;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       font-size: 12px;
     }
-    .card-month-Outflow {
-      font-size: 10px; font-weight: 750; opacity: 0.85;
-      text-align: right; white-space: nowrap;
+    .limit-detail-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+    .limit-detail-row strong {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-weight: 680;
     }
 
-    /* Навигация под каруселью карт */
-    .carousel-controls {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 20px; margin-top: -2px;
+    /* === BORDERLESS TRANSACTION LIST (NO BLOATED TILES) === */
+    .list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
-    .carousel-dots { display: flex; align-items: center; gap: 7px; }
-    .carousel-dot {
-      width: 7px; height: 7px; border-radius: 999px; border: 0; padding: 0;
-      background: var(--muted); opacity: 0.38; cursor: pointer;
-      transition: width 0.25s var(--spring), opacity 0.25s ease, background 0.25s ease;
+    .list-title {
+      font-size: 20px;
+      font-weight: 780;
+      letter-spacing: -0.4px;
+      margin: 0;
     }
-    .carousel-dot.active {
-      width: 22px; opacity: 1; background: var(--accent-strong);
-    }
-    .carousel-filter-btn {
-      border: 0; background: transparent; color: var(--muted);
-      font-size: 11px; font-weight: 750; cursor: pointer; padding: 4px 8px;
-      border-radius: 999px; transition: color 0.2s ease, background 0.2s ease;
-    }
-    .carousel-filter-btn.active {
-      color: var(--accent-strong); background: var(--accent-soft);
-    }
-
-    /* === СПИСОК РАСХОДОВ НА ГЛАВНОЙ === */
-    .section-row {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 10px; margin: 16px 2px 10px;
-    }
-    .section-label { color: var(--muted); font-size: 12px; font-weight: 780; }
-    .month-total { font-size: 12px; font-weight: 820; font-variant-numeric: tabular-nums; }
-
-    /* Быстрый фильтр по картам над расходами */
-    .card-filter-pills {
-      display: flex; gap: 7px; overflow-x: auto;
-      padding: 2px 1px 10px; scrollbar-width: none;
-    }
-    .card-filter-pills::-webkit-scrollbar { display: none; }
-    .filter-pill {
-      flex: 0 0 auto;
-      padding: 7px 13px; border-radius: 999px;
-      font-size: 11px; font-weight: 760;
-      border: 1px solid var(--glass-border);
+    .pill-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
       background: var(--surface);
-      color: var(--muted); cursor: pointer;
-      transition: transform 0.18s var(--bounce), background 0.18s ease, color 0.18s ease;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 620;
+      transition: background 0.2s ease, color 0.2s ease;
     }
-    .filter-pill.active {
-      background: var(--accent-soft);
-      color: var(--accent-strong);
-      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    .pill-filter-btn.active {
+      color: var(--text);
+      border-color: var(--line-strong);
     }
 
-    .expense-list { display: flex; flex-direction: column; gap: 9px; }
-    .day-label {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 11px; color: var(--muted); font-weight: 780;
-      margin: 12px 4px 2px;
+    .tx-group-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 650;
+      color: var(--muted);
+      margin: 16px 0 4px;
     }
-    .expense-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 13px 14px; border-radius: 20px;
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      cursor: pointer; text-align: left; width: 100%;
-      animation: row-enter 0.38s var(--spring) both;
-      animation-delay: calc(var(--i, 0) * 32ms);
-      transition: transform 0.2s var(--bounce), border-color 0.2s ease;
+    .tx-list {
+      display: flex;
+      flex-direction: column;
     }
-    .expense-row:active { transform: scale(0.975); }
-    .category-icon {
-      width: 40px; height: 40px; border-radius: 14px;
-      display: grid; place-items: center; flex: 0 0 40px;
-      background: var(--surface-2); font-size: 18px;
+    .tx-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 2px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      transition: opacity 0.16s ease, transform 0.2s var(--spring);
+      animation: row-in 0.34s var(--spring) both;
+      animation-delay: calc(var(--i, 0) * 28ms);
     }
-    .expense-copy { min-width: 0; flex: 1; }
-    .expense-title {
-      font-size: 14px; font-weight: 780; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .tx-row:last-child { border-bottom: 0; }
+    .tx-row:active { opacity: 0.6; transform: scale(0.99); }
+    .tx-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      flex-shrink: 0;
     }
-    .expense-meta {
-      display: flex; align-items: center; gap: 6px;
-      color: var(--muted); font-size: 11px; margin-top: 3px;
+    .tx-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+    .tx-copy { flex: 1; min-width: 0; }
+    .tx-name {
+      font-size: 15px;
+      font-weight: 620;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .expense-card-tag {
-      display: inline-block; padding: 1px 7px; border-radius: 6px;
-      background: var(--surface-2); font-size: 10px; font-weight: 750;
+    .tx-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 680;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .tx-amount.income { color: var(--green); }
+
+    .empty-block {
+      padding: 36px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* === ANALYTICS SCREEN (BORDERLESS / MODERN) === */
+    .screen { display: none; }
+    .screen.active { display: block; animation: screen-fade 0.28s var(--spring) both; }
+
+    .filter-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scrollbar-width: none;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+    .chip-btn {
+      flex: 0 0 auto;
+      padding: 7px 14px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .chip-btn.active {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .seg-control {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 3px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+    .seg-btn {
+      border: 0;
+      border-radius: 9px;
+      padding: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 680;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .seg-btn.active {
+      background: var(--surface-3);
       color: var(--text);
     }
-    .expense-right { text-align: right; flex: 0 0 auto; }
-    .expense-amount {
-      font-size: 15px; font-weight: 840; letter-spacing: -0.3px;
-      font-variant-numeric: tabular-nums;
-    }
-    .expense-amount.income { color: var(--green); }
-    .expense-date { color: var(--muted); font-size: 10px; margin-top: 3px; }
 
-    .empty-state {
-      background: var(--surface); border: 1px dashed var(--line);
-      border-radius: 22px; padding: 30px 18px; text-align: center;
-      color: var(--muted); backdrop-filter: blur(10px);
+    .month-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
-    .empty-symbol {
-      width: 46px; height: 46px; border-radius: 15px; margin: 0 auto 10px;
-      display: grid; place-items: center; background: var(--accent-soft);
-      color: var(--accent-strong); font-size: 21px;
+    .month-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
     }
-    .empty-title { color: var(--text); font-size: 14px; font-weight: 780; margin-bottom: 4px; }
-    .empty-text { font-size: 12px; line-height: 1.45; }
+    .month-label { font-size: 14px; font-weight: 700; }
 
-    /* === ЭКРАН 2: АНАЛИТИКА (РАДИАЛЬНОЕ МЕНЮ + КАЛЕНДАРЬ + 28 ДНЕЙ) === */
-    .period-switcher-wrap {
-      display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+    /* Compact side-by-side Donut + Legend */
+    .analytics-donut-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 0 20px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 18px;
     }
-    .period-segmented {
-      display: grid; grid-template-columns: 1fr 1fr;
-      padding: 4px; gap: 4px; border-radius: 16px;
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-    }
-    .period-btn {
-      border: 0; border-radius: 12px; padding: 10px 8px;
-      background: transparent; font-size: 12px; font-weight: 780;
-      color: var(--muted); cursor: pointer;
-      transition: transform 0.18s var(--bounce), background 0.2s ease, color 0.2s ease;
-    }
-    .period-btn.active {
-      background: var(--accent-soft); color: var(--accent-strong);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.25);
-    }
-
-    .month-nav-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; border-radius: 16px;
-      background: var(--surface); border: 1px solid var(--glass-border);
-    }
-    .month-nav-btn {
-      width: 32px; height: 32px; border-radius: 10px; border: 0;
-      background: var(--surface-2); color: var(--text);
-      font-size: 16px; font-weight: 800; cursor: pointer;
-      display: grid; place-items: center;
-    }
-    .month-nav-title {
-      font-size: 13px; font-weight: 820; letter-spacing: -0.2px;
-    }
-
-    /* Радиальное меню (SVG Donut) */
-    .radial-card {
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-radius: 24px; padding: 18px 16px; margin-bottom: 16px;
-    }
-    .radial-stage {
+    .donut-wrap {
       position: relative;
-      width: 230px; height: 230px;
-      margin: 4px auto 14px;
-      display: grid; place-items: center;
+      width: 136px;
+      height: 136px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
     }
-    .radial-svg {
-      width: 100%; height: 100%;
-      transform: rotate(-90deg);
-      overflow: visible;
-    }
-    .radial-segment {
+    .donut-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .donut-seg {
       fill: none;
-      stroke-width: 20;
+      stroke-width: 15;
       stroke-linecap: round;
       cursor: pointer;
-      transition: stroke-dasharray 0.45s var(--spring), stroke-width 0.2s var(--bounce), opacity 0.2s ease;
+      transition: stroke-width 0.2s var(--spring), opacity 0.2s ease;
     }
-    .radial-segment:hover, .radial-segment.active {
-      stroke-width: 25;
-      filter: drop-shadow(0 0 10px currentColor);
-    }
-    .radial-center {
-      position: absolute; inset: 34px;
-      border-radius: 50%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 8px;
+    .donut-seg.active { stroke-width: 19; }
+    .donut-center {
+      position: absolute;
+      text-align: center;
       pointer-events: none;
     }
-    .radial-center-label {
-      font-size: 10px; font-weight: 780; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.06em;
+    .donut-total {
+      font-size: 17px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.4px;
     }
-    .radial-center-amount {
-      font-size: 26px; font-weight: 880; letter-spacing: -1px;
-      margin: 4px 0 2px; font-variant-numeric: tabular-nums;
+    .donut-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
     }
-    .radial-center-sub {
-      font-size: 11px; font-weight: 740; color: var(--accent-strong);
+    .donut-legend {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 0;
+      background: transparent;
+      padding: 2px 0;
+      font-size: 13px;
+      text-align: left;
+      width: 100%;
+    }
+    .legend-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
+    .legend-val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; font-weight: 600; }
+
+    /* Borderless Calendar */
+    .cal-section { margin-bottom: 22px; }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      row-gap: 6px;
+    }
+    .cal-cell {
+      border: 0;
+      background: transparent;
+      padding: 5px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      border-radius: 12px;
+      transition: background 0.18s ease;
+    }
+    .cal-cell.empty { pointer-events: none; }
+    .cal-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .cal-cell.today .cal-num {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+    .cal-cell.selected .cal-num {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+    .cal-sum {
+      font-size: 9px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      min-height: 11px;
+    }
+    .cal-day-box {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
     }
 
-    .radial-chips {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 7px;
-    }
-    .radial-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 11px; border-radius: 999px;
-      background: var(--surface-2); border: 1px solid var(--glass-border);
-      font-size: 11px; font-weight: 760; cursor: pointer;
-      transition: transform 0.18s var(--bounce), border-color 0.2s ease;
-    }
-    .radial-chip.active {
-      border-color: var(--accent-strong);
-      background: var(--accent-soft);
-    }
-    .radial-chip-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-    /* Календарь трат */
-    .calendar-card {
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-radius: 24px; padding: 17px 14px; margin-bottom: 16px;
-    }
-    .calendar-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 12px; padding: 0 4px;
-    }
-    .calendar-title { font-size: 15px; font-weight: 820; }
-    .calendar-hint { font-size: 11px; color: var(--muted); }
-
-    .calendar-weekdays {
-      display: grid; grid-template-columns: repeat(7, 1fr);
-      text-align: center; font-size: 10px; font-weight: 780;
-      color: var(--muted); margin-bottom: 6px;
-    }
-    .calendar-grid {
-      display: grid; grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-    }
-    .cal-day {
-      min-height: 52px; border-radius: 13px; border: 1px solid transparent;
-      background: var(--surface-2); padding: 5px 2px 4px;
-      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-      cursor: pointer; position: relative;
-      transition: transform 0.18s var(--bounce), border-color 0.18s ease, background 0.18s ease;
-    }
-    .cal-day:active { transform: scale(0.92); }
-    .cal-day.empty { background: transparent; pointer-events: none; }
-    .cal-day.today { border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
-    .cal-day.selected {
-      background: var(--accent-soft);
-      border-color: var(--accent-strong);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.28);
-    }
-    .cal-day-num { font-size: 12px; font-weight: 800; line-height: 1; }
-    .cal-day-sum {
-      font-size: 8.5px; font-weight: 780; color: var(--muted);
-      font-variant-numeric: tabular-nums; white-space: nowrap;
-      max-width: 100%; overflow: hidden; text-overflow: ellipsis;
-    }
-    .cal-day.has-spend .cal-day-sum { color: var(--text); }
-    .cal-dots { display: flex; gap: 2.5px; justify-content: center; min-height: 5px; }
-    .cal-dot { width: 4.5px; height: 4.5px; border-radius: 50%; }
-
-    .calendar-day-details {
-      margin-top: 12px; padding: 12px 13px; border-radius: 16px;
-      background: var(--surface-2); border: 1px solid var(--glass-border);
-    }
-    .cal-detail-head {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px; font-weight: 800; margin-bottom: 8px;
-    }
-    .cal-detail-list { display: flex; flex-direction: column; gap: 6px; }
-    .cal-detail-item {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px; padding: 4px 0; border-bottom: 1px solid var(--line);
-    }
-    .cal-detail-item:last-child { border-bottom: 0; }
-
-    /* Полосы категорий под календарём */
-    .category-bars-card {
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow); border-radius: 24px;
-      padding: 17px 16px; margin-bottom: 14px;
-    }
-    .cat-bar-row { margin-bottom: 12px; }
-    .cat-bar-row:last-child { margin-bottom: 0; }
-    .cat-bar-top {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px; font-weight: 780; margin-bottom: 5px;
-    }
-    .cat-bar-track {
-      height: 7px; border-radius: 999px; background: var(--surface-2); overflow: hidden;
-    }
-    .cat-bar-fill {
-      height: 100%; border-radius: inherit;
-      transition: width 0.4s var(--spring);
-    }
-
-    /* === ПАРЯЩАЯ НИЖНЯЯ НАВИГАЦИЯ (ТОЛЬКО 2 ВКЛАДКИ + КНОПКА ПЛЮС) === */
+    /* === BOTTOM NAVIGATION (MATCHING REFERENCE) === */
     .bottom-nav-wrap {
-      position: fixed; z-index: 20;
-      bottom: calc(12px + var(--safe-bottom)); left: 0; right: 0;
-      padding: 0 18px; pointer-events: none;
+      position: fixed;
+      z-index: 30;
+      left: 0;
+      right: 0;
+      bottom: calc(14px + var(--safe-bottom));
+      padding: 0 18px;
+      pointer-events: none;
     }
     .bottom-nav {
-      pointer-events: auto; width: min(100%, 500px); margin: 0 auto; height: 72px;
-      display: grid; grid-template-columns: 1fr 68px 1fr; align-items: center;
-      padding: 7px 12px; border-radius: 26px;
-      background: var(--nav-bg); border: 1px solid var(--glass-border);
-      backdrop-filter: blur(22px) saturate(180%); -webkit-backdrop-filter: blur(22px) saturate(180%);
-      box-shadow: var(--glass-shadow), 0 14px 34px rgba(0, 0, 0, 0.22);
+      pointer-events: auto;
+      width: min(100%, 444px);
+      height: 66px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 72px 1fr;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 33px;
+      background: var(--nav-bg);
+      border: 1px solid var(--line-strong);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
     }
-    .nav-item {
-      border: 0; background: transparent; color: var(--muted);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 4px; height: 54px; border-radius: 18px;
-      font-size: 10px; font-weight: 780; cursor: pointer;
-      transition: transform 0.2s var(--bounce), background 0.2s ease, color 0.2s ease;
+    .nav-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      height: 50px;
+      font-size: 10px;
+      font-weight: 650;
+      transition: color 0.2s ease, transform 0.2s var(--spring);
     }
-    .nav-item:active { transform: scale(0.92); }
-    .nav-item svg { width: 19px; height: 19px; stroke: currentColor; }
-    .nav-item.active {
-      color: var(--accent-strong);
-      background: var(--accent-soft);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.25);
-    }
+    .nav-btn:active { transform: scale(0.92); }
+    .nav-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .nav-btn.active { color: var(--accent); }
 
-    .add-fab {
-      width: 52px; height: 52px; border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.38);
-      background: linear-gradient(145deg, #8b5cf6 0%, #4c1d95 100%);
-      color: #fff; display: grid; place-items: center; justify-self: center; cursor: pointer;
-      box-shadow: inset 0 1.5px 1px rgba(255, 255, 255, 0.55), 0 8px 22px rgba(109, 40, 217, 0.48);
-      transition: transform 0.25s var(--bounce);
+    .fab-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: linear-gradient(145deg, #9b6dff 0%, #6d28d9 100%);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      justify-self: center;
+      box-shadow: 0 0 24px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      transition: transform 0.24s var(--spring);
     }
-    .add-fab:active { transform: scale(0.9) rotate(90deg); }
-    .add-fab svg { width: 24px; height: 24px; stroke: currentColor; }
+    .fab-btn:active { transform: scale(0.9) rotate(90deg); }
+    .fab-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.3; }
 
-    /* === МОДАЛЬНЫЕ ШТОРКИ (DIALOGS) === */
-    .screen { display: none; }
-    .screen.active { display: block; animation: screen-enter 0.32s var(--spring) both; }
-
+    /* === MODAL SHEETS === */
     dialog { color: var(--text); }
     .sheet {
-      border: 0; padding: 0; width: min(100%, 540px); max-width: none;
-      max-height: min(92dvh, 860px); margin: auto auto 0;
-      background: transparent; overflow: visible;
+      border: 0;
+      padding: 0;
+      width: min(100%, 480px);
+      max-width: none;
+      margin: auto auto 0;
+      background: transparent;
+      overflow: visible;
     }
-    .sheet[open] .sheet-panel { animation: sheet-up 0.34s var(--spring) both; }
     .sheet::backdrop {
       background: var(--overlay);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
+    .sheet[open] .sheet-panel { animation: sheet-up 0.32s var(--spring) both; }
     .sheet-panel {
-      background: var(--surface-solid); border: 1px solid var(--glass-border);
-      border-bottom: 0; border-radius: 28px 28px 0 0;
-      padding: 10px 18px calc(24px + var(--safe-bottom));
-      max-height: 89dvh; overflow: auto;
-      box-shadow: 0 -12px 45px rgba(0, 0, 0, 0.28);
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-bottom: 0;
+      border-radius: 28px 28px 0 0;
+      padding: 10px 20px calc(26px + var(--safe-bottom));
+      max-height: 88dvh;
+      overflow-y: auto;
     }
     .sheet-handle {
-      width: 40px; height: 4px; border-radius: 99px;
-      background: var(--surface-3); margin: 0 auto 14px;
+      width: 38px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--surface-3);
+      margin: 0 auto 14px;
     }
     .sheet-head {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
     }
-    .sheet-head h2 { font-size: 18px; font-weight: 840; margin: 0; }
-    .close-button {
-      border: 0; width: 34px; height: 34px; border-radius: 50%;
-      background: var(--surface-2); color: var(--muted);
-      font-size: 19px; cursor: pointer;
-    }
-
-    /* Элементы форм и скинов внутри модалок */
-    .field-label {
-      display: block; font-size: 11px; color: var(--muted);
-      font-weight: 780; margin: 14px 0 7px;
-    }
-    .amount-input {
-      width: 100%; border: 0; background: transparent; color: var(--text);
-      font-size: 40px; font-weight: 860; letter-spacing: -1.5px;
-      outline: none; padding: 0 0 10px; font-variant-numeric: tabular-nums;
-    }
-    .text-input {
-      width: 100%; min-height: 45px; border: 1px solid var(--line);
-      border-radius: 14px; background: var(--input-bg); color: var(--text);
-      padding: 0 13px; font-size: 13px; font-weight: 650;
-    }
-    .segmented {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-      padding: 4px; gap: 4px; border-radius: 15px; background: var(--surface-2);
-    }
-    .segment-button {
-      border: 0; border-radius: 11px; padding: 10px 8px;
-      background: transparent; font-size: 12px; font-weight: 760;
-      color: var(--muted); cursor: pointer;
-    }
-    .segment-button.selected {
-      background: var(--accent-soft); color: var(--accent-strong);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Сетка 12 скинов карт в окне кастомизации карт */
-    .skins-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    }
-    .skin-tile {
-      border: 2px solid transparent; border-radius: 16px;
-      padding: 6px; background: var(--surface-2);
-      cursor: pointer; text-align: center;
-      transition: transform 0.18s var(--bounce), border-color 0.18s ease;
-    }
-    .skin-tile:active { transform: scale(0.94); }
-    .skin-tile.selected {
-      border-color: var(--accent-strong);
-      background: var(--accent-soft);
-    }
-    .skin-swatch {
-      height: 44px; border-radius: 11px; margin-bottom: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35);
-    }
-    .skin-name { font-size: 10px; font-weight: 780; display: block; }
-
-    .quick-balance-chips {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
-    }
-    .quick-chip {
-      border: 1px solid var(--glass-border); background: var(--surface-2);
-      border-radius: 999px; padding: 6px 11px;
-      font-size: 11px; font-weight: 760; cursor: pointer;
-    }
-
-    /* Быстрые кнопки проезда и билета домой в добавлении расхода */
-    .quick-presets-wrap {
-      margin: 4px 0 14px;
-      padding: 11px 12px;
-      border-radius: 18px;
+    .sheet-head h2 { font-size: 18px; font-weight: 760; margin: 0; }
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 0;
       background: var(--surface-2);
-      border: 1px solid var(--glass-border);
-    }
-    .quick-presets-title {
-      font-size: 10px; font-weight: 800; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px;
-    }
-    .quick-presets-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
-    }
-    .preset-expense-btn {
-      display: flex; align-items: center; justify-content: space-between; gap: 6px;
-      padding: 10px 11px; border-radius: 13px;
-      border: 1px solid var(--glass-border);
-      background: var(--surface-solid); color: var(--text);
-      font-size: 11px; font-weight: 780; cursor: pointer; text-align: left;
-      transition: transform 0.18s var(--bounce), border-color 0.18s ease, background 0.18s ease;
-    }
-    .preset-expense-btn:active { transform: scale(0.95); }
-    .preset-expense-btn:hover { border-color: var(--accent-strong); }
-    .preset-expense-btn strong {
-      color: var(--accent-strong); font-variant-numeric: tabular-nums; white-space: nowrap;
-    }
-    .preset-expense-btn.full-span {
-      grid-column: 1 / -1;
-      background: var(--accent-soft);
-      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      color: var(--muted);
+      font-size: 18px;
+      display: grid;
+      place-items: center;
     }
 
-    /* Виджет и карточка аналитики Кредитки ФПИ */
-    .credit-planner-card {
-      background: var(--surface); border: 1px solid var(--glass-border);
-      box-shadow: var(--glass-shadow);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-radius: 22px; padding: 15px 16px; margin-bottom: 14px;
-    }
-    .credit-planner-top {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 10px; margin-bottom: 10px;
-    }
-    .credit-planner-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
-      color: var(--accent-strong); background: var(--accent-soft);
-      padding: 4px 9px; border-radius: 999px;
-    }
-    .credit-daily-big {
-      font-size: 26px; font-weight: 880; letter-spacing: -0.9px;
-      font-variant-numeric: tabular-nums; margin-top: 4px;
-    }
-    .credit-daily-sub {
-      font-size: 11px; color: var(--muted); font-weight: 720; margin-top: 2px;
-    }
-    .credit-multi-bar {
-      height: 9px; border-radius: 999px; background: var(--surface-2);
-      overflow: hidden; display: flex; gap: 2px; margin: 11px 0 9px;
-    }
-    .credit-bar-seg { height: 100%; border-radius: 999px; transition: width 0.35s var(--spring); }
-    .credit-stats-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px;
-    }
-    .credit-stat-box {
-      padding: 10px 11px; border-radius: 14px;
-      background: var(--surface-2); border: 1px solid var(--line);
-    }
-    .credit-stat-label { font-size: 10px; color: var(--muted); font-weight: 740; }
-    .credit-stat-val {
-      font-size: 14px; font-weight: 840; margin-top: 3px;
+    .amount-input {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      text-align: center;
+      outline: none;
+      padding: 6px 0 12px;
       font-variant-numeric: tabular-nums;
     }
-    .credit-legend-row {
-      display: flex; flex-wrap: wrap; gap: 10px; font-size: 10px; color: var(--muted); font-weight: 740;
+    .presets-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
     }
-    .credit-legend-item { display: inline-flex; align-items: center; gap: 5px; }
-    .credit-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .preset-pill {
+      padding: 9px 6px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      font-size: 11px;
+      font-weight: 650;
+      text-align: center;
+      transition: transform 0.16s var(--spring), border-color 0.16s ease;
+    }
+    .preset-pill:active { transform: scale(0.95); }
+    .preset-pill strong { display: block; color: var(--accent); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-    .category-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    .field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 650;
+      color: var(--muted);
+      margin: 12px 0 6px;
     }
-    .category-button {
-      border: 1px solid var(--glass-border); background: var(--surface-2);
-      border-radius: 16px; min-height: 68px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 4px; color: var(--muted); font-size: 10px; font-weight: 740; cursor: pointer;
+    .text-input {
+      width: 100%;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      padding: 0 13px;
+      font-size: 14px;
+      outline: none;
     }
-    .category-button .emoji { font-size: 19px; }
-    .category-button.selected {
-      border-color: var(--accent-strong);
-      background: var(--accent-soft); color: var(--accent-strong);
+    .text-input:focus { border-color: var(--accent); }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .cat-btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      border-radius: 14px;
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      font-weight: 620;
+      color: var(--muted);
+      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+    .cat-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; }
+    .cat-btn.selected {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
     }
 
-    .settings-section {
-      padding: 14px; border: 1px solid var(--glass-border);
-      background: var(--surface); box-shadow: var(--glass-shadow);
-      border-radius: 18px; margin-bottom: 14px;
+    .skins-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
-    .settings-section-title { font-size: 13px; font-weight: 820; margin-bottom: 10px; }
-    .theme-grid-6 {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 6px; padding: 4px; border-radius: 15px; background: var(--surface-2);
+    .skin-btn {
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 5px;
+      background: var(--surface-2);
+      text-align: center;
     }
-    .design-grid-6 {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 6px; padding: 4px; border-radius: 15px; background: var(--surface-2);
+    .skin-btn.selected { border-color: var(--accent); }
+    .skin-swatch { height: 34px; border-radius: 8px; margin-bottom: 4px; }
+    .skin-name { font-size: 10px; font-weight: 650; }
+
+    .primary-btn {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 99px;
+      background: var(--text);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 760;
+      margin-top: 18px;
+      transition: transform 0.18s var(--spring), opacity 0.18s ease;
     }
-    .theme-choice, .design-choice, .pattern-choice {
-      border: 0; border-radius: 11px; min-height: 40px;
-      background: transparent; color: var(--muted);
-      font-size: 11px; font-weight: 760; cursor: pointer; padding: 6px;
+    .primary-btn:active { transform: scale(0.98); opacity: 0.9; }
+    .secondary-btn {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 680;
+      margin-top: 10px;
     }
-    .theme-choice.selected, .design-choice.selected, .pattern-choice.selected {
-      background: var(--surface-solid); color: var(--text);
-      box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.12);
+    .danger-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 680;
+      padding: 14px 0 4px;
+    }
+    .settings-group {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .settings-group:last-of-type { border-bottom: 0; }
+    .settings-title { font-size: 13px; font-weight: 740; margin-bottom: 10px; }
+    .status-note {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.45;
     }
 
-    .sheet-actions { display: flex; gap: 9px; margin-top: 18px; }
-    .primary-button {
-      flex: 1; border: 1px solid rgba(255, 255, 255, 0.28);
-      border-radius: 999px; padding: 14px 17px; min-height: 46px;
-      background: var(--glass-primary-bg); color: var(--glass-primary-text);
-      box-shadow: var(--glass-primary-shadow);
-      font-size: 13px; font-weight: 800; cursor: pointer;
-    }
-    .secondary-button {
-      border: 1px solid var(--glass-border); border-radius: 999px;
-      background: var(--surface-2); color: var(--text);
-      padding: 13px 16px; font-size: 12px; font-weight: 760; cursor: pointer;
-    }
-    .delete-button {
-      width: 100%; border: 0; background: transparent; color: var(--danger);
-      font-size: 12px; font-weight: 780; padding: 13px 10px 2px; cursor: pointer;
-    }
-    .helper-text { min-height: 16px; color: var(--danger); font-size: 11px; margin-top: 6px; }
-    .settings-status {
-      background: var(--surface-2); border-radius: 14px;
-      padding: 12px; font-size: 11px; color: var(--muted); line-height: 1.5;
-    }
     .toast {
-      position: fixed; z-index: 60; left: 50%;
-      bottom: calc(98px + var(--safe-bottom));
-      transform: translateX(-50%) translateY(8px);
-      opacity: 0; pointer-events: none;
-      background: rgba(24, 22, 34, 0.94); backdrop-filter: blur(12px);
-      color: #fff; border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 999px; padding: 11px 16px; font-size: 12px; font-weight: 700;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
-      transition: opacity 0.22s, transform 0.22s var(--bounce);
+      position: fixed;
+      z-index: 60;
+      left: 50%;
+      bottom: calc(92px + var(--safe-bottom));
+      transform: translateX(-50%) translateY(10px);
+      opacity: 0;
+      pointer-events: none;
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--line-strong);
+      border-radius: 99px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 650;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+      transition: opacity 0.22s ease, transform 0.22s var(--spring);
       white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .footer-note { color: var(--muted); font-size: 10px; text-align: center; margin: 22px 0 4px; }
     .hidden { display: none !important; }
 
-    @keyframes screen-enter {
-      from { opacity: 0; transform: translateY(10px) scale(0.99); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes row-enter {
-      from { opacity: 0; transform: translateY(10px) scale(0.985); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes slide-down {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fpi-shimmer {
-      0%, 100% { transform: translateX(-55%) rotate(8deg); }
-      50% { transform: translateX(45%) rotate(8deg); }
-    }
-    @keyframes pulse-dot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.35); opacity: 0.65; }
-    }
-    @keyframes sheet-up {
-      from { opacity: 0; transform: translateY(36px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fade-down { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes screen-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes row-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes sheet-up { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   </style>
 </head>
 <body>
   <main class="app-shell" id="app">
-    <!-- ВЕРХНЯЯ ШАПКА: Кнопка настроек строго в правом верхнем углу -->
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark" id="brand-mark">ФПИ</div>
-        <div>
-          <div class="brand-name" id="brand-name">ФПИ Банк</div>
-          <div class="brand-sub" id="brand-sub">личный финансовый дневник</div>
-        </div>
+      <div class="brand-title-wrap">
+        <h1 class="brand-title" id="screen-heading">ФПИ Банк</h1>
+        <span class="sync-dot" id="sync-dot" title="Статус синхронизации"></span>
       </div>
-      <div class="top-actions">
-        <span class="sync-pill liquid-glass" id="sync-pill" aria-live="polite">
-          <span class="sync-dot"></span>
-          <span id="sync-label">Онлайн</span>
-        </span>
-        <button class="icon-button liquid-glass" id="theme-toggle" type="button" aria-label="Сменить тему" title="Быстрая смена темы">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/>
-          </svg>
-        </button>
-        <button class="icon-button liquid-glass" id="settings-open" type="button" aria-label="Настройки" title="Настройки и темы">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/>
-          </svg>
-        </button>
-      </div>
+      <button class="icon-btn" id="settings-open" type="button" aria-label="Настройки">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="m19.4 15 .1.1a1.7 1.7 0 1 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 1 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 1 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 1 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 1 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 1 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 1 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 1 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/>
+        </svg>
+      </button>
     </header>
 
-    <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ (3 КАРТЫ + РАСХОДЫ) ================= -->
-    <section class="screen active" id="screen-home" aria-label="Карты и расходы">
-      <div class="summary-strip">
-        <div class="summary-total-wrap">
-          <span class="summary-label">Общий баланс (3 карты):</span>
-          <strong class="summary-networth" id="total-networth">0 ₽</strong>
+    <!-- ================= ГЛАВНАЯ ================= -->
+    <section class="screen active" id="screen-home">
+      <div class="deck-section">
+        <div class="card-deck" id="card-deck" aria-label="Стопка банковских карт"></div>
+        <div class="deck-dots" id="deck-dots">
+          <button class="deck-dot active" type="button" data-deck-dot="0" aria-label="Карта 1"></button>
+          <button class="deck-dot" type="button" data-deck-dot="1" aria-label="Карта 2"></button>
+          <button class="deck-dot" type="button" data-deck-dot="2" aria-label="Карта 3"></button>
         </div>
-        <button class="cards-counter-pill" type="button" id="open-card-customizer-top">
-          🎨 Скины карт
+      </div>
+
+      <!-- Компактная полоса лимита на день (раскрывается по тапу) -->
+      <section class="limit-strip" id="limit-strip">
+        <div class="limit-strip-head" id="limit-strip-toggle">
+          <div class="limit-icon-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="3"/>
+              <path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+          </div>
+          <div class="limit-main-col">
+            <div class="limit-kicker">Лимит на день</div>
+            <div class="limit-value" id="home-daily-free">0 ₽ <span>/ день</span></div>
+          </div>
+          <div class="limit-right-col">
+            <div class="limit-kicker">Без дороги</div>
+            <div class="limit-full-val" id="home-daily-full">0 ₽</div>
+          </div>
+          <svg class="limit-chevron" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+
+        <div class="limit-progress">
+          <div class="limit-seg" id="bar-spent" style="width:0%; background:var(--accent);"></div>
+          <div class="limit-seg" id="bar-reserved" style="width:0%; background:var(--amber);"></div>
+          <div class="limit-seg" id="bar-free" style="width:100%; background:var(--green);"></div>
+        </div>
+
+        <div class="limit-details">
+          <div class="limit-details-inner">
+            <div class="limit-detail-row">
+              <span>Осталось на сегодня (сверх дороги)</span>
+              <strong id="det-today-free">0 ₽</strong>
+            </div>
+            <div class="limit-detail-row">
+              <span>Осталось на сегодня (без дороги)</span>
+              <strong id="det-today-full">0 ₽</strong>
+            </div>
+            <div class="limit-detail-row">
+              <span>Бронь на дорогу (Пн–Пт)</span>
+              <strong id="det-reserved">0 ₽</strong>
+            </div>
+            <div class="limit-detail-row">
+              <span>Свободный остаток Кредитки</span>
+              <strong id="det-free-bal">0 ₽</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Лента операций без плиток -->
+      <div class="list-header">
+        <h2 class="list-title" id="home-list-heading">Сегодня</h2>
+        <button class="pill-filter-btn" id="home-filter-cycle" type="button">
+          <span id="home-filter-label">Все операции</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
         </button>
       </div>
 
-      <!-- КАРУСЕЛЬ ИЗ 3 КАРТ (рендерится и управляется из app.js, ниже базовая разметка) -->
-      <div class="cards-carousel-wrap">
-        <div class="cards-track" id="cards-track" aria-live="polite">
-          <!-- Карта 1: ФПИ Банк -->
-          <article class="bank-card" data-card-index="0" data-skin="fpi-purple">
-            <div class="fpi-card-top">
-              <div class="fpi-brand-wrap">
-                <div class="fpi-logo-shield">ФПИ</div>
-                <div>
-                  <div class="fpi-bank-title">ФПИ БАНК</div>
-                  <div class="fpi-bank-subtitle">Финансово-Пакостный Институт</div>
-                </div>
-              </div>
-              <div class="card-top-actions">
-                <button class="card-action-pill" type="button" data-customize-card="0" title="Изменить скин, имя или баланс">
-                  🎨 Дизайн и счёт
-                </button>
-              </div>
-            </div>
-
-            <div class="fpi-chip-row">
-              <div class="fpi-emv-chip" aria-hidden="true"></div>
-              <div class="fpi-card-number">2204 •••• •••• 2004</div>
-            </div>
-
-            <div class="card-MainBottom">
-              <div class="card-balance-block">
-                <div class="card-balance-caption">
-                  <span>Основная ФПИ</span>
-                </div>
-                <div class="card-balance-row" data-edit-balance="0" title="Нажмите, чтобы изменить баланс">
-                  <span class="card-balance-amount">142 800 ₽</span>
-                  <span class="card-edit-badge">✎</span>
-                </div>
-              </div>
-              <div class="card-month-Outflow">
-                <div>Потрачено</div>
-                <strong>0 ₽</strong>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="carousel-controls">
-          <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="Выбор карты">
-            <button class="carousel-dot active" type="button" data-card-dot="0" aria-label="Карта 1"></button>
-            <button class="carousel-dot" type="button" data-card-dot="1" aria-label="Карта 2"></button>
-            <button class="carousel-dot" type="button" data-card-dot="2" aria-label="Карта 3"></button>
-          </div>
-          <span style="font-size:11px; color:var(--muted); font-weight:750;" id="active-card-indicator">Карта 1 из 3 · свайп ›</span>
-        </div>
-      </div>
-
-      <!-- Умный виджет дневного бюджета по Кредитке (Карта 1) -->
-      <section class="credit-planner-card liquid-glass" id="home-credit-widget" aria-live="polite">
-        <div class="credit-planner-top">
-          <div>
-            <span class="credit-planner-badge">💳 Кредитка · лимит на день</span>
-            <div class="credit-daily-big" id="home-credit-daily-free">0 ₽ / день</div>
-            <div class="credit-daily-sub" id="home-credit-daily-full" style="color:var(--text); margin-top:3px;">Полная (без дороги): <strong>0 ₽ / день</strong></div>
-            <div class="credit-daily-sub" id="home-credit-daily-note">Свободно сверх обязательного проезда по будням</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:10px; color:var(--muted); font-weight:760;">На сегодня осталось</div>
-            <strong style="font-size:15px; font-weight:850; font-variant-numeric:tabular-nums;" id="home-credit-today-left">0 ₽</strong>
-            <div style="font-size:10px; color:var(--muted); font-weight:740; margin-top:4px;">Без дороги: <strong id="home-credit-today-full" style="color:var(--text); font-variant-numeric:tabular-nums;">0 ₽</strong></div>
-          </div>
-        </div>
-        <div class="credit-multi-bar" title="Распределение лимита 10 000 ₽">
-          <div class="credit-bar-seg" id="home-bar-spent" style="width:0%; background:#f43f5e;"></div>
-          <div class="credit-bar-seg" id="home-bar-reserved" style="width:0%; background:#f59e0b;"></div>
-          <div class="credit-bar-seg" id="home-bar-free" style="width:100%; background:#22c55e;"></div>
-        </div>
-        <div class="credit-legend-row">
-          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#22c55e;"></span>Свободно: <strong id="home-credit-free-sum" style="color:var(--text);">0 ₽</strong></span>
-          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f59e0b;"></span>Бронь проезда (Пн–Пт): <strong id="home-credit-reserved-sum" style="color:var(--text);">0 ₽</strong></span>
-        </div>
-      </section>
-
-      <!-- Фильтр ленты по картам -->
-      <div class="card-filter-pills" id="card-filter-pills" role="group" aria-label="Фильтр по картам">
-        <button class="filter-pill active" type="button" data-filter-card="all">Все карты</button>
-        <button class="filter-pill" type="button" data-filter-card="card_1" id="filter-pill-0">Основная ФПИ</button>
-        <button class="filter-pill" type="button" data-filter-card="card_2" id="filter-pill-1">Вторая карта</button>
-        <button class="filter-pill" type="button" data-filter-card="card_3" id="filter-pill-2">Накопительная</button>
-      </div>
-
-      <div class="section-row">
-        <span class="section-label" id="expenses-list-title">История операций</span>
-        <span class="month-total" id="home-period-total">0 ₽ за месяц</span>
-      </div>
-
-      <div class="expense-list" id="expense-list"></div>
-      <p class="footer-note">Личный кабинет · ФПИ Банк Онлайн</p>
+      <div class="tx-list" id="expense-list"></div>
     </section>
 
-    <!-- ================= ВКЛАДКА 2: АНАЛИТИКА (РАДИАЛЬНОЕ МЕНЮ + КАЛЕНДАРЬ + 28 ДНЕЙ) ================= -->
-    <section class="screen" id="screen-analytics" aria-label="Аналитика и календарь">
-      <!-- Выбор карт в Аналитике: Все вместе или каждая карта отдельно -->
-      <div class="card-filter-pills" id="analytics-card-pills" role="group" aria-label="Выбор карты для аналитики" style="margin-bottom:8px;">
-        <button class="filter-pill active" type="button" data-analytics-card="all">Все карты (3)</button>
-        <button class="filter-pill" type="button" data-analytics-card="card_1" id="analytics-pill-0">Основная ФПИ</button>
-        <button class="filter-pill" type="button" data-analytics-card="card_2" id="analytics-pill-1">Повседневная</button>
-        <button class="filter-pill" type="button" data-analytics-card="card_3" id="analytics-pill-2">Накопительная</button>
+    <!-- ================= АНАЛИТИКА ================= -->
+    <section class="screen" id="screen-analytics">
+      <div class="filter-scroll" id="analytics-card-pills">
+        <button class="chip-btn active" type="button" data-analytics-card="all">Все карты</button>
+        <button class="chip-btn" type="button" data-analytics-card="card_1" id="an-pill-0">Кредитка ФПИ</button>
+        <button class="chip-btn" type="button" data-analytics-card="card_2" id="an-pill-1">Повседневная</button>
+        <button class="chip-btn" type="button" data-analytics-card="card_3" id="an-pill-2">Накопительная</button>
       </div>
 
-      <div class="period-switcher-wrap">
-        <div class="period-segmented" role="group" aria-label="Режим периода">
-          <button class="period-btn active" type="button" data-period-mode="month">Месяцы</button>
-          <button class="period-btn" type="button" data-period-mode="28days">Последние 28 дней</button>
-        </div>
+      <div class="seg-control">
+        <button class="seg-btn active" type="button" data-period-mode="month">Месяцы</button>
+        <button class="seg-btn" type="button" data-period-mode="28days">28 дней</button>
+      </div>
 
-        <div class="month-nav-bar" id="month-nav-bar">
-          <button class="month-nav-btn" type="button" id="month-prev" aria-label="Предыдущий месяц">‹</button>
-          <div class="month-nav-title" id="analytics-period-label">Ноябрь 2026</div>
-          <button class="month-nav-btn" type="button" id="month-next" aria-label="Следующий месяц">›</button>
+      <div class="month-bar" id="month-nav-bar">
+        <button class="month-arrow" id="month-prev" type="button" aria-label="Предыдущий месяц">‹</button>
+        <div class="month-label" id="analytics-period-label">Ноябрь 2026</div>
+        <button class="month-arrow" id="month-next" type="button" aria-label="Следующий месяц">›</button>
+      </div>
+
+      <!-- Компактная сводка кредитки без коробок -->
+      <div style="margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:13px; margin-bottom:4px;">
+          <span>Лимит: <strong id="an-daily-free" style="font-variant-numeric:tabular-nums;">0 ₽/д</strong></span>
+          <span style="color:var(--muted);">Без дороги: <strong id="an-daily-full" style="color:var(--text); font-variant-numeric:tabular-nums;">0 ₽/д</strong></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:8px;">
+          <span id="an-reserve-line">Бронь Пн–Пт: 0 ₽</span>
+          <span id="an-days-line">0 дн.</span>
+        </div>
+        <div class="limit-progress" style="margin-top:0;">
+          <div class="limit-seg" id="an-bar-spent" style="width:0%; background:var(--accent);"></div>
+          <div class="limit-seg" id="an-bar-reserved" style="width:0%; background:var(--amber);"></div>
+          <div class="limit-seg" id="an-bar-free" style="width:100%; background:var(--green);"></div>
         </div>
       </div>
 
-      <!-- ПОЛНАЯ АНАЛИТИКА КРЕДИТКИ (ЛИМИТ 10 000 ₽ + БУДНИЙ ПРОЕЗД) -->
-      <section class="credit-planner-card liquid-glass" id="analytics-credit-card" aria-label="Расчёт дневного бюджета кредитки">
-        <div class="credit-planner-top">
-          <div>
-            <span class="credit-planner-badge" id="an-credit-badge">💳 Кредитка ФПИ · 10 000 ₽ / мес</span>
-            <div class="credit-daily-big" id="an-credit-daily-free">0 ₽ / день</div>
-            <div class="credit-daily-sub" id="an-credit-daily-full" style="color:var(--text); margin-top:3px;">Полная (без дороги): <strong>0 ₽ / день</strong></div>
-            <div class="credit-daily-sub" id="an-credit-subtitle">Свободно на любые траты сверх проезда</div>
-          </div>
-          <button class="cards-counter-pill" type="button" id="an-reset-credit-btn" title="Установить баланс кредитки 10 000 ₽">
-            🔄 10 000 ₽
-          </button>
-        </div>
-
-        <div class="credit-multi-bar">
-          <div class="credit-bar-seg" id="an-bar-spent" style="width:0%; background:#f43f5e;"></div>
-          <div class="credit-bar-seg" id="an-bar-reserved" style="width:0%; background:#f59e0b;"></div>
-          <div class="credit-bar-seg" id="an-bar-free" style="width:100%; background:#22c55e;"></div>
-        </div>
-
-        <div class="credit-legend-row" style="margin-bottom:4px;">
-          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f43f5e;"></span>Потрачено: <strong id="an-credit-spent" style="color:var(--text);">0 ₽</strong></span>
-          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#f59e0b;"></span>Проезд Пн–Пт: <strong id="an-credit-reserved" style="color:var(--text);">0 ₽</strong></span>
-          <span class="credit-legend-item"><span class="credit-legend-dot" style="background:#22c55e;"></span>Чистый остаток: <strong id="an-credit-free" style="color:var(--text);">0 ₽</strong></span>
-        </div>
-
-        <div class="credit-stats-grid">
-          <div class="credit-stat-box">
-            <div class="credit-stat-label">Баланс Кредитки сейчас</div>
-            <div class="credit-stat-val" id="an-credit-balance">10 000 ₽</div>
-          </div>
-          <div class="credit-stat-box">
-            <div class="credit-stat-label">Осталось дней (будней Пн–Пт)</div>
-            <div class="credit-stat-val" id="an-credit-days">0 дн. (0 будн.)</div>
-          </div>
-          <div class="credit-stat-box">
-            <div class="credit-stat-label">Бронь на автобус + билет домой</div>
-            <div class="credit-stat-val" id="an-credit-commute-info">0 ₽</div>
-          </div>
-          <div class="credit-stat-box">
-            <div class="credit-stat-label">Общий лимит в будний день</div>
-            <div class="credit-stat-val" id="an-credit-weekday-total">0 ₽ / будни</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- РАДИАЛЬНОЕ МЕНЮ ТРАТ -->
-      <section class="radial-card" aria-label="Радиальная диаграмма расходов">
-        <div class="radial-stage">
-          <svg class="radial-svg" viewBox="0 0 220 220" id="radial-svg">
-            <circle cx="110" cy="110" r="84" fill="none" stroke="var(--surface-2)" stroke-width="20"></circle>
+      <!-- Кольцо + Легенда в один ряд -->
+      <div class="analytics-donut-row">
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 140 140" id="radial-svg">
+            <circle cx="70" cy="70" r="54" fill="none" stroke="var(--surface-2)" stroke-width="15"></circle>
             <g id="radial-segments"></g>
           </svg>
-          <div class="radial-center">
-            <span class="radial-center-label" id="radial-center-title">Всего потрачено</span>
-            <strong class="radial-center-amount" id="radial-center-amount">0 ₽</strong>
-            <span class="radial-center-sub" id="radial-center-sub">Все категории</span>
+          <div class="donut-center">
+            <div class="donut-total" id="radial-center-amount">0 ₽</div>
+            <div class="donut-sub" id="radial-center-sub">Потрачено</div>
           </div>
         </div>
-        <div class="radial-chips" id="radial-chips"></div>
-      </section>
+        <div class="donut-legend" id="radial-legend"></div>
+      </div>
 
-      <!-- ИНТЕРАКТИВНЫЙ КАЛЕНДАРЬ ТРАТ -->
-      <section class="calendar-card" aria-label="Календарь расходов по дням">
-        <div class="calendar-head">
-          <span class="calendar-title">Календарь трат</span>
-          <span class="calendar-hint" id="calendar-subhint">Нажми на день для деталей</span>
-        </div>
-        <div class="calendar-weekdays">
+      <!-- Воздушный календарь без плиток -->
+      <section class="cal-section">
+        <div class="cal-weekdays">
           <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
         </div>
-        <div class="calendar-grid" id="calendar-grid"></div>
-
-        <div class="calendar-day-details hidden" id="calendar-day-details">
-          <div class="cal-detail-head">
-            <span id="cal-selected-date">12 ноября</span>
-            <strong id="cal-selected-total">0 ₽</strong>
+        <div class="cal-grid" id="calendar-grid"></div>
+        <div class="cal-day-box hidden" id="calendar-day-details">
+          <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+            <span id="cal-selected-date">Сегодня</span>
+            <span id="cal-selected-total">0 ₽</span>
           </div>
-          <div class="cal-detail-list" id="cal-detail-list"></div>
+          <div class="tx-list" id="cal-detail-list"></div>
         </div>
-      </section>
-
-      <!-- ДЕТАЛИЗАЦИЯ ПО КАТЕГОРИЯМ -->
-      <section class="category-bars-card">
-        <div class="calendar-head" style="margin-bottom:10px;">
-          <span class="calendar-title">Категории за период</span>
-          <span class="calendar-hint" id="avg-daily-spend">0 ₽ / день</span>
-        </div>
-        <div id="category-bars-list"></div>
       </section>
     </section>
   </main>
 
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ -->
+  <!-- НИЖНЯЯ НАВИГАЦИЯ -->
   <div class="bottom-nav-wrap">
-    <nav class="bottom-nav" aria-label="Основная навигация">
-      <button class="nav-item active" type="button" data-tab="home" aria-current="page">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2.5" y="5" width="19" height="14" rx="3"/>
-          <path d="M2.5 9.5h19M6.5 14.5h4"/>
+    <nav class="bottom-nav" aria-label="Навигация">
+      <button class="nav-btn active" type="button" data-tab="home">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20v-9.5Z"/>
         </svg>
         <span>Главная</span>
       </button>
 
-      <button class="add-fab" type="button" id="add-open" aria-label="Добавить операцию">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round">
+      <button class="fab-btn" id="add-open" type="button" aria-label="Добавить операцию">
+        <svg viewBox="0 0 24 24" stroke-linecap="round">
           <path d="M12 5v14M5 12h14"/>
         </svg>
       </button>
 
-      <button class="nav-item" type="button" data-tab="analytics">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <button class="nav-btn" type="button" data-tab="analytics">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="9"/>
-          <path d="M12 3v9l6.4 6.4"/>
+          <path d="M12 3v9l6.3 6.3"/>
         </svg>
         <span>Аналитика</span>
       </button>
     </nav>
   </div>
 
-  <!-- ================= МОДАЛКА 1: ОТДЕЛЬНОЕ ОКНО КАСТОМИЗАЦИИ КАРТ И БАЛАНСА ================= -->
-  <dialog class="sheet" id="card-dialog">
-    <div class="sheet-panel">
-      <div class="sheet-handle"></div>
-      <div class="sheet-head">
-        <h2>Кастомизация карты</h2>
-        <button class="close-button" type="button" data-close="card-dialog" aria-label="Закрыть">×</button>
-      </div>
-
-      <form id="card-custom-form">
-        <!-- Переключатель между 3 картами -->
-        <div class="segmented" role="group" aria-label="Выбор карты для настройки" style="margin-bottom:14px;">
-          <button class="segment-button selected" type="button" data-edit-card-slot="0">Карта 1</button>
-          <button class="segment-button" type="button" data-edit-card-slot="1">Карта 2</button>
-          <button class="segment-button" type="button" data-edit-card-slot="2">Карта 3</button>
-        </div>
-
-        <!-- Живое превью настраиваемой карты -->
-        <article class="bank-card" id="card-preview-box" data-skin="fpi-purple" style="min-height:186px; margin-bottom:14px;">
-          <div class="fpi-card-top">
-            <div class="fpi-brand-wrap">
-              <div class="fpi-logo-shield" id="preview-card-logo">ФПИ</div>
-              <div>
-                <div class="fpi-bank-title" id="preview-card-bank">ФПИ БАНК</div>
-                <div class="fpi-bank-subtitle" id="preview-card-sub">SOLO VIP EDITION</div>
-              </div>
-            </div>
-          </div>
-          <div class="fpi-chip-row">
-            <div class="fpi-emv-chip"></div>
-            <div class="fpi-card-number" id="preview-card-digits">2204 •••• •••• 2004</div>
-          </div>
-          <div class="card-MainBottom">
-            <div class="card-balance-block">
-              <div class="card-balance-caption" id="preview-card-name">Основная ФПИ</div>
-              <div class="card-balance-amount" id="preview-card-balance" style="font-size:28px;">142 800 ₽</div>
-            </div>
-          </div>
-        </article>
-
-        <label class="field-label" for="card-balance-input">Текущий баланс на карте (₽)</label>
-        <input class="amount-input" id="card-balance-input" type="number" inputmode="decimal" step="0.01" placeholder="0 ₽" required>
-        <div class="quick-balance-chips">
-          <button class="quick-chip" type="button" data-balance-delta="1000">+1 000 ₽</button>
-          <button class="quick-chip" type="button" data-balance-delta="5000">+5 000 ₽</button>
-          <button class="quick-chip" type="button" data-balance-delta="10000">+10 000 ₽</button>
-          <button class="quick-chip" type="button" data-balance-delta="-1000">−1 000 ₽</button>
-        </div>
-
-        <label class="field-label" for="card-name-input">Название карты</label>
-        <input class="text-input" id="card-name-input" maxlength="28" placeholder="Например: Основная ФПИ" required>
-
-        <div style="display:grid; grid-template-columns: 1fr 110px; gap:8px;">
-          <div>
-            <label class="field-label" for="card-bank-input">Заголовок банка на карте</label>
-            <input class="text-input" id="card-bank-input" maxlength="22" placeholder="ФПИ БАНК">
-          </div>
-          <div>
-            <label class="field-label" for="card-digits-input">Последние 4 цифры</label>
-            <input class="text-input" id="card-digits-input" maxlength="4" inputmode="numeric" placeholder="2004">
-          </div>
-        </div>
-
-        <span class="field-label">Дизайн (скин) карты</span>
-        <div class="skins-grid" id="card-skins-grid">
-          <button class="skin-tile selected" type="button" data-card-skin="fpi-purple">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#230c44,#6f34c7,#9356ec)"></div>
-            <span class="skin-name">ФПИ Фиолет</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="liquid-glass">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#1e293b,#94a3b8,#38bdf8)"></div>
-            <span class="skin-name">Жидкое стекло</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="holo">
-            <div class="skin-swatch" style="background:linear-gradient(130deg,#4f46e5,#ec4899,#06b6d4)"></div>
-            <span class="skin-name">Holo Иридий</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="carbon">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#09090b,#27272a)"></div>
-            <span class="skin-name">Карбон Pro</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="gold">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#85581A,#FFF3B0,#AA7C11)"></div>
-            <span class="skin-name">Gold Metal</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="amoled">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#000000,#1e1b4b)"></div>
-            <span class="skin-name">Amoled Black</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="cyber">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#090420,#be185d,#06b6d4)"></div>
-            <span class="skin-name">Кибер Неон</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="emerald">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#042f2e,#059669,#34d399)"></div>
-            <span class="skin-name">Изумруд</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="ruby">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#3b0614,#e11d48,#fb7185)"></div>
-            <span class="skin-name">Алый Рубин</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="zolo">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#1c1917,#a16207,#eab308)"></div>
-            <span class="skin-name">Золо 2004 👑</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="cats">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#1e1b4b,#4338ca,#7e22ce)"></div>
-            <span class="skin-name">Котики 🐈‍⬛</span>
-          </button>
-          <button class="skin-tile" type="button" data-card-skin="custom">
-            <div class="skin-swatch" style="background:linear-gradient(135deg,#3b0764,#2563eb); display:grid; place-items:center; font-size:16px;">🖼️</div>
-            <span class="skin-name">Своё фото</span>
-          </button>
-        </div>
-
-        <div class="hidden" id="card-custom-image-wrap">
-          <label class="field-label" for="card-bg-url">Ссылка на картинку или загрузить фото карты</label>
-          <input class="text-input" id="card-bg-url" placeholder="https://... или выберите файл ниже">
-          <input class="text-input" id="card-bg-file" type="file" accept="image/*" style="padding-top:9px; margin-top:6px;">
-        </div>
-
-        <div class="sheet-actions">
-          <button class="secondary-button" type="button" data-close="card-dialog">Отмена</button>
-          <button class="primary-button" type="submit">Сохранить карту</button>
-        </div>
-      </form>
-    </div>
-  </dialog>
-
-  <!-- ================= МОДАЛКА 2: ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ОПЕРАЦИИ ================= -->
+  <!-- ================= ШТОРКА: ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ОПЕРАЦИИ ================= -->
   <dialog class="sheet" id="expense-dialog">
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
       <div class="sheet-head">
         <h2 id="expense-dialog-title">Новая операция</h2>
-        <button class="close-button" type="button" data-close="expense-dialog" aria-label="Закрыть">×</button>
+        <button class="close-btn" type="button" data-close="expense-dialog">×</button>
       </div>
 
       <form id="expense-form">
         <input type="hidden" id="expense-id">
 
-        <div class="segmented" role="group" aria-label="Тип операции" style="margin-bottom:12px;">
-          <button class="segment-button selected" type="button" data-tx-type="expense">− Расход</button>
-          <button class="segment-button" type="button" data-tx-type="income">+ Пополнение</button>
+        <div class="seg-control">
+          <button class="seg-btn active" type="button" data-tx-type="expense">Расход</button>
+          <button class="seg-btn" type="button" data-tx-type="income">Пополнение</button>
         </div>
 
-        <label class="field-label" for="expense-amount">Сумма</label>
         <input class="amount-input" id="expense-amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0 ₽" required>
 
-        <!-- Быстрые кнопки частых трат с кредитки -->
-        <div class="quick-presets-wrap" id="quick-expense-presets">
-          <div class="quick-presets-title">Быстрый ввод (Кредитка · Транспорт)</div>
-          <div class="quick-presets-grid">
-            <button class="preset-expense-btn" type="button" data-quick-preset="bus">
-              <span>🚌 Автобус</span>
-              <strong id="preset-bus-price">42 ₽</strong>
-            </button>
-            <button class="preset-expense-btn" type="button" data-quick-preset="home">
-              <span>🎫 Билет домой</span>
-              <strong id="preset-home-price">189 ₽</strong>
-            </button>
-            <button class="preset-expense-btn full-span" type="button" data-quick-preset="both">
-              <span>⚡ Автобус + Билет домой (комбо за день)</span>
-              <strong id="preset-both-price">231 ₽</strong>
-            </button>
-          </div>
+        <div class="presets-row" id="quick-expense-presets">
+          <button class="preset-pill" type="button" data-quick-preset="bus">
+            Автобус
+            <strong id="preset-bus-price">42 ₽</strong>
+          </button>
+          <button class="preset-pill" type="button" data-quick-preset="home">
+            Билет домой
+            <strong id="preset-home-price">175 ₽</strong>
+          </button>
+          <button class="preset-pill" type="button" data-quick-preset="both">
+            Комбо
+            <strong id="preset-both-price">217 ₽</strong>
+          </button>
         </div>
 
-        <span class="field-label">Карта списания / зачисления</span>
-        <div class="segmented" id="expense-card-selector" role="group" aria-label="Выбор карты">
-          <button class="segment-button selected" type="button" data-select-card="card_1">Основная ФПИ</button>
-          <button class="segment-button" type="button" data-select-card="card_2">Вторая карта</button>
-          <button class="segment-button" type="button" data-select-card="card_3">Накопительная</button>
+        <span class="field-label">Карта</span>
+        <div class="seg-control" style="grid-template-columns: repeat(3, 1fr);" id="expense-card-selector">
+          <button class="seg-btn active" type="button" data-select-card="card_1">Кредитка</button>
+          <button class="seg-btn" type="button" data-select-card="card_2">Повседневная</button>
+          <button class="seg-btn" type="button" data-select-card="card_3">Накопительная</button>
         </div>
 
         <label class="field-label" for="expense-description">Описание</label>
-        <input class="text-input" id="expense-description" maxlength="70" placeholder="Например: Кофе, Супермаркет, Подписка">
+        <input class="text-input" id="expense-description" maxlength="70" placeholder="Например: Продукты, Кофе, Такси">
 
         <label class="field-label" for="expense-date">Дата</label>
         <input class="text-input" id="expense-date" type="date" required>
 
-        <span class="field-label" id="category-field-label">Категория</span>
-        <div class="category-grid" id="category-grid">
-          <button class="category-button selected" type="button" data-category="food"><span class="emoji">🍔</span>Еда</button>
-          <button class="category-button" type="button" data-category="groceries"><span class="emoji">🛒</span>Продукты</button>
-          <button class="category-button" type="button" data-category="cafe"><span class="emoji">☕</span>Кафе</button>
-          <button class="category-button" type="button" data-category="transport"><span class="emoji">🚕</span>Транспорт</button>
-          <button class="category-button" type="button" data-category="shopping"><span class="emoji">🛍️</span>Покупки</button>
-          <button class="category-button" type="button" data-category="home"><span class="emoji">🏠</span>Дом</button>
-          <button class="category-button" type="button" data-category="subs"><span class="emoji">💎</span>Подписки</button>
-          <button class="category-button" type="button" data-category="fun"><span class="emoji">🎮</span>Развлечения</button>
-          <button class="category-button" type="button" data-category="health"><span class="emoji">💊</span>Аптека</button>
-          <button class="category-button" type="button" data-category="beauty"><span class="emoji">✨</span>Уход</button>
-          <button class="category-button" type="button" data-category="transfer"><span class="emoji">💸</span>Переводы</button>
-          <button class="category-button" type="button" data-category="other"><span class="emoji">•••</span>Другое</button>
-        </div>
+        <span class="field-label">Категория</span>
+        <div class="cat-grid" id="category-grid"></div>
 
-        <div class="helper-text" id="expense-error" role="alert"></div>
-        <div class="sheet-actions">
-          <button class="secondary-button" type="button" data-close="expense-dialog">Отмена</button>
-          <button class="primary-button" type="submit" id="expense-save">Сохранить</button>
-        </div>
-        <button class="delete-button hidden" type="button" id="expense-delete">Удалить операцию</button>
+        <div id="expense-error" style="color:var(--red); font-size:12px; margin-top:8px;"></div>
+        <button class="primary-btn" type="submit" id="expense-save">Сохранить</button>
+        <button class="danger-btn hidden" type="button" id="expense-delete">Удалить операцию</button>
       </form>
     </div>
   </dialog>
 
-  <!-- ================= МОДАЛКА 3: ГЛОБАЛЬНЫЕ НАСТРОЙКИ И ТЕМЫ ================= -->
+  <!-- ================= ШТОРКА: НАСТРОЙКА КАРТЫ ================= -->
+  <dialog class="sheet" id="card-dialog">
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <h2>Настройка карты</h2>
+        <button class="close-btn" type="button" data-close="card-dialog">×</button>
+      </div>
+
+      <form id="card-custom-form">
+        <div class="seg-control" style="grid-template-columns: repeat(3, 1fr);">
+          <button class="seg-btn active" type="button" data-edit-card-slot="0">Карта 1</button>
+          <button class="seg-btn" type="button" data-edit-card-slot="1">Карта 2</button>
+          <button class="seg-btn" type="button" data-edit-card-slot="2">Карта 3</button>
+        </div>
+
+        <label class="field-label" for="card-balance-input">Текущий баланс (₽)</label>
+        <input class="amount-input" id="card-balance-input" type="number" inputmode="decimal" step="0.01" required style="font-size:34px; text-align:left; padding:0 0 8px;">
+
+        <label class="field-label" for="card-name-input">Название карты</label>
+        <input class="text-input" id="card-name-input" maxlength="28" required>
+
+        <div style="display:grid; grid-template-columns: 1fr 100px; gap:8px;">
+          <div>
+            <label class="field-label" for="card-bank-input">Банк</label>
+            <input class="text-input" id="card-bank-input" maxlength="20">
+          </div>
+          <div>
+            <label class="field-label" for="card-digits-input">4 цифры</label>
+            <input class="text-input" id="card-digits-input" maxlength="4" inputmode="numeric">
+          </div>
+        </div>
+
+        <span class="field-label">Стиль карты</span>
+        <div class="skins-grid" id="card-skins-grid">
+          <button class="skin-btn selected" type="button" data-card-skin="fpi-obsidian">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#161521,#6d28d9)"></div>
+            <span class="skin-name">ФПИ Фиолет</span>
+          </button>
+          <button class="skin-btn" type="button" data-card-skin="titanium-dark">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#2a2c32,#0e0f12)"></div>
+            <span class="skin-name">Титан Dark</span>
+          </button>
+          <button class="skin-btn" type="button" data-card-skin="pacific-blue">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#0c192c,#0284c7)"></div>
+            <span class="skin-name">Pacific Blue</span>
+          </button>
+          <button class="skin-btn" type="button" data-card-skin="alpine-green">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#0b1c17,#059669)"></div>
+            <span class="skin-name">Alpine Green</span>
+          </button>
+          <button class="skin-btn" type="button" data-card-skin="natural-titanium">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#d8d4cb,#9f9a8f)"></div>
+            <span class="skin-name">Natural Титан</span>
+          </button>
+          <button class="skin-btn" type="button" data-card-skin="crimson-noir">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#1d0b12,#be123c)"></div>
+            <span class="skin-name">Crimson Noir</span>
+          </button>
+        </div>
+
+        <button class="primary-btn" type="submit">Сохранить карту</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- ================= ШТОРКА: НАСТРОЙКИ ================= -->
   <dialog class="sheet" id="settings-dialog">
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
       <div class="sheet-head">
-        <h2>Настройки и кастомизация</h2>
-        <button class="close-button" type="button" data-close="settings-dialog" aria-label="Закрыть">×</button>
+        <h2>Настройки</h2>
+        <button class="close-btn" type="button" data-close="settings-dialog">×</button>
       </div>
 
-      <section class="settings-section">
-        <div class="settings-section-title">Банковские карты (3 счёта)</div>
-        <button class="primary-button" type="button" id="settings-open-cards" style="width:100%;">
-          🎨 Настроить дизайн и баланс карт
-        </button>
-      </section>
+      <div class="settings-group">
+        <div class="settings-title">Тема оформления</div>
+        <div class="seg-control" style="margin-bottom:0;">
+          <button class="seg-btn active" type="button" data-theme-choice="dark">Тёмная</button>
+          <button class="seg-btn" type="button" data-theme-choice="light">Светлая</button>
+        </div>
+      </div>
 
-      <section class="settings-section">
-        <div class="settings-section-title">💳 Кредитка (1-е число) и цены на проезд</div>
+      <div class="settings-group">
+        <div class="settings-title">Кредитка и проезд (Пн–Пт)</div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
           <div>
-            <label class="field-label" for="setting-bus-price" style="margin-top:4px;">🚌 Автобус (₽)</label>
+            <label class="field-label" for="setting-bus-price" style="margin-top:0;">Автобус до вокзала (₽)</label>
             <input class="text-input" id="setting-bus-price" type="number" inputmode="decimal" min="0" step="0.5" value="42">
           </div>
           <div>
-            <label class="field-label" for="setting-home-price" style="margin-top:4px;">🎫 Билет домой (₽)</label>
-            <input class="text-input" id="setting-home-price" type="number" inputmode="decimal" min="0" step="0.5" value="189">
+            <label class="field-label" for="setting-home-price" style="margin-top:0;">Билет на вокзале (₽)</label>
+            <input class="text-input" id="setting-home-price" type="number" inputmode="decimal" min="0" step="0.5" value="175">
           </div>
         </div>
 
-        <label class="field-label" for="setting-credit-limit" style="margin-top:10px;">Лимит Кредитки 1-го числа каждого месяца (₽)</label>
+        <label class="field-label" for="setting-credit-limit">Лимит Кредитки 1-го числа (₽)</label>
         <input class="text-input" id="setting-credit-limit" type="number" inputmode="decimal" min="100" step="100" value="10000">
 
-        <div class="segmented" role="group" aria-label="Автообновление 1 числа" style="margin-top:10px;">
-          <button class="segment-button selected" type="button" data-auto-reset="true">Авто 1-го числа: ВКЛ</button>
-          <button class="segment-button" type="button" data-auto-reset="false">ВЫКЛ</button>
+        <div class="seg-control" style="margin-top:10px; margin-bottom:0;">
+          <button class="seg-btn active" type="button" data-auto-reset="true">Автосброс 1-го: ВКЛ</button>
+          <button class="seg-btn" type="button" data-auto-reset="false">ВЫКЛ</button>
         </div>
 
-        <button class="secondary-button" type="button" id="settings-reset-credit-now" style="width:100%; margin-top:10px;">
-          🔄 Выставить на Кредитке 10 000 ₽ сейчас
-        </button>
-      </section>
-
-      <section class="settings-section">
-        <div class="settings-section-title">1. Стиль кнопок и панелей (Поверхность)</div>
-        <div class="design-grid-6" role="group" aria-label="Стиль кнопок и карточек">
-          <button class="theme-choice selected" type="button" data-surface-choice="liquid">🧊 Liquid Glass</button>
-          <button class="theme-choice" type="button" data-surface-choice="matte">🪨 Матовый</button>
-          <button class="theme-choice" type="button" data-surface-choice="frosted">🌫️ Морозный</button>
-          <button class="theme-choice" type="button" data-surface-choice="brutal">🧱 Брутализм</button>
-          <button class="theme-choice" type="button" data-surface-choice="glossy">✨ Глянец 3D</button>
-          <button class="theme-choice" type="button" data-surface-choice="outline">📐 Контурный</button>
-        </div>
-
-        <div class="settings-section-title" style="margin-top:16px;">2. Цветовая схема (Палитра)</div>
-        <div class="theme-grid-6" role="group" aria-label="Цветовая палитра">
-          <button class="theme-choice selected" type="button" data-theme-choice="dark">🔮 ФПИ Ночь</button>
-          <button class="theme-choice" type="button" data-theme-choice="ocean">🌊 Океан Cyan</button>
-          <button class="theme-choice" type="button" data-theme-choice="emerald">🌲 Изумруд</button>
-          <button class="theme-choice" type="button" data-theme-choice="rose">🍷 Бархат Роза</button>
-          <button class="theme-choice" type="button" data-theme-choice="obsidian">🔥 Обсидиан Gold</button>
-          <button class="theme-choice" type="button" data-theme-choice="amoled">🌑 Amoled 0%</button>
-          <button class="theme-choice" type="button" data-theme-choice="light">☀️ Снежный iOS</button>
-          <button class="theme-choice" type="button" data-theme-choice="latte">🍵 Матча Латте</button>
-          <button class="theme-choice" type="button" data-theme-choice="nord">❄️ Норд Арктика</button>
-          <button class="theme-choice" type="button" data-theme-choice="bw">◐ ЧБ / ◑ БЧ</button>
-        </div>
-
-        <div class="settings-section-title" style="margin-top:16px;">3. Узор и текстура фона</div>
-        <div class="design-grid-6" role="group" aria-label="Фон приложения">
-          <button class="design-choice selected" type="button" data-design-choice="liquid">🌌 Аврора</button>
-          <button class="design-choice" type="button" data-design-choice="cats">🐈‍⬛ Котики</button>
-          <button class="design-choice" type="button" data-design-choice="zolo">👑 Золо 2004</button>
-          <button class="design-choice" type="button" data-design-choice="topo">🗺️ Топо-карта</button>
-          <button class="design-choice" type="button" data-design-choice="dots">⠿ Точки Swiss</button>
-          <button class="design-choice" type="button" data-design-choice="waves">🌊 Волны</button>
-          <button class="design-choice" type="button" data-design-choice="cyber">🌆 Кибер-сетка</button>
-          <button class="design-choice" type="button" data-design-choice="clean">✨ Чистый</button>
-          <button class="design-choice" type="button" data-design-choice="custom">🖼️ Свой фон</button>
-        </div>
-
-        <div class="hidden" id="app-custom-bg-wrap" style="margin-top:10px;">
-          <label class="field-label" for="app-bg-url">URL картинки фона или файл</label>
-          <input class="text-input" id="app-bg-url" placeholder="https://...">
-          <input class="text-input" id="app-bg-file" type="file" accept="image/*" style="padding-top:9px; margin-top:6px;">
-        </div>
-
-        <div class="settings-section-title" style="margin-top:14px;">Масштаб узора на фоне</div>
-        <div class="segmented" role="group" aria-label="Плотность фона">
-          <button class="pattern-choice selected" type="button" data-pattern-choice="bold">Крупно / Детально</button>
-          <button class="pattern-choice" type="button" data-pattern-choice="soft">Мягко</button>
-        </div>
-      </section>
-
-      <section class="settings-section">
-        <div class="settings-section-title">Период аналитики по умолчанию</div>
-        <div class="segmented" role="group" aria-label="Период по умолчанию">
-          <button class="segment-button selected" type="button" data-default-period="month">Текущий месяц</button>
-          <button class="segment-button" type="button" data-default-period="28days">Последние 28 дней</button>
-        </div>
-      </section>
-
-      <div class="settings-status" id="firebase-help">
-        <strong>Облако ФПИ Банк:</strong> Готово к синхронизации.
+        <button class="secondary-btn" type="button" id="settings-reset-credit-now">Выставить баланс 10 000 ₽ сейчас</button>
       </div>
+
+      <div class="settings-group">
+        <div class="settings-title">Банковские карты</div>
+        <button class="secondary-btn" type="button" id="settings-open-cards" style="margin-top:0;">Настроить карты и балансы</button>
+      </div>
+
+      <div class="status-note" id="firebase-help">Проверка облака ФПИ Банк…</div>
     </div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=1" defer></script>
+  <script src="./app.js?v=7" defer></script>
 </body>
 </html>
