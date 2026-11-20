@@ -3,7 +3,6 @@
  * Local-first PWA + Firebase Firestore Sync + 3 кастомные карты + Радиальная аналитика и Календарь
  */
 
-// Конфигурация Firebase (solo-fpi-bank)
 const firebaseConfig = {
   apiKey: "AIzaSyBkJMhoEC18iK_khQA_ax03TvEobKHa5WY",
   authDomain: "solo-fpi-bank.firebaseapp.com",
@@ -22,6 +21,7 @@ const DESIGN_KEY = "solo_fpi_design_v1";
 const PATTERN_KEY = "solo_fpi_pattern_v1";
 const DEFAULT_PERIOD_KEY = "solo_fpi_default_period_v1";
 const APP_CUSTOM_BG_KEY = "solo_fpi_custom_bg_v1";
+const PLANNER_KEY = "solo_fpi_planner_v1";
 const GROUP_ID = "solo_fpi_v1";
 
 const CATEGORIES = {
@@ -39,16 +39,31 @@ const CATEGORIES = {
   other:     { label: "Другое",      emoji: "•••", color: "#94a3b8" }
 };
 
+function getDefaultPlanner() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PLANNER_KEY) || "{}");
+    return {
+      busPrice: Number.isFinite(Number(saved.busPrice)) ? Number(saved.busPrice) : 42,
+      homeTicketPrice: Number.isFinite(Number(saved.homeTicketPrice)) ? Number(saved.homeTicketPrice) : 189,
+      creditLimit: Number.isFinite(Number(saved.creditLimit)) && Number(saved.creditLimit) > 0 ? Number(saved.creditLimit) : 10000,
+      autoResetCredit: saved.autoResetCredit !== false,
+      lastResetMonth: String(saved.lastResetMonth || "")
+    };
+  } catch (_) {
+    return { busPrice: 42, homeTicketPrice: 189, creditLimit: 10000, autoResetCredit: true, lastResetMonth: "" };
+  }
+}
+
 function getDefaultCards() {
   return [
     {
       id: "card_1",
       slot: 0,
-      name: "Основная ФПИ",
+      name: "Кредитка ФПИ",
       bank: "ФПИ БАНК",
       subtitle: "Финансово-Пакостный Институт",
       digits: "2004",
-      balance: 142800,
+      balance: 10000,
       skin: "fpi-purple",
       customBg: "",
       updatedAt: 0
@@ -80,16 +95,12 @@ function getDefaultCards() {
   ];
 }
 
-function localISODate(date = new Date()) {
-  const offset = date.getTimezoneOffset();
-  return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 10);
-}
-
 const defaultPeriodPref = localStorage.getItem(DEFAULT_PERIOD_KEY) === "28days" ? "28days" : "month";
 
 const state = {
   cards: getDefaultCards(),
   expenses: [],
+  planner: getDefaultPlanner(),
   theme: localStorage.getItem(THEME_KEY) || "dark",
   surface: localStorage.getItem(SURFACE_KEY) || "liquid",
   design: localStorage.getItem(DESIGN_KEY) || "liquid",
@@ -121,25 +132,11 @@ let toastTimer = null;
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-function getActiveFirebaseConfig() {
-  if (typeof FIREBASE_CONFIG !== "undefined" && FIREBASE_CONFIG) return FIREBASE_CONFIG;
-  if (typeof firebaseConfig !== "undefined" && firebaseConfig) return firebaseConfig;
-  return null;
-}
-
 function isFirebaseConfigured() {
-  const cfg = getActiveFirebaseConfig();
   return Boolean(
-    cfg &&
-    cfg.apiKey &&
-    !String(cfg.apiKey).startsWith("PASTE_") &&
-    !String(cfg.apiKey).startsWith("ВСТАВЬ_") &&
-    cfg.projectId &&
-    !String(cfg.projectId).startsWith("PASTE_") &&
-    !String(cfg.projectId).startsWith("ВСТАВЬ_") &&
-    cfg.appId &&
-    !String(cfg.appId).startsWith("PASTE_") &&
-    !String(cfg.appId).startsWith("ВСТАВЬ_")
+    FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("PASTE_") &&
+    FIREBASE_CONFIG.projectId && !FIREBASE_CONFIG.projectId.startsWith("PASTE_") &&
+    FIREBASE_CONFIG.appId && !FIREBASE_CONFIG.appId.startsWith("PASTE_")
   );
 }
 
@@ -157,6 +154,11 @@ function compactMoney(value) {
   if (num >= 10000) return `${Math.round(num / 1000)}к`;
   if (num >= 1000) return `${(num / 1000).toFixed(1).replace(".0", "")}к`;
   return `${Math.round(num)}`;
+}
+
+function localISODate(date = new Date()) {
+  const offset = date.getTimezoneOffset();
+  return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 10);
 }
 
 function dateLabel(isoDate) {
@@ -244,13 +246,14 @@ function writeLocal() {
   }
 }
 
-/* ================= ТЕМЫ, ПОВЕРХНОСТИ И УЗОРЫ ФОНА ================= */
+/* ================= ТЕМЫ И ВНЕШНИЙ ВИД ================= */
 
 function isDarkLikeTheme(theme) {
   return !["light", "latte", "nord", "bw"].includes(theme);
 }
 
 function setTheme(theme) {
+  // При повторном клике на кнопку ЧБ/БЧ переключаем между ЧБ и БЧ
   if (theme === "bw" && state.theme === "bw") theme = "wb";
   const valid = ["dark", "ocean", "emerald", "rose", "obsidian", "amoled", "light", "latte", "nord", "bw", "wb"];
   state.theme = valid.includes(theme) ? theme : "dark";
@@ -284,11 +287,6 @@ function setTheme(theme) {
     toggle.innerHTML = darkLike
       ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>'
       : '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 15.2A8.5 8.5 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z"/></svg>';
-  }
-
-  const bwBtn = $("#bw-wb-choice-btn");
-  if (bwBtn) {
-    bwBtn.textContent = state.theme === "wb" ? "◑ БЧ (Активна)" : state.theme === "bw" ? "◐ ЧБ (Активна)" : "◐ ЧБ / ◑ БЧ";
   }
 
   $$("[data-theme-choice]").forEach(btn => {
@@ -467,6 +465,7 @@ function renderCardsCarousel() {
     `;
   }).join("");
 
+  // Обновляем подписи на чипсах-фильтрах (на главной и в аналитике) и в диалоге операции
   state.cards.forEach((card, idx) => {
     const pill = $(`#filter-pill-${idx}`);
     if (pill) pill.textContent = card.name;
@@ -837,6 +836,7 @@ async function saveExpense(event) {
     updatedAt: timestamp
   };
 
+  // Автоматическая корректировка баланса карты
   if (existing) {
     const oldDelta = existing.type === "income" ? -existing.amount : existing.amount;
     await adjustCardBalanceByDelta(existing.cardId, oldDelta);
@@ -973,15 +973,12 @@ function renderRadialChart(periodExpenses, totalSpent) {
     .filter(([, sum]) => sum > 0)
     .sort((a, b) => b[1] - a[1]);
 
-  const selectedCardObj = state.cards.find(c => c.id === state.analyticsCardId);
-  const cardScopeLabel = selectedCardObj ? selectedCardObj.name : "Все карты";
-
   if (!entries.length || totalSpent <= 0) {
     segGroup.innerHTML = "";
     chipsWrap.innerHTML = `<span style="font-size:11px; color:var(--muted);">Нет трат за выбранный период</span>`;
-    if (centerTitle) centerTitle.textContent = selectedCardObj ? `Траты · ${selectedCardObj.name}` : "Потрачено";
+    if (centerTitle) centerTitle.textContent = "Потрачено";
     if (centerAmount) centerAmount.textContent = "0 ₽";
-    if (centerSub) centerSub.textContent = state.periodMode === "28days" ? `${cardScopeLabel} · 28 дней` : `${cardScopeLabel} · за месяц`;
+    if (centerSub) centerSub.textContent = state.periodMode === "28days" ? "За 28 дней" : "За месяц";
     return;
   }
 
@@ -1023,7 +1020,11 @@ function renderRadialChart(periodExpenses, totalSpent) {
     `;
   }).join("");
 
+  // Центральная подпись внутри радиального кольца
   const activeKey = state.selectedAnalyticsCategory;
+  const selectedCardObj = state.cards.find(c => c.id === state.analyticsCardId);
+  const cardScopeLabel = selectedCardObj ? selectedCardObj.name : "Все карты";
+
   if (activeKey && byCat[activeKey]) {
     const cat = CATEGORIES[activeKey] || CATEGORIES.other;
     const pct = Math.round((byCat[activeKey] / totalSpent) * 100);
@@ -1044,6 +1045,7 @@ function renderCalendar(periodExpenses) {
   const range = getPeriodRange();
   const todayISO = localISODate();
 
+  // Группируем расходы по дате YYYY-MM-DD
   const byDate = {};
   for (const tx of periodExpenses) {
     const d = tx.date;
@@ -1061,7 +1063,7 @@ function renderCalendar(periodExpenses) {
 
   if (state.periodMode === "28days") {
     const startObj = new Date(`${range.startISO}T12:00:00`);
-    const startWeekday = (startObj.getDay() + 6) % 7;
+    const startWeekday = (startObj.getDay() + 6) % 7; // Пн = 0 .. Вс = 6
     for (let i = 0; i < startWeekday; i++) {
       cells.push(`<div class="cal-day empty"></div>`);
     }
@@ -1091,7 +1093,7 @@ function renderCalendar(periodExpenses) {
       cells.push(`<div class="cal-day empty"></div>`);
     }
     for (let day = 1; day <= range.daysCount; day++) {
-      const iso = `${state.analyticsMonth}-${String(day).padStart(2, "0")}`;
+      const iso = `${ state.analyticsMonth }-${String(day).padStart(2, "0")}`;
       const info = byDate[iso];
       const isToday = iso === todayISO;
       const isSelected = iso === state.selectedCalendarDate;
@@ -1210,8 +1212,283 @@ function renderAnalytics() {
   renderCategoryBars(periodExpenses, totalSpent, range.daysCount);
 }
 
+function savePlannerSettings() {
+  try {
+    localStorage.setItem(PLANNER_KEY, JSON.stringify(state.planner));
+  } catch (_) {}
+}
+
+async function checkMonthlyCreditReset() {
+  const currentMonth = localISODate().slice(0, 7);
+  if (!state.planner.autoResetCredit) return;
+  if (!state.planner.lastResetMonth) {
+    state.planner.lastResetMonth = currentMonth;
+    savePlannerSettings();
+    return;
+  }
+  if (state.planner.lastResetMonth !== currentMonth) {
+    state.planner.lastResetMonth = currentMonth;
+    savePlannerSettings();
+    const limit = roundMoney(state.planner.creditLimit || 10000);
+    if (state.cards[0]) {
+      state.cards[0].balance = limit;
+      state.cards[0].updatedAt = Date.now();
+      writeLocal();
+      renderAll();
+      showToast(`1-е число месяца: баланс Кредитки обновлён до ${money(limit)}`);
+      await syncCardToCloud(state.cards[0]);
+    }
+  }
+}
+
+async function resetCreditCardToLimitNow() {
+  const limit = roundMoney(state.planner.creditLimit || 10000);
+  if (!state.cards[0]) return;
+  if (!confirm(`Выставить баланс карты «${state.cards[0].name}» ровно на ${money(limit)}?`)) return;
+  state.cards[0].balance = limit;
+  state.cards[0].updatedAt = Date.now();
+  state.planner.lastResetMonth = localISODate().slice(0, 7);
+  savePlannerSettings();
+  writeLocal();
+  renderAll();
+  showToast(`Баланс Кредитки выставлен на ${money(limit)}`);
+  await syncCardToCloud(state.cards[0]);
+}
+
+function calculateCreditCardAnalytics() {
+  const creditCard = state.cards[0] || getDefaultCards()[0];
+  const balance = roundMoney(Number(creditCard.balance) || 0);
+  const limit = roundMoney(Number(state.planner.creditLimit) || 10000);
+  const busPrice = roundMoney(Number(state.planner.busPrice) || 0);
+  const homePrice = roundMoney(Number(state.planner.homeTicketPrice) || 0);
+  const dailyCommuteCost = roundMoney(busPrice + homePrice);
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const todayDate = now.getDate();
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const todayISO = localISODate(now);
+  const monthPrefix = todayISO.slice(0, 7);
+
+  const daysLeft = Math.max(1, lastDay - todayDate + 1);
+
+  // Считаем будние дни (Пн=1 .. Пт=5) со следующего дня до конца месяца
+  let futureWeekdays = 0;
+  for (let d = todayDate + 1; d <= lastDay; d++) {
+    const dow = new Date(year, month, d).getDay();
+    if (dow >= 1 && dow <= 5) futureWeekdays++;
+  }
+
+  const todayDow = now.getDay();
+  const isTodayWeekday = todayDow >= 1 && todayDow <= 5;
+  const totalWeekdaysLeft = futureWeekdays + (isTodayWeekday ? 1 : 0);
+
+  // Проверяем, сколько уже потрачено сегодня с кредитки на транспорт и прочее
+  const todayCreditTxs = state.expenses.filter(
+    tx => tx.cardId === "card_1" && tx.type !== "income" && tx.date === todayISO
+  );
+
+  const todayTransportSpent = roundMoney(
+    todayCreditTxs
+      .filter(tx => tx.category === "transport" || /автобус|билет|проезд/i.test(String(tx.description || "")))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+  );
+
+  const todayOtherSpent = roundMoney(
+    todayCreditTxs
+      .filter(tx => !(tx.category === "transport" || /автобус|билет|проезд/i.test(String(tx.description || ""))))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+  );
+
+  // Если сегодня будний день и проезд ещё не оплачен (или оплачен частично), бронируем остаток сегодняшнего проезда
+  const todayRemainingCommute = isTodayWeekday
+    ? roundMoney(Math.max(0, dailyCommuteCost - todayTransportSpent))
+    : 0;
+
+  const reservedForCommute = roundMoney(futureWeekdays * dailyCommuteCost + todayRemainingCommute);
+  const freeBalance = roundMoney(Math.max(0, balance - reservedForCommute));
+  const shortage = roundMoney(Math.max(0, reservedForCommute - balance));
+
+  const todayTotalSpent = roundMoney(todayTransportSpent + todayOtherSpent);
+
+  // Сколько можно свободно тратить в день сверх проезда:
+  // прибавляем todayOtherSpent к базе деления, чтобы лимит на день не менялся хаотично внутри одного дня
+  const dailyFreeAllowance = roundMoney(Math.max(0, (freeBalance + todayOtherSpent) / daysLeft));
+  const todayFreeLeft = roundMoney(dailyFreeAllowance - todayOtherSpent);
+
+  // Полная сумма в день и остаток на сегодня, если вообще не вычитать дорогу
+  const dailyFullAllowance = roundMoney(Math.max(0, (balance + todayTotalSpent) / daysLeft));
+  const todayFullLeft = roundMoney(dailyFullAllowance - todayTotalSpent);
+
+  const weekdayTotalAllowance = roundMoney(dailyFreeAllowance + dailyCommuteCost);
+
+  const monthSpentOnCredit = roundMoney(
+    state.expenses
+      .filter(tx => tx.cardId === "card_1" && tx.type !== "income" && String(tx.date || "").startsWith(monthPrefix))
+      .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
+  );
+
+  const baseScale = Math.max(limit, balance + monthSpentOnCredit, 1);
+  const spentPct = Math.min(100, Math.max(0, ((baseScale - balance) / baseScale) * 100));
+  const reservedPct = Math.min(100 - spentPct, Math.max(0, (reservedForCommute / baseScale) * 100));
+  const freePct = Math.max(0, 100 - spentPct - reservedPct);
+
+  return {
+    cardName: creditCard.name,
+    balance,
+    limit,
+    busPrice,
+    homePrice,
+    dailyCommuteCost,
+    daysLeft,
+    totalWeekdaysLeft,
+    reservedForCommute,
+    freeBalance,
+    shortage,
+    dailyFreeAllowance,
+    todayFreeLeft,
+    dailyFullAllowance,
+    todayFullLeft,
+    weekdayTotalAllowance,
+    spentAmount: roundMoney(Math.max(0, limit - balance)),
+    spentPct,
+    reservedPct,
+    freePct
+  };
+}
+
+function renderCreditPlanner() {
+  const info = calculateCreditCardAnalytics();
+
+  // Обновляем цены на быстрых кнопках в диалоге добавления расхода
+  const busEl = $("#preset-bus-price");
+  const homeEl = $("#preset-home-price");
+  const bothEl = $("#preset-both-price");
+  if (busEl) busEl.textContent = money(info.busPrice);
+  if (homeEl) homeEl.textContent = money(info.homePrice);
+  if (bothEl) bothEl.textContent = money(info.dailyCommuteCost);
+
+  // Синхронизируем поля в настройках
+  const setBus = $("#setting-bus-price");
+  const setHome = $("#setting-home-price");
+  const setLim = $("#setting-credit-limit");
+  if (setBus && document.activeElement !== setBus) setBus.value = String(info.busPrice);
+  if (setHome && document.activeElement !== setHome) setHome.value = String(info.homePrice);
+  if (setLim && document.activeElement !== setLim) setLim.value = String(info.limit);
+
+  $$("[data-auto-reset]").forEach(btn => {
+    btn.classList.toggle("selected", (btn.dataset.autoReset === "true") === state.planner.autoResetCredit);
+  });
+
+  const resetNowBtn = $("#settings-reset-credit-now");
+  if (resetNowBtn) {
+    resetNowBtn.textContent = `🔄 Выставить на Кредитке ${money(info.limit)} сейчас`;
+  }
+
+  // 1. Виджет на Главной
+  const homeDailyEl = $("#home-credit-daily-free");
+  const homeDailyFullEl = $("#home-credit-daily-full");
+  const homeNoteEl = $("#home-credit-daily-note");
+  const homeTodayLeftEl = $("#home-credit-today-left");
+  const homeTodayFullEl = $("#home-credit-today-full");
+  const homeFreeSumEl = $("#home-credit-free-sum");
+  const homeResSumEl = $("#home-credit-reserved-sum");
+
+  if (homeDailyEl) homeDailyEl.textContent = `${money(info.dailyFreeAllowance)} / день`;
+  if (homeDailyFullEl) {
+    homeDailyFullEl.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  }
+  if (homeNoteEl) {
+    homeNoteEl.textContent = info.shortage > 0
+      ? `⚠️ На проезд до конца месяца не хватает ${money(info.shortage)}`
+      : `Свободно сверх проезда (${money(info.weekdayTotalAllowance)}/день в будни с проездом)`;
+  }
+  if (homeTodayLeftEl) {
+    homeTodayLeftEl.textContent = info.todayFreeLeft >= 0 ? money(info.todayFreeLeft) : `−${money(Math.abs(info.todayFreeLeft))}`;
+    homeTodayLeftEl.style.color = info.todayFreeLeft >= 0 ? "var(--green)" : "var(--danger)";
+  }
+  if (homeTodayFullEl) {
+    homeTodayFullEl.textContent = info.todayFullLeft >= 0 ? money(info.todayFullLeft) : `−${money(Math.abs(info.todayFullLeft))}`;
+    homeTodayFullEl.style.color = info.todayFullLeft >= 0 ? "var(--text)" : "var(--danger)";
+  }
+  if (homeFreeSumEl) homeFreeSumEl.textContent = money(info.freeBalance);
+  if (homeResSumEl) homeResSumEl.textContent = `${money(info.reservedForCommute)} (${info.totalWeekdaysLeft} будн.)`;
+
+  const hSpent = $("#home-bar-spent");
+  const hRes = $("#home-bar-reserved");
+  const hFree = $("#home-bar-free");
+  if (hSpent) hSpent.style.width = `${info.spentPct}%`;
+  if (hRes) hRes.style.width = `${info.reservedPct}%`;
+  if (hFree) hFree.style.width = `${info.freePct}%`;
+
+  // 2. Карточка во вкладке Аналитика
+  const anBadge = $("#an-credit-badge");
+  const anDaily = $("#an-credit-daily-free");
+  const anDailyFull = $("#an-credit-daily-full");
+  const anSub = $("#an-credit-subtitle");
+  const anResetBtn = $("#an-reset-credit-btn");
+  const anSpent = $("#an-credit-spent");
+  const anRes = $("#an-credit-reserved");
+  const anFree = $("#an-credit-free");
+  const anBal = $("#an-credit-balance");
+  const anDays = $("#an-credit-days");
+  const anCommute = $("#an-credit-commute-info");
+  const anWeekday = $("#an-credit-weekday-total");
+
+  if (anBadge) anBadge.textContent = `💳 ${info.cardName} · лимит ${money(info.limit)}`;
+  if (anDaily) anDaily.textContent = `${money(info.dailyFreeAllowance)} / день`;
+  if (anDailyFull) {
+    anDailyFull.innerHTML = `Полная (без дороги): <strong>${money(info.dailyFullAllowance)} / день</strong>`;
+  }
+  if (anSub) {
+    anSub.textContent = info.shortage > 0
+      ? `Внимание: баланс меньше брони на проезд на ${money(info.shortage)}`
+      : `Безопасный расход сверх автобуса (${money(info.busPrice)}) и билета домой (${money(info.homePrice)})`;
+  }
+  if (anResetBtn) anResetBtn.textContent = `🔄 ${money(info.limit)}`;
+  if (anSpent) anSpent.textContent = money(info.spentAmount);
+  if (anRes) anRes.textContent = money(info.reservedForCommute);
+  if (anFree) anFree.textContent = money(info.freeBalance);
+  if (anBal) anBal.textContent = money(info.balance);
+  if (anDays) anDays.textContent = `${info.daysLeft} дн. (${info.totalWeekdaysLeft} будн.)`;
+  if (anCommute) anCommute.textContent = `${info.totalWeekdaysLeft} × ${money(info.dailyCommuteCost)} = ${money(info.reservedForCommute)}`;
+  if (anWeekday) anWeekday.textContent = `${money(info.weekdayTotalAllowance)} / день`;
+
+  const aSpent = $("#an-bar-spent");
+  const aRes = $("#an-bar-reserved");
+  const aFree = $("#an-bar-free");
+  if (aSpent) aSpent.style.width = `${info.spentPct}%`;
+  if (aRes) aRes.style.width = `${info.reservedPct}%`;
+  if (aFree) aFree.style.width = `${info.freePct}%`;
+}
+
+function applyQuickPreset(type) {
+  const busPrice = roundMoney(Number(state.planner.busPrice) || 42);
+  const homePrice = roundMoney(Number(state.planner.homeTicketPrice) || 189);
+
+  setTxType("expense");
+  setTxCard("card_1");
+  setTxCategory("transport");
+
+  const amountEl = $("#expense-amount");
+  const descEl = $("#expense-description");
+
+  if (type === "bus") {
+    if (amountEl) amountEl.value = String(busPrice);
+    if (descEl) descEl.value = "Проезд на автобусе";
+  } else if (type === "home") {
+    if (amountEl) amountEl.value = String(homePrice);
+    if (descEl) descEl.value = "Билет домой";
+  } else if (type === "both") {
+    if (amountEl) amountEl.value = String(roundMoney(busPrice + homePrice));
+    if (descEl) descEl.value = "Проезд на автобусе + Билет домой";
+  }
+}
+
 function renderAll() {
   renderCardsCarousel();
+  renderCreditPlanner();
   renderHomeExpenses();
   renderAnalytics();
 }
@@ -1260,23 +1537,18 @@ function compressImageFile(file, maxWidth = 900, quality = 0.78) {
 
 async function initFirebase() {
   const helpEl = $("#firebase-help");
-  const cfg = getActiveFirebaseConfig();
-
   if (!isFirebaseConfigured()) {
     setSyncStatus("", "Локально");
-    if (helpEl) {
-      helpEl.innerHTML = "<strong>Локальный режим:</strong> вставь свои ключи <code>apiKey</code>, <code>messagingSenderId</code> и <code>appId</code> в <code>FIREBASE_CONFIG</code> в начале файла <code>app.js</code>.";
-    }
+    if (helpEl) helpEl.innerHTML = "<strong>Локальный режим:</strong> данные хранятся на устройстве.";
     return;
   }
 
   try {
-    setSyncStatus("busy", "Подключаю…");
     const [appModule, firestoreModule] = await Promise.all([
       import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`),
       import(`https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-firestore.js`)
     ]);
-    const app = appModule.getApps().length ? appModule.getApp() : appModule.initializeApp(cfg);
+    const app = appModule.getApps().length ? appModule.getApp() : appModule.initializeApp(FIREBASE_CONFIG);
     firestore = firestoreModule.getFirestore(app);
     firebaseFns = {
       collection: firestoreModule.collection,
@@ -1286,17 +1558,13 @@ async function initFirebase() {
       deleteDoc: firestoreModule.deleteDoc
     };
     state.firebaseReady = true;
-    setSyncStatus("online", "Онлайн");
-    if (helpEl) {
-      helpEl.innerHTML = `<strong>Облако ФПИ Банк подключено (${escapeHTML(cfg.projectId)}):</strong> все 3 карты, скины и расходы синхронизируются автоматически.`;
-    }
     attachCloudListeners();
+    setSyncStatus("online", "Онлайн");
+    if (helpEl) helpEl.innerHTML = "<strong>Облако ФПИ Банк подключено:</strong> все 3 карты, скины и расходы синхронизируются автоматически.";
   } catch (error) {
     console.warn("Firebase init error:", error);
     setSyncStatus("", "Офлайн");
-    if (helpEl) {
-      helpEl.innerHTML = "<strong>Офлайн-режим:</strong> не удалось подключиться к Firestore. Проверь интернет и Rules в консоли Firebase.";
-    }
+    if (helpEl) helpEl.innerHTML = "<strong>Офлайн-режим:</strong> все изменения сохраняются локально.";
   }
 }
 
@@ -1314,10 +1582,11 @@ function attachCloudListeners() {
         writeLocal();
         renderAll();
       } else {
+        // Первичная запись дефолтных карт в облако
         state.cards.forEach(c => syncCardToCloud(c));
       }
       setSyncStatus("online", "Онлайн");
-    }, err => { console.warn("Firestore snapshot error:", err); setSyncStatus("", "Нет доступа"); })
+    }, () => setSyncStatus("", "Локально"))
   );
 
   state.unsubscribers.push(
@@ -1326,17 +1595,19 @@ function attachCloudListeners() {
       writeLocal();
       renderAll();
       setSyncStatus("online", "Онлайн");
-    }, err => { console.warn("Firestore snapshot error:", err); setSyncStatus("", "Нет доступа"); })
+    }, () => setSyncStatus("", "Локально"))
   );
 }
 
 /* ================= ПРИВЯЗКА СОБЫТИЙ ================= */
 
 function bindEvents() {
+  // Навигация по вкладкам
   $$("[data-tab]").forEach(btn => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
   });
 
+  // Верхние кнопки
   $("#theme-toggle")?.addEventListener("click", cycleThemeQuick);
   $("#settings-open")?.addEventListener("click", () => $("#settings-dialog")?.showModal());
   $("#open-card-customizer-top")?.addEventListener("click", () => openCardCustomizer(state.activeCardSlot, false));
@@ -1345,6 +1616,7 @@ function bindEvents() {
     openCardCustomizer(state.activeCardSlot, false);
   });
 
+  // Свайп и клики по карусели карт
   const track = $("#cards-track");
   if (track) {
     let scrollTimer = null;
@@ -1374,6 +1646,7 @@ function bindEvents() {
     dot.addEventListener("click", () => scrollToCardSlot(Number(dot.dataset.cardDot)));
   });
 
+  // Фильтр операций по картам на главной
   $("#card-filter-pills")?.addEventListener("click", event => {
     const pill = event.target.closest("[data-filter-card]");
     if (!pill) return;
@@ -1384,6 +1657,7 @@ function bindEvents() {
     renderHomeExpenses();
   });
 
+  // Окно кастомизации карт
   $$("[data-edit-card-slot]").forEach(btn => {
     btn.addEventListener("click", () => loadCardIntoCustomizer(Number(btn.dataset.editCardSlot)));
   });
@@ -1426,6 +1700,7 @@ function bindEvents() {
 
   $("#card-custom-form")?.addEventListener("submit", saveCardCustomization);
 
+  // Добавление и редактирование расходов
   $("#add-open")?.addEventListener("click", openNewExpense);
 
   $$("[data-tx-type]").forEach(btn => {
@@ -1441,6 +1716,37 @@ function bindEvents() {
     if (btn) setTxCategory(btn.dataset.category);
   });
 
+  $("#quick-expense-presets")?.addEventListener("click", event => {
+    const btn = event.target.closest("[data-quick-preset]");
+    if (btn) applyQuickPreset(btn.dataset.quickPreset);
+  });
+
+  const updatePlannerInputs = () => {
+    const b = Number($("#setting-bus-price")?.value);
+    const h = Number($("#setting-home-price")?.value);
+    const l = Number($("#setting-credit-limit")?.value);
+    if (Number.isFinite(b) && b >= 0) state.planner.busPrice = roundMoney(b);
+    if (Number.isFinite(h) && h >= 0) state.planner.homeTicketPrice = roundMoney(h);
+    if (Number.isFinite(l) && l > 0) state.planner.creditLimit = roundMoney(l);
+    savePlannerSettings();
+    renderCreditPlanner();
+  };
+
+  ["#setting-bus-price", "#setting-home-price", "#setting-credit-limit"].forEach(sel => {
+    $(sel)?.addEventListener("input", updatePlannerInputs);
+  });
+
+  $$("[data-auto-reset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.planner.autoResetCredit = btn.dataset.autoReset === "true";
+      savePlannerSettings();
+      renderCreditPlanner();
+    });
+  });
+
+  $("#settings-reset-credit-now")?.addEventListener("click", resetCreditCardToLimitNow);
+  $("#an-reset-credit-btn")?.addEventListener("click", resetCreditCardToLimitNow);
+
   $("#expense-form")?.addEventListener("submit", saveExpense);
   $("#expense-delete")?.addEventListener("click", deleteCurrentExpense);
 
@@ -1449,6 +1755,7 @@ function bindEvents() {
     if (row) openEditExpense(row.dataset.expenseId);
   });
 
+  // Аналитика: фильтр по картам (Все карты или каждая отдельно)
   $("#analytics-card-pills")?.addEventListener("click", event => {
     const pill = event.target.closest("[data-analytics-card]");
     if (!pill) return;
@@ -1460,6 +1767,7 @@ function bindEvents() {
     renderAnalytics();
   });
 
+  // Аналитика: переключение периодов, радиальное меню и календарь
   $$("[data-period-mode]").forEach(btn => {
     btn.addEventListener("click", () => setPeriodMode(btn.dataset.periodMode));
   });
@@ -1489,6 +1797,7 @@ function bindEvents() {
     if (item) openEditExpense(item.dataset.expenseId);
   });
 
+  // Глобальные настройки: стиль кнопок/поверхностей и цветовые палитры
   $$("[data-surface-choice]").forEach(btn => {
     btn.addEventListener("click", () => setSurface(btn.dataset.surfaceChoice));
   });
@@ -1528,6 +1837,7 @@ function bindEvents() {
     }
   });
 
+  // Закрытие модалок по кнопке × или клику в фон
   $$("[data-close]").forEach(btn => {
     btn.addEventListener("click", () => $(`#${btn.dataset.close}`)?.close());
   });
@@ -1547,11 +1857,9 @@ function bootstrap() {
   setDesign(state.design);
   setPatternDensity(state.pattern);
   setDefaultPeriod(state.defaultPeriod);
-  if (state.appCustomBg && !state.appCustomBg.startsWith("data:") && $("#app-bg-url")) {
-    $("#app-bg-url").value = state.appCustomBg;
-  }
   renderAll();
   bindEvents();
+  checkMonthlyCreditReset();
   initFirebase();
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
