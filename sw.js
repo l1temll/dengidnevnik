@@ -1,11 +1,9 @@
-const CACHE_NAME = "solo-fpi-expenses-v5";
+const CACHE_NAME = "solo-fpi-expenses-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./app.js",
-  "./manifest.webmanifest",
-  "./assets/icon-192.png",
-  "./assets/icon-512.png"
+  "./manifest.webmanifest"
 ];
 
 self.addEventListener("install", event => {
