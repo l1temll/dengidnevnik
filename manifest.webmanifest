@@ -7,9 +7,13 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0c0b14",
-  "theme_color": "#0c0b14",
-  "categories": ["finance", "productivity", "utilities"],
+  "background_color": "#0d0d12",
+  "theme_color": "#0d0d12",
+  "categories": [
+    "finance",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "./assets/icon-192.png",
