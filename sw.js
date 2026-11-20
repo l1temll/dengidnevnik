@@ -1,4 +1,4 @@
-const CACHE_NAME = "solo-fpi-expenses-v4";
+const CACHE_NAME = "solo-fpi-expenses-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
